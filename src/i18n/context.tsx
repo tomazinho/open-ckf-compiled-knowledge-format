@@ -13,7 +13,14 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? (localStorage.getItem("openckf-lang") as Lang | null) : null;
+    if (typeof window === "undefined") return;
+    // One-shot migration from legacy openkcp-* key
+    const legacy = localStorage.getItem("openkcp-lang");
+    if (legacy && !localStorage.getItem("openckf-lang")) {
+      localStorage.setItem("openckf-lang", legacy);
+      localStorage.removeItem("openkcp-lang");
+    }
+    const stored = localStorage.getItem("openckf-lang") as Lang | null;
     if (stored === "en" || stored === "pt-BR") setLangState(stored);
     else if (typeof navigator !== "undefined" && navigator.language?.toLowerCase().startsWith("pt")) {
       setLangState("pt-BR");
