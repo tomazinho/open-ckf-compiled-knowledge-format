@@ -1,4 +1,5 @@
-import mammoth from "mammoth";
+// mammoth and pdfjs are dynamically imported inside the handlers below to keep
+// them out of the SSR bundle (they reference browser globals at module init).
 
 export type ExtractionProgress = {
   stage: "start" | "loading" | "parsing" | "page" | "done";
@@ -52,6 +53,7 @@ export async function readFileAsText(file: File, onProgress?: ProgressFn): Promi
     onProgress?.({ stage: "loading", message: "Reading .docx bytes…", percent: 20 });
     const buf = await file.arrayBuffer();
     onProgress?.({ stage: "parsing", message: "Extracting text from Word…", percent: 60 });
+    const mammoth = (await import("mammoth")).default;
     const result = await mammoth.extractRawText({ arrayBuffer: buf });
     onProgress?.({ stage: "done", message: `Extracted ${result.value.length} characters.`, percent: 100 });
     return result.value;
