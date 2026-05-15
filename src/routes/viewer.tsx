@@ -14,8 +14,12 @@ export const Route = createFileRoute("/viewer")({
   head: () => ({
     meta: [
       { title: "Open CKF — Viewer" },
-      { name: "description", content: "Inspect any .kcp package — sections, search, and source traceability." },
+      { name: "description", content: "Inspect any .ckf package — sections, search, and source traceability." },
+      { property: "og:title", content: "Open CKF — Viewer" },
+      { property: "og:description", content: "Inspect any .ckf package locally." },
+      { property: "og:url", content: "https://open.compiledknowledgeformat.org/viewer" },
     ],
+    links: [{ rel: "canonical", href: "https://open.compiledknowledgeformat.org/viewer" }],
   }),
   component: ViewerPage,
 });
