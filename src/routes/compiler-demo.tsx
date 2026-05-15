@@ -26,7 +26,8 @@ export const Route = createFileRoute("/compiler-demo")({
 });
 
 function DemoPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const isPt = lang === "pt";
   const [text, setText] = useState("");
   const [sourceType, setSourceType] = useState(t.compiler.sourceTypes[0]);
   const [compression, setCompression] = useState<CompileOptions["compressionLevel"]>("standard");
