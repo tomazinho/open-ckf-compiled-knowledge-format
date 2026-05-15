@@ -49,9 +49,9 @@ export const CKF_PARTIAL_SCHEMA = {
   required: ["entities", "concepts"],
 };
 
-export const CKF_SYSTEM_PROMPT = `You are the Knowledge Context Protocol (KCP) extractor.
+export const CKF_SYSTEM_PROMPT = `You are the Compiled Knowledge Format (CKF) extractor.
 
-You receive ONE chunk of source text (between <<<SOURCE>>> markers) and must extract a precise, faithful KCP partial knowledge package.
+You receive ONE chunk of source text (between <<<SOURCE>>> markers) and must extract a precise, faithful CKF partial knowledge package.
 
 ABSOLUTE RULES:
 - Do not invent facts. Only extract what is supported by the source.
