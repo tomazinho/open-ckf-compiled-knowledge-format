@@ -123,7 +123,7 @@ function ProPage() {
     const blob = new Blob([result.pkgMd], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `${(filename ?? "kcp-package").replace(/\.[^.]+$/, "")}.kcp.md`; a.click();
+    a.href = url; a.download = `${(filename ?? "ckf-package").replace(/\.[^.]+$/, "")}.ckf.md`; a.click();
     URL.revokeObjectURL(url);
   }
 
