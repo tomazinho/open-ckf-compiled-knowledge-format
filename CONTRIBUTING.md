@@ -1,6 +1,6 @@
-# Contributing to Open KCP
+# Contributing to Open CKF
 
-Thanks for your interest! Open KCP is the open-source reference implementation of the Knowledge Context Protocol. The goal is to keep it **small, dependency-light, and 100% client-side**.
+Thanks for your interest! Open CKF is the open-source reference implementation of the Compiled Knowledge Format. The goal is to keep it **small, dependency-light, and 100% client-side**.
 
 ## Ground rules
 
@@ -29,7 +29,7 @@ bun run build
 See the README for a tour. The two non-obvious areas are:
 
 - `src/lib/compiler/` — the chunk → map → reduce LLM pipeline used by Compiler Pro. The system prompt and JSON schema live in `schema.ts`. Provider adapters live in `providers.ts`.
-- `src/lib/kcp/compile.ts` — the deterministic heuristic compiler used by the Demo. No network calls.
+- `src/lib/ckf/compile.ts` — the deterministic heuristic compiler used by the Demo. No network calls.
 
 ## Adding a provider
 
