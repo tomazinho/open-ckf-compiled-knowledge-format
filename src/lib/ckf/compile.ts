@@ -1,4 +1,4 @@
-// Heuristic, client-side KCP compiler (no LLM).
+// Heuristic, client-side CKF compiler (no LLM).
 import type {
   AgentInstructions, AntiPattern, AtomicUnit, CausalChain, CompileOptions, CompileResult,
   Concept, ContextualTrigger, CoreIntent, DecisionRule, Domain, DomainMap, Entity,
