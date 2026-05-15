@@ -7,7 +7,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? (localStorage.getItem("openckf-theme") as Theme | null) : null;
+    if (typeof window === "undefined") return;
+    // One-shot migration from legacy openkcp-* key
+    const legacy = localStorage.getItem("openkcp-theme");
+    if (legacy && !localStorage.getItem("openckf-theme")) {
+      localStorage.setItem("openckf-theme", legacy);
+      localStorage.removeItem("openkcp-theme");
+    }
+    const stored = localStorage.getItem("openckf-theme") as Theme | null;
     const initial: Theme = stored ?? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     setTheme(initial);
   }, []);
