@@ -76,7 +76,7 @@ export const KEY_REGEX: Record<ProviderId, RegExp> = {
   openrouter: /^sk-or-[A-Za-z0-9_\-]{20,}$/,
 };
 
-const STORAGE_KEY = "openkcp.byok.v1";
+const STORAGE_KEY = "openckf.byok.v1";
 type Store = { session: Partial<Record<ProviderId, string>>; persistent: Partial<Record<ProviderId, string>> };
 
 function readStore(persistent: boolean): Partial<Record<ProviderId, string>> {

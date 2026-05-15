@@ -7,7 +7,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? (localStorage.getItem("openkcp-theme") as Theme | null) : null;
+    const stored = typeof window !== "undefined" ? (localStorage.getItem("openckf-theme") as Theme | null) : null;
     const initial: Theme = stored ?? (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     setTheme(initial);
   }, []);
@@ -15,7 +15,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("dark", theme === "dark");
-    if (typeof window !== "undefined") localStorage.setItem("openkcp-theme", theme);
+    if (typeof window !== "undefined") localStorage.setItem("openckf-theme", theme);
   }, [theme]);
 
   return (

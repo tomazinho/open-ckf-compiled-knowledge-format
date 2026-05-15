@@ -2,7 +2,7 @@
 import type {
   AgentInstructions, AntiPattern, AtomicUnit, CausalChain, CompileOptions, CompileResult,
   Concept, ContextualTrigger, CoreIntent, DecisionRule, Domain, DomainMap, Entity,
-  Exception, Heuristic, IfThenRule, KcpMetadata, KcpPackage, KnowledgeLimits, MentalModel,
+  Exception, Heuristic, IfThenRule, CkfMetadata, CkfPackage, KnowledgeLimits, MentalModel,
   Pattern, Playbook, Principle, Procedure, QAPair, RetrievalChunk, SourceBasis, SourceTraceItem,
 } from "./types";
 import { detectDomain, detectLanguage } from "./domains";
@@ -220,7 +220,7 @@ function buildTrace(items: { id: string; excerpt: string }[]): SourceTraceItem[]
   }));
 }
 
-export function compileKcp(rawText: string, options: CompileOptions): CompileResult {
+export function compileCkf(rawText: string, options: CompileOptions): CompileResult {
   const text = rawText.trim();
   const warnings: string[] = [];
   if (text.length < 100) warnings.push("Input is short; extraction quality may be limited.");
@@ -260,7 +260,7 @@ export function compileKcp(rawText: string, options: CompileOptions): CompileRes
     name: n.term, relevance: Math.max(0.4, 1 - i * 0.15), related_concepts: [n.term],
   }));
 
-  const metadata: KcpMetadata = {
+  const metadata: CkfMetadata = {
     package_id: `kcp_demo_${Date.now()}`, protocol_version: "0.1",
     source_type: options.sourceType, source_title: "Untitled source", source_author: "Unknown",
     domain, subdomains: subdomains.map((s) => s.name), language: lang, created_at,
@@ -281,7 +281,7 @@ export function compileKcp(rawText: string, options: CompileOptions): CompileRes
 
   const principles: Principle[] = [];
 
-  const pkg: KcpPackage = {
+  const pkg: CkfPackage = {
     metadata, core_intent: coreIntent, domain_map: domainMap,
     entities, concepts, principles, heuristics,
     decision_rules: decisionRules, procedures, patterns,
