@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { Download, Copy, Check, Upload, Trash2, Sparkles } from "lucide-react";
+import { Download, Copy, Check, Upload, Trash2, Sparkles, FileInput, Cpu, Package, Bot, ArrowRight } from "lucide-react";
 import { Shell } from "@/components/Shell";
 import { useI18n } from "@/i18n/context";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,8 @@ export const Route = createFileRoute("/compiler-demo")({
 });
 
 function DemoPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const isPt = lang === "pt-BR";
   const [text, setText] = useState("");
   const [sourceType, setSourceType] = useState(t.compiler.sourceTypes[0]);
   const [compression, setCompression] = useState<CompileOptions["compressionLevel"]>("standard");
@@ -171,8 +172,74 @@ function DemoPage() {
             )}
           </section>
         </div>
+
+        {/* HOW IT WORKS */}
+        <section className="mt-10 rounded-xl border border-border/60 bg-card p-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/40 px-3 py-1 text-xs font-medium">
+            <span className="size-1.5 rounded-full bg-primary" />
+            {isPt ? "COMO FUNCIONA" : "HOW IT WORKS"}
+          </div>
+          <h3 className="mt-3 font-display text-2xl font-semibold tracking-tight">
+            {isPt ? "Do arquivo humano ao agente de IA, em 4 passos" : "From human file to AI agent, in 4 steps"}
+          </h3>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            {isPt
+              ? "O KCP traduz documentos pensados para humanos em conhecimento estruturado que agentes conseguem raciocinar, sem alucinar e com rastreabilidade."
+              : "KCP translates human-oriented documents into structured knowledge that agents can reason over — without hallucinating and with full traceability."}
+          </p>
+
+          <div className="mt-6 grid items-stretch gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
+            <Step icon={<FileInput className="size-5" />} n="01"
+              title={isPt ? "Arquivo humano" : "Human file"}
+              desc={isPt ? "PDF, DOCX, MD, TXT, transcrições — qualquer texto que humanos leem." : "PDF, DOCX, MD, TXT, transcripts — anything humans read."} />
+            <Arrow />
+            <Step icon={<Cpu className="size-5" />} n="02"
+              title={isPt ? "Compilador KCP" : "KCP Compiler"}
+              desc={isPt ? "Extrai entidades, conceitos, regras, princípios e procedimentos em 23 seções padronizadas." : "Extracts entities, concepts, rules, principles and procedures into 23 canonical sections."}
+              highlight />
+            <Arrow />
+            <Step icon={<Package className="size-5" />} n="03"
+              title={isPt ? "Pacote .kcp" : ".kcp Package"}
+              desc={isPt ? "Markdown / JSON / YAML — portátil, versionável, auditável e rastreável até a fonte." : "Markdown / JSON / YAML — portable, versionable, auditable, traceable to source."} />
+            <Arrow />
+            <Step icon={<Bot className="size-5" />} n="04"
+              title={isPt ? "Agentes de IA" : "AI Agents"}
+              desc={isPt ? "LLMs, RAG e agentes consomem conhecimento pré-compilado — menos tokens, menos alucinação, mais precisão." : "LLMs, RAG and agents consume pre-compiled knowledge — fewer tokens, less hallucination, higher precision."} />
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link to="/viewer">{isPt ? "Abrir Viewer" : "Open Viewer"}</Link>
+            </Button>
+          </div>
+        </section>
+
+        <p className="mt-6 max-w-3xl text-xs italic text-muted-foreground">{t.compiler.disclaimer}</p>
       </div>
     </Shell>
+  );
+}
+
+function Step({ icon, n, title, desc, highlight }: { icon: React.ReactNode; n: string; title: string; desc: string; highlight?: boolean }) {
+  return (
+    <div className={`flex flex-col gap-2 rounded-lg border p-4 ${highlight ? "border-primary/40 bg-primary/5" : "border-border"}`}>
+      <div className="flex items-center justify-between">
+        <div className={`grid size-9 place-items-center rounded-md ${highlight ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
+          {icon}
+        </div>
+        <span className="font-mono text-[10px] text-muted-foreground">{n}</span>
+      </div>
+      <div className="font-display text-sm font-semibold">{title}</div>
+      <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
+    </div>
+  );
+}
+
+function Arrow() {
+  return (
+    <div className="hidden place-items-center text-muted-foreground md:grid">
+      <ArrowRight className="size-4" />
+    </div>
   );
 }
 
