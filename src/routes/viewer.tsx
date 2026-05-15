@@ -112,7 +112,7 @@ function ViewerPage() {
           >
             <p className="font-display text-xl font-semibold">{t.viewer.dropTitle}</p>
             <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{t.viewer.dropHint}</p>
-            <input ref={fileRef} type="file" accept=".kcp,.json,.yaml,.yml,.md,.markdown" hidden onChange={(e) => e.target.files?.[0] && onLoad(e.target.files[0])} />
+            <input ref={fileRef} type="file" accept=".ckf,.json,.yaml,.yml,.md,.markdown" hidden onChange={(e) => e.target.files?.[0] && onLoad(e.target.files[0])} />
             <Button className="mt-6" onClick={() => fileRef.current?.click()}><Upload className="mr-2 h-4 w-4" />{t.viewer.browse}</Button>
             <p className="mt-4 text-xs text-muted-foreground">{t.viewer.alsoCompiler} <Link to="/compiler" className="text-primary underline">{t.compiler.title}</Link>.</p>
           </div>
