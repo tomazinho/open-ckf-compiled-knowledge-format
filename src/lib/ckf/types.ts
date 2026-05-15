@@ -1,4 +1,4 @@
-// Canonical TypeScript types for a KCP package.
+// Canonical TypeScript types for a CKF (Compiled Knowledge Format) package.
 
 export type CompressionLevel = "light" | "standard" | "dense" | "agentic";
 export type OutputFormat = "markdown" | "json" | "yaml";
