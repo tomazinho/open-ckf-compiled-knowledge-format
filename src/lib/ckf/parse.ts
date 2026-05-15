@@ -12,7 +12,7 @@ function detectFormat(text: string, filename?: string): CkfFormat {
   const name = (filename ?? "").toLowerCase();
   if (name.endsWith(".json")) return "json";
   if (name.endsWith(".yaml") || name.endsWith(".yml")) return "yaml";
-  if (name.endsWith(".md") || name.endsWith(".markdown") || name.endsWith(".kcp.md")) return "markdown";
+  if (name.endsWith(".md") || name.endsWith(".markdown") || name.endsWith(".ckf.md")) return "markdown";
   const trimmed = text.trimStart();
   if (trimmed.startsWith("{")) return "json";
   if (trimmed.startsWith("#") || trimmed.includes("```yaml")) return "markdown";
