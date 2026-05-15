@@ -9,8 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ViewerRouteImport } from './routes/viewer'
+import { Route as CompilerDemoRouteImport } from './routes/compiler-demo'
+import { Route as CompilerRouteImport } from './routes/compiler'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ViewerRoute = ViewerRouteImport.update({
+  id: '/viewer',
+  path: '/viewer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompilerDemoRoute = CompilerDemoRouteImport.update({
+  id: '/compiler-demo',
+  path: '/compiler-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompilerRoute = CompilerRouteImport.update({
+  id: '/compiler',
+  path: '/compiler',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +37,61 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compiler': typeof CompilerRoute
+  '/compiler-demo': typeof CompilerDemoRoute
+  '/viewer': typeof ViewerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compiler': typeof CompilerRoute
+  '/compiler-demo': typeof CompilerDemoRoute
+  '/viewer': typeof ViewerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compiler': typeof CompilerRoute
+  '/compiler-demo': typeof CompilerDemoRoute
+  '/viewer': typeof ViewerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/compiler' | '/compiler-demo' | '/viewer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/compiler' | '/compiler-demo' | '/viewer'
+  id: '__root__' | '/' | '/compiler' | '/compiler-demo' | '/viewer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompilerRoute: typeof CompilerRoute
+  CompilerDemoRoute: typeof CompilerDemoRoute
+  ViewerRoute: typeof ViewerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/viewer': {
+      id: '/viewer'
+      path: '/viewer'
+      fullPath: '/viewer'
+      preLoaderRoute: typeof ViewerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compiler-demo': {
+      id: '/compiler-demo'
+      path: '/compiler-demo'
+      fullPath: '/compiler-demo'
+      preLoaderRoute: typeof CompilerDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compiler': {
+      id: '/compiler'
+      path: '/compiler'
+      fullPath: '/compiler'
+      preLoaderRoute: typeof CompilerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +104,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompilerRoute: CompilerRoute,
+  CompilerDemoRoute: CompilerDemoRoute,
+  ViewerRoute: ViewerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
