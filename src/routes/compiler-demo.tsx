@@ -188,8 +188,8 @@ function DemoPage() {
           </h3>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             {isPt
-              ? "O KCP traduz documentos pensados para humanos em conhecimento estruturado que agentes conseguem raciocinar, sem alucinar e com rastreabilidade."
-              : "KCP translates human-oriented documents into structured knowledge that agents can reason over — without hallucinating and with full traceability."}
+              ? "O CKF traduz documentos pensados para humanos em conhecimento compilado que agentes conseguem raciocinar, sem alucinar e com rastreabilidade."
+              : "CKF translates human-oriented documents into compiled knowledge that agents can reason over — without hallucinating and with full traceability."}
           </p>
 
           <div className="mt-6 grid items-stretch gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
@@ -198,12 +198,12 @@ function DemoPage() {
               desc={isPt ? "PDF, DOCX, MD, TXT, transcrições — qualquer texto que humanos leem." : "PDF, DOCX, MD, TXT, transcripts — anything humans read."} />
             <Arrow />
             <Step icon={<Cpu className="size-5" />} n="02"
-              title={isPt ? "Compilador KCP" : "KCP Compiler"}
-              desc={isPt ? "Extrai entidades, conceitos, regras, princípios e procedimentos em 23 seções padronizadas." : "Extracts entities, concepts, rules, principles and procedures into 23 canonical sections."}
+              title={isPt ? "Compilador CKF" : "CKF Compiler"}
+              desc={isPt ? "Extrai entidades, conceitos, regras, princípios e procedimentos em 22 seções canônicas." : "Extracts entities, concepts, rules, principles and procedures into 22 canonical sections."}
               highlight />
             <Arrow />
             <Step icon={<Package className="size-5" />} n="03"
-              title={isPt ? "Pacote .kcp" : ".kcp Package"}
+              title={isPt ? "Pacote .ckf" : ".ckf Package"}
               desc={isPt ? "Markdown / JSON / YAML — portátil, versionável, auditável e rastreável até a fonte." : "Markdown / JSON / YAML — portable, versionable, auditable, traceable to source."} />
             <Arrow />
             <Step icon={<Bot className="size-5" />} n="04"
