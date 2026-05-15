@@ -19,8 +19,12 @@ export const Route = createFileRoute("/compiler-demo")({
   head: () => ({
     meta: [
       { title: "Open CKF — Demo Compiler (no key required)" },
-      { name: "description", content: "Heuristic, deterministic, in-browser KCP compiler. Paste text and see a structured .kcp package." },
+      { name: "description", content: "Heuristic, deterministic, in-browser CKF compiler. Paste text and see a structured .ckf package." },
+      { property: "og:title", content: "Open CKF — Demo Compiler" },
+      { property: "og:description", content: "Heuristic, in-browser CKF compiler. No key required." },
+      { property: "og:url", content: "https://open.compiledknowledgeformat.org/compiler-demo" },
     ],
+    links: [{ rel: "canonical", href: "https://open.compiledknowledgeformat.org/compiler-demo" }],
   }),
   component: DemoPage,
 });
