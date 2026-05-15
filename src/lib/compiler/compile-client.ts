@@ -1,4 +1,4 @@
-// Pure client-side compile-to-KCP pipeline (Pro). Replaces the original
+// Pure client-side compile-to-CKF pipeline (Pro). Replaces the original
 // server function. Same shape, same outputs — but runs entirely in the browser
 // with the user's BYOK key.
 
