@@ -23,10 +23,10 @@ function section(num: number, title: string, key: string, value: unknown, note?:
 
 export function toMarkdown(pkg: CkfPackage): string {
   const m = pkg.metadata;
-  const header = `# KCP — KNOWLEDGE CONTEXT PACKAGE
+  const header = `# CKF — COMPILED KNOWLEDGE FORMAT PACKAGE
 
 package_id: ${m.package_id}
-protocol_version: ${m.protocol_version}
+format_version: ${m.protocol_version}
 source_type: ${m.source_type}
 source_title: ${m.source_title}
 source_author: ${m.source_author}
