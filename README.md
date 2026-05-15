@@ -24,8 +24,8 @@ Click **Remix** on the project page on [Lovable](https://lovable.dev) — you ge
 ### Clone and run locally
 
 ```bash
-git clone https://github.com/tomazinho/open-ckf-compiled-knowledge-format.git
-cd open-ckf-compiled-knowledge-format
+git clone https://github.com/tomazinho/open-ckp-compiled-knowledge-format.git
+cd open-ckp-compiled-knowledge-format
 bun install     # or: npm install
 bun dev         # or: npm run dev
 ```
