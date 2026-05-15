@@ -5,24 +5,28 @@ import { Shell } from "@/components/Shell";
 import { useI18n } from "@/i18n/context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { parseKcp } from "@/lib/kcp/parse";
-import type { KcpPackage } from "@/lib/kcp/types";
-import { readFileAsText } from "@/lib/kcp/fileReader";
+import { parseCkf } from "@/lib/ckf/parse";
+import type { CkfPackage } from "@/lib/ckf/types";
+import { readFileAsText } from "@/lib/ckf/fileReader";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/viewer")({
   head: () => ({
     meta: [
-      { title: "Open KCP — Viewer" },
-      { name: "description", content: "Inspect any .kcp package — sections, search, and source traceability." },
+      { title: "Open CKF — Viewer" },
+      { name: "description", content: "Inspect any .ckf package — sections, search, and source traceability." },
+      { property: "og:title", content: "Open CKF — Viewer" },
+      { property: "og:description", content: "Inspect any .ckf package locally." },
+      { property: "og:url", content: "https://open.compiledknowledgeformat.org/viewer" },
     ],
+    links: [{ rel: "canonical", href: "https://open.compiledknowledgeformat.org/viewer" }],
   }),
   component: ViewerPage,
 });
 
-type Loaded = { pkg: KcpPackage; filename: string; format: string };
+type Loaded = { pkg: CkfPackage; filename: string; format: string };
 
-const SECTIONS: { key: keyof KcpPackage; label: string }[] = [
+const SECTIONS: { key: keyof CkfPackage; label: string }[] = [
   { key: "core_intent", label: "Core intent" },
   { key: "domain_map", label: "Domain map" },
   { key: "entities", label: "Entities" },
@@ -50,7 +54,7 @@ const SECTIONS: { key: keyof KcpPackage; label: string }[] = [
 function ViewerPage() {
   const { t } = useI18n();
   const [loaded, setLoaded] = useState<Loaded | null>(null);
-  const [active, setActive] = useState<keyof KcpPackage>("entities");
+  const [active, setActive] = useState<keyof CkfPackage>("entities");
   const [search, setSearch] = useState("");
   const [source, setSource] = useState<{ name: string; text: string } | null>(null);
   const [trace, setTrace] = useState<{ id: string; excerpt?: string } | null>(null);
@@ -60,7 +64,7 @@ function ViewerPage() {
   async function onLoad(f: File) {
     try {
       const txt = await f.text();
-      const r = parseKcp(txt, f.name);
+      const r = parseCkf(txt, f.name);
       setLoaded({ pkg: r.pkg, filename: f.name, format: r.format });
       toast.success(`Loaded ${f.name}`);
     } catch (e) { toast.error(e instanceof Error ? e.message : String(e)); }
@@ -108,7 +112,7 @@ function ViewerPage() {
           >
             <p className="font-display text-xl font-semibold">{t.viewer.dropTitle}</p>
             <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{t.viewer.dropHint}</p>
-            <input ref={fileRef} type="file" accept=".kcp,.json,.yaml,.yml,.md,.markdown" hidden onChange={(e) => e.target.files?.[0] && onLoad(e.target.files[0])} />
+            <input ref={fileRef} type="file" accept=".ckf,.json,.yaml,.yml,.md,.markdown" hidden onChange={(e) => e.target.files?.[0] && onLoad(e.target.files[0])} />
             <Button className="mt-6" onClick={() => fileRef.current?.click()}><Upload className="mr-2 h-4 w-4" />{t.viewer.browse}</Button>
             <p className="mt-4 text-xs text-muted-foreground">{t.viewer.alsoCompiler} <Link to="/compiler" className="text-primary underline">{t.compiler.title}</Link>.</p>
           </div>

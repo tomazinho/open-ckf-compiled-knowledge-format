@@ -4,8 +4,8 @@ import { useI18n } from "@/i18n/context";
 import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 
-const GH_URL = "https://github.com/tomazinho/open-kcp-knowledge-context-protocol";
-const SITE_URL = "https://knowledgecontextprotocol.org";
+const GH_URL = "https://github.com/tomazinho/open-ckf-compiled-knowledge-format";
+const SITE_URL = "https://compiledknowledgeformat.org";
 
 export function Header() {
   const { t, lang, setLang } = useI18n();
@@ -15,7 +15,7 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
         <Link to="/" className="flex items-center gap-2 font-display text-base font-semibold tracking-tight">
           <span className="inline-block h-2.5 w-2.5 rounded-sm bg-gradient-to-br from-violet to-blue" />
-          Open KCP
+          Open CKF
         </Link>
         <nav className="hidden items-center gap-5 text-sm text-muted-foreground md:flex">
           <Link to="/compiler" activeProps={{ className: "text-foreground" }} className="hover:text-foreground transition-colors">{t.nav.compiler}</Link>
