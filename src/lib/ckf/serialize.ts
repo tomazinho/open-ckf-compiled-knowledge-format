@@ -1,11 +1,11 @@
 import { stringify as yamlStringify } from "yaml";
-import type { KcpPackage } from "./types";
+import type { CkfPackage } from "./types";
 
-export function toJson(pkg: KcpPackage): string {
+export function toJson(pkg: CkfPackage): string {
   return JSON.stringify(pkg, null, 2);
 }
 
-export function toYaml(pkg: KcpPackage): string {
+export function toYaml(pkg: CkfPackage): string {
   return yamlStringify(pkg, { lineWidth: 0 });
 }
 
@@ -21,12 +21,12 @@ function section(num: number, title: string, key: string, value: unknown, note?:
   return `## ${num}. ${title}\n\n${note ? `<!-- ${note} -->\n\n` : ""}\`\`\`yaml\n${body}\n\`\`\`\n`;
 }
 
-export function toMarkdown(pkg: KcpPackage): string {
+export function toMarkdown(pkg: CkfPackage): string {
   const m = pkg.metadata;
-  const header = `# KCP — KNOWLEDGE CONTEXT PACKAGE
+  const header = `# CKF — COMPILED KNOWLEDGE FORMAT PACKAGE
 
 package_id: ${m.package_id}
-protocol_version: ${m.protocol_version}
+format_version: ${m.protocol_version}
 source_type: ${m.source_type}
 source_title: ${m.source_title}
 source_author: ${m.source_author}

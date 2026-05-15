@@ -1,7 +1,7 @@
-export const KCP_TOOL_NAME = "emit_kcp_partial";
-export const KCP_TOOL_DESCRIPTION = "Emit a structured KCP partial knowledge package extracted from this chunk of source text.";
+export const CKF_TOOL_NAME = "emit_ckf_partial";
+export const CKF_TOOL_DESCRIPTION = "Emit a structured CKF partial knowledge package extracted from this chunk of source text.";
 
-export const KCP_PARTIAL_SCHEMA = {
+export const CKF_PARTIAL_SCHEMA = {
   type: "object",
   properties: {
     core_intent: {
@@ -49,9 +49,9 @@ export const KCP_PARTIAL_SCHEMA = {
   required: ["entities", "concepts"],
 };
 
-export const KCP_SYSTEM_PROMPT = `You are the Knowledge Context Protocol (KCP) extractor.
+export const CKF_SYSTEM_PROMPT = `You are the Compiled Knowledge Format (CKF) extractor.
 
-You receive ONE chunk of source text (between <<<SOURCE>>> markers) and must extract a precise, faithful KCP partial knowledge package.
+You receive ONE chunk of source text (between <<<SOURCE>>> markers) and must extract a precise, faithful CKF partial knowledge package.
 
 ABSOLUTE RULES:
 - Do not invent facts. Only extract what is supported by the source.

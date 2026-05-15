@@ -8,19 +8,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { compileKcp } from "@/lib/kcp/compile";
-import { toJson, toMarkdown, toYaml } from "@/lib/kcp/serialize";
-import type { CompileOptions, OutputFormat } from "@/lib/kcp/types";
-import { LEARNING_EXAMPLE, BUSINESS_EXAMPLE } from "@/lib/kcp/examples";
-import { readFileAsText } from "@/lib/kcp/fileReader";
+import { compileCkf } from "@/lib/ckf/compile";
+import { toJson, toMarkdown, toYaml } from "@/lib/ckf/serialize";
+import type { CompileOptions, OutputFormat } from "@/lib/ckf/types";
+import { LEARNING_EXAMPLE, BUSINESS_EXAMPLE } from "@/lib/ckf/examples";
+import { readFileAsText } from "@/lib/ckf/fileReader";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/compiler-demo")({
   head: () => ({
     meta: [
-      { title: "Open KCP — Demo Compiler (no key required)" },
-      { name: "description", content: "Heuristic, deterministic, in-browser KCP compiler. Paste text and see a structured .kcp package." },
+      { title: "Open CKF — Demo Compiler (no key required)" },
+      { name: "description", content: "Heuristic, deterministic, in-browser CKF compiler. Paste text and see a structured .ckf package." },
+      { property: "og:title", content: "Open CKF — Demo Compiler" },
+      { property: "og:description", content: "Heuristic, in-browser CKF compiler. No key required." },
+      { property: "og:url", content: "https://open.compiledknowledgeformat.org/compiler-demo" },
     ],
+    links: [{ rel: "canonical", href: "https://open.compiledknowledgeformat.org/compiler-demo" }],
   }),
   component: DemoPage,
 });
@@ -33,7 +37,7 @@ function DemoPage() {
   const [compression, setCompression] = useState<CompileOptions["compressionLevel"]>("standard");
   const [output, setOutput] = useState<OutputFormat>("markdown");
   const [running, setRunning] = useState(false);
-  const [result, setResult] = useState<ReturnType<typeof compileKcp> | null>(null);
+  const [result, setResult] = useState<ReturnType<typeof compileCkf> | null>(null);
   const [copied, setCopied] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -48,7 +52,7 @@ function DemoPage() {
     if (!text.trim()) return toast.error(t.compiler.empty);
     setRunning(true);
     try {
-      const r = compileKcp(text, { sourceType, compressionLevel: compression, outputFormat: output });
+      const r = compileCkf(text, { sourceType, compressionLevel: compression, outputFormat: output });
       setResult(r);
       toast.success(t.compiler.success);
     } catch (e) {
@@ -71,7 +75,7 @@ function DemoPage() {
     const blob = new Blob([serialized], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `kcp-package.${ext}`; a.click();
+    a.href = url; a.download = `ckf-package.${ext}`; a.click();
     URL.revokeObjectURL(url);
   }
 
@@ -184,8 +188,8 @@ function DemoPage() {
           </h3>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             {isPt
-              ? "O KCP traduz documentos pensados para humanos em conhecimento estruturado que agentes conseguem raciocinar, sem alucinar e com rastreabilidade."
-              : "KCP translates human-oriented documents into structured knowledge that agents can reason over — without hallucinating and with full traceability."}
+              ? "O CKF traduz documentos pensados para humanos em conhecimento compilado que agentes conseguem raciocinar, sem alucinar e com rastreabilidade."
+              : "CKF translates human-oriented documents into compiled knowledge that agents can reason over — without hallucinating and with full traceability."}
           </p>
 
           <div className="mt-6 grid items-stretch gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
@@ -194,12 +198,12 @@ function DemoPage() {
               desc={isPt ? "PDF, DOCX, MD, TXT, transcrições — qualquer texto que humanos leem." : "PDF, DOCX, MD, TXT, transcripts — anything humans read."} />
             <Arrow />
             <Step icon={<Cpu className="size-5" />} n="02"
-              title={isPt ? "Compilador KCP" : "KCP Compiler"}
-              desc={isPt ? "Extrai entidades, conceitos, regras, princípios e procedimentos em 23 seções padronizadas." : "Extracts entities, concepts, rules, principles and procedures into 23 canonical sections."}
+              title={isPt ? "Compilador CKF" : "CKF Compiler"}
+              desc={isPt ? "Extrai entidades, conceitos, regras, princípios e procedimentos em 22 seções canônicas." : "Extracts entities, concepts, rules, principles and procedures into 22 canonical sections."}
               highlight />
             <Arrow />
             <Step icon={<Package className="size-5" />} n="03"
-              title={isPt ? "Pacote .kcp" : ".kcp Package"}
+              title={isPt ? "Pacote .ckf" : ".ckf Package"}
               desc={isPt ? "Markdown / JSON / YAML — portátil, versionável, auditável e rastreável até a fonte." : "Markdown / JSON / YAML — portable, versionable, auditable, traceable to source."} />
             <Arrow />
             <Step icon={<Bot className="size-5" />} n="04"
@@ -243,7 +247,7 @@ function Arrow() {
   );
 }
 
-function Report({ pkg, warnings }: { pkg: ReturnType<typeof compileKcp>["pkg"]; warnings: string[] }) {
+function Report({ pkg, warnings }: { pkg: ReturnType<typeof compileCkf>["pkg"]; warnings: string[] }) {
   const { t } = useI18n();
   const stats: [string, string | number][] = [
     [t.compiler.detectedDomain, pkg.metadata.domain],

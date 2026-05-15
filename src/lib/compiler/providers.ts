@@ -23,7 +23,7 @@ export async function callProvider(
   if (provider === "openai") return callOpenAICompat("https://api.openai.com/v1/chat/completions", apiKey, model, req);
   if (provider === "deepseek") return callOpenAICompat("https://api.deepseek.com/v1/chat/completions", apiKey, model, req);
   if (provider === "openrouter") return callOpenAICompat("https://openrouter.ai/api/v1/chat/completions", apiKey, model, req, {
-    "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "https://github.com/", "X-Title": "Open KCP",
+    "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "https://github.com/", "X-Title": "Open CKF",
   });
   if (provider === "anthropic") return callAnthropic(apiKey, model, req);
   if (provider === "gemini") return callGemini(apiKey, model, req);

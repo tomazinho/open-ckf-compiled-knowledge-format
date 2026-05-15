@@ -7,9 +7,13 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Open KCP — Compile any document into a Knowledge Context Package" },
-      { name: "description", content: "Open-source reference implementation of the Knowledge Context Protocol. Client-side compiler and viewer, BYOK." },
+      { title: "Open CKF — Compile any document into a Compiled Knowledge Format package" },
+      { name: "description", content: "Open-source reference implementation of the Compiled Knowledge Format (CKF). Client-side compiler and viewer, BYOK." },
+      { property: "og:title", content: "Open CKF — Compiled Knowledge Format" },
+      { property: "og:description", content: "Compile any document into a structured .ckf package. 100% client-side, BYOK." },
+      { property: "og:url", content: "https://open.compiledknowledgeformat.org/" },
     ],
+    links: [{ rel: "canonical", href: "https://open.compiledknowledgeformat.org/" }],
   }),
   component: Home,
 });
@@ -37,7 +41,7 @@ function Home() {
             <Link to="/compiler"><Button size="lg">{t.home.ctaPro} <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
             <Link to="/compiler-demo"><Button size="lg" variant="secondary">{t.home.ctaDemo}</Button></Link>
             <Link to="/viewer"><Button size="lg" variant="ghost">{t.home.ctaViewer}</Button></Link>
-            <a href="https://github.com/tomazinho/open-kcp-knowledge-context-protocol" target="_blank" rel="noreferrer">
+            <a href="https://github.com/tomazinho/open-ckf-compiled-knowledge-format" target="_blank" rel="noreferrer">
               <Button size="lg" variant="outline"><Github className="mr-2 h-4 w-4" /> GitHub</Button>
             </a>
           </div>
@@ -57,7 +61,7 @@ function Home() {
           <h2 className="font-display text-2xl font-semibold tracking-tight">{t.home.officialTitle}</h2>
           <p className="mt-2 max-w-2xl text-muted-foreground">{t.home.officialBody}</p>
           <a
-            href="https://knowledgecontextprotocol.org"
+            href="https://compiledknowledgeformat.org"
             target="_blank"
             rel="noreferrer"
             className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
