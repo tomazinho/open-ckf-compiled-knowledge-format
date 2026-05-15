@@ -7,9 +7,13 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Open CKF — Compile any document into a Knowledge Context Package" },
-      { name: "description", content: "Open-source reference implementation of the Knowledge Context Protocol. Client-side compiler and viewer, BYOK." },
+      { title: "Open CKF — Compile any document into a Compiled Knowledge Format package" },
+      { name: "description", content: "Open-source reference implementation of the Compiled Knowledge Format (CKF). Client-side compiler and viewer, BYOK." },
+      { property: "og:title", content: "Open CKF — Compiled Knowledge Format" },
+      { property: "og:description", content: "Compile any document into a structured .ckf package. 100% client-side, BYOK." },
+      { property: "og:url", content: "https://open.compiledknowledgeformat.org/" },
     ],
+    links: [{ rel: "canonical", href: "https://open.compiledknowledgeformat.org/" }],
   }),
   component: Home,
 });
