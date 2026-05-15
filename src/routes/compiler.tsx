@@ -20,8 +20,12 @@ export const Route = createFileRoute("/compiler")({
   head: () => ({
     meta: [
       { title: "Open CKF — Pro Compiler (BYOK, client-side)" },
-      { name: "description", content: "Industrial-strength KCP compiler. BYOK for OpenAI, Anthropic, Gemini, DeepSeek or OpenRouter. Runs entirely in your browser." },
+      { name: "description", content: "Industrial-strength CKF compiler. BYOK for OpenAI, Anthropic, Gemini, DeepSeek or OpenRouter. Runs entirely in your browser." },
+      { property: "og:title", content: "Open CKF — Pro Compiler (BYOK)" },
+      { property: "og:description", content: "Industrial CKF compiler in your browser. Bring your own key." },
+      { property: "og:url", content: "https://open.compiledknowledgeformat.org/compiler" },
     ],
+    links: [{ rel: "canonical", href: "https://open.compiledknowledgeformat.org/compiler" }],
   }),
   component: ProPage,
 });
