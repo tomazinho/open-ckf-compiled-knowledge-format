@@ -1,4 +1,4 @@
-// Map-reduce merger: combines per-chunk KCP partials into one canonical package.
+// Map-reduce merger: combines per-chunk CKF partials into one canonical package.
 
 export type Partial = {
   core_intent?: { primary_purpose?: string; intended_agent_use?: string[] };
