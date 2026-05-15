@@ -18,8 +18,18 @@ export type StoredJob = {
   pkg: CompileResult["pkg"];
 };
 
+function migrateLegacy() {
+  if (typeof window === "undefined") return;
+  const legacy = window.localStorage.getItem("openkcp.jobs.v1");
+  if (legacy && !window.localStorage.getItem(KEY)) {
+    window.localStorage.setItem(KEY, legacy);
+    window.localStorage.removeItem("openkcp.jobs.v1");
+  }
+}
+
 function read(): StoredJob[] {
   if (typeof window === "undefined") return [];
+  migrateLegacy();
   try { const raw = window.localStorage.getItem(KEY); return raw ? (JSON.parse(raw) as StoredJob[]) : []; }
   catch { return []; }
 }
