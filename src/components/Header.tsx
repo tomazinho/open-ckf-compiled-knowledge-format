@@ -4,7 +4,7 @@ import { useI18n } from "@/i18n/context";
 import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 
-const GH_URL = "https://github.com/lovable-dev/open-kcp";
+const GH_URL = "https://github.com/tomazinho/open-kcp-knowledge-context-protocol";
 const SITE_URL = "https://knowledgecontextprotocol.org";
 
 export function Header() {
