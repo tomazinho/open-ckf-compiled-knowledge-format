@@ -7,7 +7,7 @@ import { PROVIDER_MANIFEST } from "./providers-manifest";
 import { callProvider, validateKeyFormat } from "./providers";
 import { chunkSemantically, sha256 } from "./chunker";
 import { CKF_PARTIAL_SCHEMA, CKF_SYSTEM_PROMPT, CKF_TOOL_DESCRIPTION, CKF_TOOL_NAME } from "./schema";
-import { reduce, serializeMarkdown, type Partial as KcpPartial, type MergedPackage } from "./reduce";
+import { reduce, serializeMarkdown, type Partial as CkfPartial, type MergedPackage } from "./reduce";
 
 export type CompileInput = {
   text: string;
@@ -57,7 +57,7 @@ export async function pingByokKey(provider: ProviderId, model: string, byokKey: 
   });
 }
 
-export async function compileToKcp(input: CompileInput, onProgress?: CompileProgress): Promise<CompileResult> {
+export async function compileToCkf(input: CompileInput, onProgress?: CompileProgress): Promise<CompileResult> {
   if (!input.byokKey) throw new Error(`A ${PROVIDER_MANIFEST[input.provider].label} API key is required.`);
   if (!validateKeyFormat(input.provider, input.byokKey)) throw new Error("API key format does not match this provider.");
 
@@ -70,7 +70,7 @@ export async function compileToKcp(input: CompileInput, onProgress?: CompileProg
   if (chunks.length > 80) throw new Error(`Source too large: ${chunks.length} chunks. Split it before compiling (max ~960k chars).`);
   onProgress?.({ stage: "chunked", chunks: chunks.length });
 
-  const partials: KcpPartial[] = [];
+  const partials: CkfPartial[] = [];
   const warnings: string[] = [];
   let tokensIn = 0, tokensOut = 0, failed = 0;
 
@@ -85,7 +85,7 @@ export async function compileToKcp(input: CompileInput, onProgress?: CompileProg
         toolDescription: CKF_TOOL_DESCRIPTION,
         toolSchema: CKF_PARTIAL_SCHEMA,
       });
-      partials.push(r.data as KcpPartial);
+      partials.push(r.data as CkfPartial);
       tokensIn += r.tokens_in ?? 0;
       tokensOut += r.tokens_out ?? 0;
       onProgress?.({ stage: "chunk-done", index: i, total: chunks.length, tokens: { in: r.tokens_in, out: r.tokens_out } });

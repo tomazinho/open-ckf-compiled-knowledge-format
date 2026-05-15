@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/compiler-demo")({
   head: () => ({
     meta: [
-      { title: "Open KCP — Demo Compiler (no key required)" },
+      { title: "Open CKF — Demo Compiler (no key required)" },
       { name: "description", content: "Heuristic, deterministic, in-browser KCP compiler. Paste text and see a structured .kcp package." },
     ],
   }),

@@ -261,7 +261,7 @@ export function compileCkf(rawText: string, options: CompileOptions): CompileRes
   }));
 
   const metadata: CkfMetadata = {
-    package_id: `kcp_demo_${Date.now()}`, protocol_version: "0.1",
+    package_id: `ckf_demo_${Date.now()}`, protocol_version: "0.1",
     source_type: options.sourceType, source_title: "Untitled source", source_author: "Unknown",
     domain, subdomains: subdomains.map((s) => s.name), language: lang, created_at,
     compression_level: options.compressionLevel,
