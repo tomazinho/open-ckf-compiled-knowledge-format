@@ -1,5 +1,5 @@
 export const CKF_TOOL_NAME = "emit_ckf_partial";
-export const CKF_TOOL_DESCRIPTION = "Emit a structured KCP partial knowledge package extracted from this chunk of source text.";
+export const CKF_TOOL_DESCRIPTION = "Emit a structured CKF partial knowledge package extracted from this chunk of source text.";
 
 export const CKF_PARTIAL_SCHEMA = {
   type: "object",
