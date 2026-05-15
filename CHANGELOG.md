@@ -27,7 +27,7 @@ technical, format-oriented identity.
 - **Domain:** `knowledgecontextprotocol.org` references replaced with
   `compiledknowledgeformat.org`. Open CKF is now served at
   `open.compiledknowledgeformat.org`.
-- **Repository:** moved to `tomazinho/open-ckf-compiled-knowledge-format`
+- **Repository:** moved to `tomazinho/open-ckp-compiled-knowledge-format`
   (GitHub keeps the old URL as a redirect).
 
 ### Changed

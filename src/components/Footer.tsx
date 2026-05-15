@@ -15,7 +15,7 @@ export function Footer() {
             <a href="https://compiledknowledgeformat.org" target="_blank" rel="noreferrer" className="hover:text-foreground">
               {t.footer.official}
             </a>
-            <a href="https://github.com/tomazinho/open-ckf-compiled-knowledge-format" target="_blank" rel="noreferrer" className="hover:text-foreground">
+            <a href="https://github.com/tomazinho/open-ckp-compiled-knowledge-format" target="_blank" rel="noreferrer" className="hover:text-foreground">
               GitHub
             </a>
             <span className="text-xs">© {new Date().getFullYear()} · {t.footer.rights}</span>

@@ -4,7 +4,7 @@ import { useI18n } from "@/i18n/context";
 import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 
-const GH_URL = "https://github.com/tomazinho/open-ckf-compiled-knowledge-format";
+const GH_URL = "https://github.com/tomazinho/open-ckp-compiled-knowledge-format";
 const SITE_URL = "https://compiledknowledgeformat.org";
 
 export function Header() {
