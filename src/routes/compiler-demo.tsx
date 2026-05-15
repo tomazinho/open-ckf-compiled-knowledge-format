@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import { Download, Copy, Check, Upload, Trash2, Sparkles } from "lucide-react";
+import { Download, Copy, Check, Upload, Trash2, Sparkles, FileInput, Cpu, Package, Bot, ArrowRight } from "lucide-react";
 import { Shell } from "@/components/Shell";
 import { useI18n } from "@/i18n/context";
 import { Button } from "@/components/ui/button";
