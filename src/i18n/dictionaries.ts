@@ -164,7 +164,7 @@ export const ptBR: Dict = {
   },
   compiler: {
     title: "Compilador CKF",
-    subtitle: "Compile qualquer texto humano em um pacote KCP estruturado, pronto para agentes.",
+    subtitle: "Compile qualquer texto humano em um pacote CKF estruturado, pronto para agentes.",
     inputTitle: "Entrada",
     upload: "Upload (.pdf, .txt, .md, .docx)",
     pastePlaceholder: "Cole um trecho, um artigo, um capítulo, notas…",
