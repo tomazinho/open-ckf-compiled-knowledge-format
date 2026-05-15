@@ -77,11 +77,18 @@ export const KEY_REGEX: Record<ProviderId, RegExp> = {
 };
 
 const STORAGE_KEY = "openckf.byok.v1";
+const LEGACY_KEY = "openkcp.byok.v1";
 type Store = { session: Partial<Record<ProviderId, string>>; persistent: Partial<Record<ProviderId, string>> };
 
 function readStore(persistent: boolean): Partial<Record<ProviderId, string>> {
   if (typeof window === "undefined") return {};
   const storage = persistent ? window.localStorage : window.sessionStorage;
+  // One-shot migration from legacy key
+  const legacy = storage.getItem(LEGACY_KEY);
+  if (legacy && !storage.getItem(STORAGE_KEY)) {
+    storage.setItem(STORAGE_KEY, legacy);
+    storage.removeItem(LEGACY_KEY);
+  }
   try { const raw = storage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : {}; } catch { return {}; }
 }
 function writeStore(persistent: boolean, val: Partial<Record<ProviderId, string>>) {
