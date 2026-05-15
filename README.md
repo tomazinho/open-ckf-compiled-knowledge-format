@@ -24,7 +24,7 @@ Click **Remix** on the project page on [Lovable](https://lovable.dev) — you ge
 ### Clone and run locally
 
 ```bash
-git clone https://github.com/lovable-dev/open-kcp.git
+git clone https://github.com/tomazinho/open-kcp-knowledge-context-protocol.git
 cd open-kcp
 bun install     # or: npm install
 bun dev         # or: npm run dev

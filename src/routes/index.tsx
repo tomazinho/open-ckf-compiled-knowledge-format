@@ -37,7 +37,7 @@ function Home() {
             <Link to="/compiler"><Button size="lg">{t.home.ctaPro} <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
             <Link to="/compiler-demo"><Button size="lg" variant="secondary">{t.home.ctaDemo}</Button></Link>
             <Link to="/viewer"><Button size="lg" variant="ghost">{t.home.ctaViewer}</Button></Link>
-            <a href="https://github.com/lovable-dev/open-kcp" target="_blank" rel="noreferrer">
+            <a href="https://github.com/tomazinho/open-kcp-knowledge-context-protocol" target="_blank" rel="noreferrer">
               <Button size="lg" variant="outline"><Github className="mr-2 h-4 w-4" /> GitHub</Button>
             </a>
           </div>
