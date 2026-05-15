@@ -12,7 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { PROVIDER_MANIFEST, PROVIDER_IDS, loadByokKeys, saveByokKey, clearByokKey, type ProviderId } from "@/lib/compiler/providers-manifest";
 import { compileToKcp, pingByokKey, type CompileResult } from "@/lib/compiler/compile-client";
-import { readFileAsText } from "@/lib/kcp/fileReader";
+import { readFileAsText } from "@/lib/ckf/fileReader";
 import { listJobs, saveJob, deleteJob, exportJobs, importJobs, clearJobs, type StoredJob } from "@/lib/history/local-jobs";
 import { toast } from "sonner";
 
@@ -127,7 +127,7 @@ function ProPage() {
     const blob = new Blob([exportJobs()], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `openkcp-jobs-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+    a.href = url; a.download = `openckf-jobs-${new Date().toISOString().slice(0, 10)}.json`; a.click();
     URL.revokeObjectURL(url);
     toast.success(t.history.exported.replace("{n}", String(jobs.length)));
   }

@@ -8,11 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { compileKcp } from "@/lib/kcp/compile";
-import { toJson, toMarkdown, toYaml } from "@/lib/kcp/serialize";
-import type { CompileOptions, OutputFormat } from "@/lib/kcp/types";
-import { LEARNING_EXAMPLE, BUSINESS_EXAMPLE } from "@/lib/kcp/examples";
-import { readFileAsText } from "@/lib/kcp/fileReader";
+import { compileCkf } from "@/lib/ckf/compile";
+import { toJson, toMarkdown, toYaml } from "@/lib/ckf/serialize";
+import type { CompileOptions, OutputFormat } from "@/lib/ckf/types";
+import { LEARNING_EXAMPLE, BUSINESS_EXAMPLE } from "@/lib/ckf/examples";
+import { readFileAsText } from "@/lib/ckf/fileReader";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/compiler-demo")({
@@ -33,7 +33,7 @@ function DemoPage() {
   const [compression, setCompression] = useState<CompileOptions["compressionLevel"]>("standard");
   const [output, setOutput] = useState<OutputFormat>("markdown");
   const [running, setRunning] = useState(false);
-  const [result, setResult] = useState<ReturnType<typeof compileKcp> | null>(null);
+  const [result, setResult] = useState<ReturnType<typeof compileCkf> | null>(null);
   const [copied, setCopied] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -48,7 +48,7 @@ function DemoPage() {
     if (!text.trim()) return toast.error(t.compiler.empty);
     setRunning(true);
     try {
-      const r = compileKcp(text, { sourceType, compressionLevel: compression, outputFormat: output });
+      const r = compileCkf(text, { sourceType, compressionLevel: compression, outputFormat: output });
       setResult(r);
       toast.success(t.compiler.success);
     } catch (e) {
@@ -243,7 +243,7 @@ function Arrow() {
   );
 }
 
-function Report({ pkg, warnings }: { pkg: ReturnType<typeof compileKcp>["pkg"]; warnings: string[] }) {
+function Report({ pkg, warnings }: { pkg: ReturnType<typeof compileCkf>["pkg"]; warnings: string[] }) {
   const { t } = useI18n();
   const stats: [string, string | number][] = [
     [t.compiler.detectedDomain, pkg.metadata.domain],

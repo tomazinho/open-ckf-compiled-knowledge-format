@@ -1,7 +1,7 @@
 // Local job history (replaces Supabase compiler_jobs).
 import type { CompileResult } from "@/lib/compiler/compile-client";
 
-const KEY = "openkcp.jobs.v1";
+const KEY = "openckf.jobs.v1";
 const MAX_JOBS = 50;
 
 export type StoredJob = {
@@ -48,7 +48,7 @@ export function deleteJob(id: string) { write(read().filter((j) => j.id !== id))
 export function clearJobs() { write([]); }
 
 export function exportJobs(): string {
-  return JSON.stringify({ schema: "openkcp.jobs.v1", exportedAt: new Date().toISOString(), jobs: read() }, null, 2);
+  return JSON.stringify({ schema: "openckf.jobs.v1", exportedAt: new Date().toISOString(), jobs: read() }, null, 2);
 }
 
 export function importJobs(text: string): { added: number } {

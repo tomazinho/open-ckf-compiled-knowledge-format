@@ -13,7 +13,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? (localStorage.getItem("openkcp-lang") as Lang | null) : null;
+    const stored = typeof window !== "undefined" ? (localStorage.getItem("openckf-lang") as Lang | null) : null;
     if (stored === "en" || stored === "pt-BR") setLangState(stored);
     else if (typeof navigator !== "undefined" && navigator.language?.toLowerCase().startsWith("pt")) {
       setLangState("pt-BR");
@@ -22,7 +22,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const setLang = (l: Lang) => {
     setLangState(l);
-    if (typeof window !== "undefined") localStorage.setItem("openkcp-lang", l);
+    if (typeof window !== "undefined") localStorage.setItem("openckf-lang", l);
   };
 
   return (

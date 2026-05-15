@@ -6,7 +6,7 @@ import type { ProviderId } from "./providers-manifest";
 import { PROVIDER_MANIFEST } from "./providers-manifest";
 import { callProvider, validateKeyFormat } from "./providers";
 import { chunkSemantically, sha256 } from "./chunker";
-import { KCP_PARTIAL_SCHEMA, KCP_SYSTEM_PROMPT, KCP_TOOL_DESCRIPTION, KCP_TOOL_NAME } from "./schema";
+import { CKF_PARTIAL_SCHEMA, CKF_SYSTEM_PROMPT, CKF_TOOL_DESCRIPTION, CKF_TOOL_NAME } from "./schema";
 import { reduce, serializeMarkdown, type Partial as KcpPartial, type MergedPackage } from "./reduce";
 
 export type CompileInput = {
@@ -79,11 +79,11 @@ export async function compileToKcp(input: CompileInput, onProgress?: CompileProg
     onProgress?.({ stage: "chunk-start", index: i, total: chunks.length, path: ch.path });
     try {
       const r = await callProvider(input.provider, input.model, input.byokKey, {
-        system: KCP_SYSTEM_PROMPT,
+        system: CKF_SYSTEM_PROMPT,
         user: `Path: ${ch.path}\n\n<<<SOURCE>>>\n${ch.text}\n<<<END SOURCE>>>`,
-        toolName: KCP_TOOL_NAME,
-        toolDescription: KCP_TOOL_DESCRIPTION,
-        toolSchema: KCP_PARTIAL_SCHEMA,
+        toolName: CKF_TOOL_NAME,
+        toolDescription: CKF_TOOL_DESCRIPTION,
+        toolSchema: CKF_PARTIAL_SCHEMA,
       });
       partials.push(r.data as KcpPartial);
       tokensIn += r.tokens_in ?? 0;

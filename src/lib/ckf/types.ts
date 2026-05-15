@@ -13,7 +13,7 @@ export type Domain =
   | "science"
   | "general knowledge";
 
-export interface KcpMetadata {
+export interface CkfMetadata {
   package_id: string;
   protocol_version: string;
   source_type: string;
@@ -236,8 +236,8 @@ export interface SourceTraceItem {
   extraction_type: SourceBasis;
 }
 
-export interface KcpPackage {
-  metadata: KcpMetadata;
+export interface CkfPackage {
+  metadata: CkfMetadata;
   core_intent: CoreIntent;
   domain_map: DomainMap;
   entities: Entity[];
@@ -270,6 +270,6 @@ export interface CompileOptions {
 }
 
 export interface CompileResult {
-  pkg: KcpPackage;
+  pkg: CkfPackage;
   warnings: string[];
 }

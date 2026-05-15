@@ -5,9 +5,9 @@ import { Shell } from "@/components/Shell";
 import { useI18n } from "@/i18n/context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { parseKcp } from "@/lib/kcp/parse";
-import type { KcpPackage } from "@/lib/kcp/types";
-import { readFileAsText } from "@/lib/kcp/fileReader";
+import { parseCkf } from "@/lib/ckf/parse";
+import type { CkfPackage } from "@/lib/ckf/types";
+import { readFileAsText } from "@/lib/ckf/fileReader";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/viewer")({
@@ -20,9 +20,9 @@ export const Route = createFileRoute("/viewer")({
   component: ViewerPage,
 });
 
-type Loaded = { pkg: KcpPackage; filename: string; format: string };
+type Loaded = { pkg: CkfPackage; filename: string; format: string };
 
-const SECTIONS: { key: keyof KcpPackage; label: string }[] = [
+const SECTIONS: { key: keyof CkfPackage; label: string }[] = [
   { key: "core_intent", label: "Core intent" },
   { key: "domain_map", label: "Domain map" },
   { key: "entities", label: "Entities" },
@@ -50,7 +50,7 @@ const SECTIONS: { key: keyof KcpPackage; label: string }[] = [
 function ViewerPage() {
   const { t } = useI18n();
   const [loaded, setLoaded] = useState<Loaded | null>(null);
-  const [active, setActive] = useState<keyof KcpPackage>("entities");
+  const [active, setActive] = useState<keyof CkfPackage>("entities");
   const [search, setSearch] = useState("");
   const [source, setSource] = useState<{ name: string; text: string } | null>(null);
   const [trace, setTrace] = useState<{ id: string; excerpt?: string } | null>(null);
@@ -60,7 +60,7 @@ function ViewerPage() {
   async function onLoad(f: File) {
     try {
       const txt = await f.text();
-      const r = parseKcp(txt, f.name);
+      const r = parseCkf(txt, f.name);
       setLoaded({ pkg: r.pkg, filename: f.name, format: r.format });
       toast.success(`Loaded ${f.name}`);
     } catch (e) { toast.error(e instanceof Error ? e.message : String(e)); }

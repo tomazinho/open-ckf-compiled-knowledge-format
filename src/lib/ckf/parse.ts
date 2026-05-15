@@ -1,10 +1,10 @@
 import { parse as yamlParse } from "yaml";
-import type { KcpPackage } from "./types";
+import type { CkfPackage } from "./types";
 
 export type KcpFormat = "json" | "yaml" | "markdown";
 
 export type ParseResult = {
-  pkg: KcpPackage;
+  pkg: CkfPackage;
   format: KcpFormat;
 };
 
@@ -62,7 +62,7 @@ function parseMarkdown(text: string): Record<string, unknown> {
   return merged;
 }
 
-const EMPTY_PKG: KcpPackage = {
+const EMPTY_PKG: CkfPackage = {
   metadata: {
     package_id: "unknown",
     protocol_version: "0.1",
@@ -121,7 +121,7 @@ const EMPTY_PKG: KcpPackage = {
   source_traceability: [],
 };
 
-export function parseKcp(text: string, filename?: string): ParseResult {
+export function parseCkf(text: string, filename?: string): ParseResult {
   const format = detectFormat(text, filename);
   let raw: Record<string, unknown>;
   if (format === "json") {
@@ -131,7 +131,7 @@ export function parseKcp(text: string, filename?: string): ParseResult {
   } else {
     raw = parseMarkdown(text);
   }
-  const pkg = { ...EMPTY_PKG, ...raw } as KcpPackage;
+  const pkg = { ...EMPTY_PKG, ...raw } as CkfPackage;
   pkg.metadata = { ...EMPTY_PKG.metadata, ...(pkg.metadata ?? {}) };
   pkg.core_intent = { ...EMPTY_PKG.core_intent, ...(pkg.core_intent ?? {}) };
   pkg.domain_map = { ...EMPTY_PKG.domain_map, ...(pkg.domain_map ?? {}) };
