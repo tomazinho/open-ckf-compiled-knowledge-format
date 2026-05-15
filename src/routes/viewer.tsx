@@ -13,7 +13,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/viewer")({
   head: () => ({
     meta: [
-      { title: "Open KCP — Viewer" },
+      { title: "Open CKF — Viewer" },
       { name: "description", content: "Inspect any .kcp package — sections, search, and source traceability." },
     ],
   }),

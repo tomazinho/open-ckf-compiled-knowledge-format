@@ -1,14 +1,14 @@
 import { parse as yamlParse } from "yaml";
 import type { CkfPackage } from "./types";
 
-export type KcpFormat = "json" | "yaml" | "markdown";
+export type CkfFormat = "json" | "yaml" | "markdown";
 
 export type ParseResult = {
   pkg: CkfPackage;
-  format: KcpFormat;
+  format: CkfFormat;
 };
 
-function detectFormat(text: string, filename?: string): KcpFormat {
+function detectFormat(text: string, filename?: string): CkfFormat {
   const name = (filename ?? "").toLowerCase();
   if (name.endsWith(".json")) return "json";
   if (name.endsWith(".yaml") || name.endsWith(".yml")) return "yaml";

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { PROVIDER_MANIFEST, PROVIDER_IDS, loadByokKeys, saveByokKey, clearByokKey, type ProviderId } from "@/lib/compiler/providers-manifest";
-import { compileToKcp, pingByokKey, type CompileResult } from "@/lib/compiler/compile-client";
+import { compileToCkf, pingByokKey, type CompileResult } from "@/lib/compiler/compile-client";
 import { readFileAsText } from "@/lib/ckf/fileReader";
 import { listJobs, saveJob, deleteJob, exportJobs, importJobs, clearJobs, type StoredJob } from "@/lib/history/local-jobs";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/compiler")({
   head: () => ({
     meta: [
-      { title: "Open KCP — Pro Compiler (BYOK, client-side)" },
+      { title: "Open CKF — Pro Compiler (BYOK, client-side)" },
       { name: "description", content: "Industrial-strength KCP compiler. BYOK for OpenAI, Anthropic, Gemini, DeepSeek or OpenRouter. Runs entirely in your browser." },
     ],
   }),
@@ -89,7 +89,7 @@ function ProPage() {
     if (!apiKey) return toast.error(`Enter your ${manifest.label} API key.`);
     setRunning(true); setResult(null);
     try {
-      const r = await compileToKcp(
+      const r = await compileToCkf(
         { text, filename, provider, model, byokKey: apiKey },
         (e) => {
           if (e.stage === "chunked") setStage({ label: `Split into ${e.chunks} chunk(s)`, pct: 5 });

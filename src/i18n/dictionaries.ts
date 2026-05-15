@@ -12,7 +12,7 @@ export const en = {
   },
   home: {
     eyebrow: "Open source · Reference implementation",
-    title: "Open KCP",
+    title: "Open CKF",
     subtitle: "Reference open-source implementation of the Knowledge Context Protocol.",
     body: "Compile any document into a structured Knowledge Context Package (.kcp) — entirely in your browser, with your own API key. No accounts, no servers, no telemetry.",
     ctaPro: "Open Compiler Pro",
@@ -26,7 +26,7 @@ export const en = {
     cardViewerBody: "Drag any .kcp file to inspect sections, search, and trace each item back to the original source excerpt.",
     officialTitle: "About the protocol",
     officialBody: "For the full protocol specification, manifesto, news and lab, visit the official site.",
-    officialLink: "knowledgecontextprotocol.org",
+    officialLink: "compiledknowledgeformat.org",
   },
   compiler: {
     title: "KCP Compiler",
@@ -146,7 +146,7 @@ export const ptBR: Dict = {
   },
   home: {
     eyebrow: "Open source · Implementação de referência",
-    title: "Open KCP",
+    title: "Open CKF",
     subtitle: "Implementação de referência, open-source, do Knowledge Context Protocol.",
     body: "Compile qualquer documento em um Knowledge Context Package (.kcp) estruturado — totalmente no seu navegador, com sua própria chave de API. Sem conta, sem servidor, sem telemetria.",
     ctaPro: "Abrir Compilador Pro",
@@ -160,7 +160,7 @@ export const ptBR: Dict = {
     cardViewerBody: "Arraste qualquer arquivo .kcp para navegar seções, buscar conteúdo e rastrear cada item até a fonte.",
     officialTitle: "Sobre o protocolo",
     officialBody: "Para a especificação completa, manifesto, notícias e lab, visite o site oficial.",
-    officialLink: "knowledgecontextprotocol.org",
+    officialLink: "compiledknowledgeformat.org",
   },
   compiler: {
     title: "Compilador KCP",
