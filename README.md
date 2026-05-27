@@ -4,6 +4,13 @@
 
 This repository contains the same engine that powers [compiledknowledgeformat.org](https://compiledknowledgeformat.org), repackaged with **zero backend, zero database, zero login**.
 
+## Downloads
+
+[![Download Release](https://img.shields.io/badge/Download-v1.0.0-blueviolet)](https://github.com/tomazinho/open-ckf-compiled-knowledge-format/archive/refs/tags/v1.0.0.zip)
+
+- Source ZIP: https://github.com/tomazinho/open-ckf-compiled-knowledge-format/archive/refs/tags/v1.0.0.zip
+- Releases page: https://github.com/tomazinho/open-ckf-compiled-knowledge-format/releases
+
 ## Packages
 
 | Package | What it does | Backend? |
