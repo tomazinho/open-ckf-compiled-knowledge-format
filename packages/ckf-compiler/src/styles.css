@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0b0d10;
+  --fg: #e6e6e6;
+  --muted: #8a8f98;
+  --accent: #5cc8ff;
+  --border: #1f242c;
+  --card: #11151a;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #fafafa;
+    --fg: #111;
+    --muted: #555;
+    --accent: #0070f3;
+    --border: #e6e6e6;
+    --card: #fff;
+  }
+}
+
+html,
+body,
+#root {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+input,
+select,
+textarea {
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: inherit;
+  width: 100%;
+}
+
+a {
+  color: var(--accent);
+}
+
+pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  overflow: auto;
+  font-size: 13px;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

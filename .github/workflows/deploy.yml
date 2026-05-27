@@ -1,0 +1,31 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package: [ckf-viewer, ckf-compiler]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cd packages/${{ matrix.package }} && npm install && npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/${{ matrix.package }}/dist
+          name: ${{ matrix.package }}-dist
+      - uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ matrix.package }}-dist

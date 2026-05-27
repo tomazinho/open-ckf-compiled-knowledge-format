@@ -1,100 +1,46 @@
 # Open CKF
 
-> Open-source reference implementation of the **Compiled Knowledge Format (CKF)** — compile any document into a structured `.ckf` package, 100% in your browser, BYOK.
+**Standalone, open-source Compiled Knowledge Format (CKF) tools.** Two browser-only apps you can host anywhere — GitHub Pages, S3, Netlify, a VPS, or even a USB stick.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-v0.2.0-violet.svg)](CHANGELOG.md)
+This repository contains the same engine that powers [compiledknowledgeformat.org](https://compiledknowledgeformat.org), repackaged with **zero backend, zero database, zero login**.
 
-Open CKF is a standalone, client-side application that ports the official CKF compiler and viewer from [compiledknowledgeformat.org](https://compiledknowledgeformat.org). It contains:
+## Packages
 
-- **Compiler Pro** — an industrial pipeline (chunk → map → reduce → validate) that calls the LLM provider of your choice directly from the browser using your own API key.
-- **Compiler Demo** — a deterministic, no-key heuristic compiler that produces a 22-section `.ckf` package locally.
-- **Viewer** — a drag-and-drop inspector for any `.ckf` file, with section navigation, search, and source traceability.
+| Package | What it does | Backend? |
+|---|---|---|
+| [`packages/ckf-viewer`](./packages/ckf-viewer) | Drop a `.ckf.json` file and explore its sections, rules, definitions, and source traceability. | None |
+| [`packages/ckf-compiler`](./packages/ckf-compiler) | Compile raw text into a CKF package. Heuristic mode runs fully offline; BYOK mode calls OpenAI / Anthropic / Google / DeepSeek / OpenRouter directly from your browser. | None — your API key stays in `localStorage` |
 
-No accounts. No servers. No telemetry. Your text and your API keys never leave your browser.
-
----
-
-## Quickstart
-
-### Remix on Lovable
-
-Click **Remix** on the project page on [Lovable](https://lovable.dev) — you get your own copy in seconds, no setup needed.
-
-### Clone and run locally
+## Quick start
 
 ```bash
-git clone https://github.com/tomazinho/open-ckf-compiled-knowledge-format.git
-cd open-ckp-compiled-knowledge-format
-bun install     # or: npm install
-bun dev         # or: npm run dev
+git clone https://github.com/tomazinho/open-ckf-compiled-knowledge-format
+cd open-ckf-compiled-knowledge-format/packages/ckf-viewer
+npm install && npm run dev
+# or, in packages/ckf-compiler
 ```
 
-The app runs at `http://localhost:5173`. To produce a static build:
+To build a static bundle:
 
 ```bash
-bun run build
+npm run build
+# -> dist/ ready for any static host or `python -m http.server`
 ```
 
-### Deploy
+## When to use Open CKF vs the hosted site
 
-Open CKF is a static SPA — deploy the `dist/` output to any static host (Cloudflare Pages, Netlify, Vercel static, GitHub Pages, S3+CloudFront).
-
----
-
-## Providers (BYOK)
-
-All five providers are called directly from the browser. Bring your own key — keys are kept in `sessionStorage` by default, or `localStorage` if you tick *Remember*.
-
-| Provider     | Default model              | Get a key                                                    | CORS notes                                                                 |
-| ------------ | -------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| OpenAI       | `gpt-4o-mini`              | https://platform.openai.com/api-keys                          | Direct browser calls supported.                                            |
-| Anthropic    | `claude-3-5-sonnet-20241022` | https://console.anthropic.com/settings/keys                  | Requires `anthropic-dangerous-direct-browser-access: true` (sent for you). |
-| Google Gemini | `gemini-2.0-flash`         | https://aistudio.google.com/app/apikey                        | Direct browser calls supported.                                            |
-| DeepSeek     | `deepseek-chat`            | https://platform.deepseek.com/api_keys                        | Direct browser calls supported.                                            |
-| OpenRouter   | `openai/gpt-4o-mini`       | https://openrouter.ai/keys                                    | Direct browser calls supported (one key, many models).                     |
-
-If your network blocks any of these endpoints (corporate firewalls, mobile carriers), deploy a small CORS proxy and point the base URL at it.
-
----
-
-## Architecture
-
-- **Framework:** TanStack Start (React 19 + Vite 7), file-based routing.
-- **Styling:** Tailwind CSS v4 with CSS variables (light/dark).
-- **i18n:** PT-BR / EN, lazy switch in the header.
-- **No backend.** No Supabase, no server functions, no auth.
-- **History:** stored in `localStorage`. Export/import as JSON to back up or move between browsers.
-
-```
-src/
-  routes/
-    index.tsx              # landing
-    compiler.tsx           # Pro (BYOK)
-    compiler-demo.tsx      # heuristic demo
-    viewer.tsx             # .ckf inspector
-  lib/
-    ckf/                   # canonical types, heuristic compiler, parser, file readers
-    compiler/              # client-side LLM pipeline (chunk + map + reduce)
-    history/local-jobs.ts  # localStorage history
-  i18n/                    # dictionaries + provider
-  components/              # Header, Footer, Shell, shadcn/ui
-```
-
----
-
-## About the format
-
-The Compiled Knowledge Format (CKF) is a structured format for transforming human-oriented text into compiled knowledge that AI agents can reason over. For the full format specification, reference docs and lab, visit:
-
-**→ [compiledknowledgeformat.org](https://compiledknowledgeformat.org)**
-
----
-
-## Contributing
-
-Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). The project is intentionally minimal and dependency-light — keep it that way.
+| Need | Use |
+|---|---|
+| Try CKF without installing anything | [compiledknowledgeformat.org](https://compiledknowledgeformat.org) |
+| Run on your own infra / behind a VPN | Open CKF |
+| 100% offline / air-gapped | Open CKF (heuristic mode) |
+| White-label deployment | Open CKF (MIT licensed) |
+| Lovable AI free credits | Hosted site (admin allowlist) |
 
 ## License
 
-[MIT](LICENSE).
+MIT — see [LICENSE](./LICENSE).
+
+## Contributing
+
+Bug reports, PRs, and forks are welcome. The canonical CKF specification lives at [compiledknowledgeformat.org/docs](https://compiledknowledgeformat.org/docs).
