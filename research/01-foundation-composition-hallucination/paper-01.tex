@@ -1,0 +1,798 @@
+\documentclass[11pt]{article}
+
+% ---------- Page and typography ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage{microtype}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% ---------- Math, lists, tables ----------
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{ragged2e}
+
+% ---------- Colors and links ----------
+\usepackage{xcolor}
+\definecolor{linkblue}{HTML}{1F4E79}
+\definecolor{citeblue}{HTML}{1F4E79}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkblue,
+  citecolor=citeblue,
+  urlcolor=linkblue,
+  pdftitle={Composition Hallucination in Retrieval-Augmented Generation: A Failure Mode and Benchmark Protocol},
+  pdfauthor={Paulo Tomazinho},
+  pdfsubject={RAG, hallucination, benchmark protocol, knowledge representation},
+  pdfkeywords={composition hallucination, RAG, GraphRAG, benchmark, knowledge representation}
+}
+
+% ---------- Tabularx column types ----------
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+
+% ---------- Spacing ----------
+\setlength{\parskip}{4pt plus 1pt minus 1pt}
+\setlength{\parindent}{1.5em}
+
+% ---------- Section title spacing ----------
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{14pt plus 2pt minus 2pt}{6pt plus 1pt minus 1pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 1pt minus 1pt}{4pt plus 1pt minus 1pt}
+\titlespacing*{\subsubsection}{0pt}{8pt}{3pt}
+
+% ---------- Title ----------
+\title{Composition Hallucination in Retrieval-Augmented Generation:\\
+A Failure Mode and Benchmark Protocol}
+
+\author{%
+Paulo Tomazinho, PhD\\
+CKF Research\\
+\texttt{paulo@tomazinho.com.br}%
+}
+
+\date{May 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Retrieval-Augmented Generation (RAG) is commonly motivated by the idea that language models answer more faithfully when relevant evidence is retrieved and placed in context. This assumption is useful but incomplete. In policy, legal, clinical, educational, and operational documents, correct answers often depend not only on relevant fragments but on relations among them: exceptions, overrides, scopes, preconditions, precedence, temporal dependencies, and procedural order. This paper defines composition hallucination: a failure mode in which a model produces an answer incompatible with information present in its context, even though the necessary fragments are available and locally interpretable, because the model fails to compose those fragments according to their implicit relations. We distinguish composition hallucination from parametric hallucination, retrieval failure, and long-context or positional context-use failures. We then propose a benchmark protocol for isolating the phenomenon without reporting new model results. The protocol uses paired cases in which the same informational content is presented under different relational explicitness conditions: raw prose, relation-annotated prose, and structurally compiled representations. Each case includes sufficiency checks, local-legibility probes, counterfactual controls, position controls, and retrieval controls so that failures can be attributed to composition rather than missing evidence, unreadable fragments, or long-context decay. The purpose is methodological: to make a frequent but under-specified failure mode measurable, falsifiable, and separable from adjacent RAG failure modes.
+\end{abstract}
+
+\medskip
+\noindent\textbf{Keywords:} hallucination; retrieval-augmented generation; RAG; benchmark protocol; knowledge representation; structured retrieval; agentic systems; composition hallucination.
+
+% =================================================================
+\section{Introduction}
+% =================================================================
+
+Consider a corporate expense policy with two clauses:
+
+\begin{quote}
+\emph{Employees may approve expenses up to \$5,000.}
+\end{quote}
+
+\begin{quote}
+\emph{International expenses require approval from the Chief Financial Officer, regardless of amount.}
+\end{quote}
+
+A user asks an assistant grounded in that policy: \emph{``Can I approve an international expense of \$3,000?''} A retrieval-augmented system~\cite{lewis2020rag} retrieves both clauses and places them in the model's context. The model reads each clause correctly. It can answer, if asked separately, that employees may approve expenses up to \$5,000. It can also answer, if asked separately, that international expenses require CFO approval regardless of amount. Yet when asked the composed question, it answers: \emph{``Yes. The amount is below \$5,000.''}
+
+This error is not well described as a lack of information. The information is present. It is not well described as retrieval failure. The exception clause was retrieved. It is not merely a parametric hallucination~\cite{ji2023survey,huang2023hallucination}. The model is not inventing an unsupported fact from its weights. Nor is it necessarily a long-context failure: the same pattern can occur in short contexts where both clauses are adjacent~\cite{liu2024lost}.
+
+The error arises because the model fails to compose two locally legible fragments under an implicit relation. The second clause overrides the first when the expense is international. Correct answering requires the model to infer that relation, test whether the query triggers it, and apply the exception rather than the general threshold rule. The answer is wrong because the relation was not successfully reconstructed at inference time.
+
+We call this failure mode \emph{composition hallucination}.
+
+The term is intended to name a specific class of failures in RAG and agentic systems: outputs that contradict knowledge available in context because the system fails to integrate fragments according to relations that are present only implicitly in prose. These relations include exceptions, overrides, scoping rules, preconditions, procedural dependencies, precedence relations, temporal order, contraindications, and applicability constraints.
+
+The distinction matters because different failure modes imply different remedies. If a model fails because the relevant passage was absent, the remedy is better retrieval. If it fails because the passage was buried in a long context, the remedy may be context ordering, compression, or attention-aware prompting~\cite{liu2024lost}. If it fails because the answer is unsupported by retrieved evidence, the remedy may involve attribution, verification, or refusal behavior~\cite{asai2024selfrag,niu2024ragtruth}. But if the model fails because the right fragments are present and legible yet their relation is not composed, the remedy is representational or procedural: relations must be made explicit before inference, or the system must be forced to construct and verify an intermediate relational representation during inference~\cite{davis1993kr,tomazinho2026ckf}.
+
+This paper does not report model evaluation results. It is a problem-definition and benchmark-protocol paper. Its goal is to define composition hallucination formally, distinguish it from adjacent failure modes, and specify a benchmark protocol capable of isolating it. The protocol is deliberately designed around paired evidence: the same informational content is presented as raw prose, relation-annotated prose, and structurally compiled representation. If model performance changes across these conditions while information availability is held constant, the difference measures the value of explicit relational structure rather than retrieval coverage.
+
+The paper makes four contributions:
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+    \item It defines \emph{composition hallucination} as a distinct RAG failure mode characterized by sufficiency of evidence, local legibility, implicit relational structure, and incorrect relational integration.
+    \item It places the phenomenon in a taxonomy that distinguishes parametric, retrieval, contextual, and compositional failures.
+    \item It proposes a benchmark protocol for constructing, validating, and scoring composition-sensitive RAG cases without relying on preregistered results or unreleased empirical claims.
+    \item It explains how the protocol can evaluate future interventions, including GraphRAG~\cite{edge2024graphrag}, structured retrieval, explicit relation extraction, and knowledge-compilation formats such as CKF~\cite{tomazinho2026ckf}.
+\end{enumerate}
+
+% =================================================================
+\section{Motivation: Why Retrieved Context Is Not Sufficient Knowledge}
+% =================================================================
+
+RAG systems~\cite{lewis2020rag} are often built on a practical assumption: if the retriever brings the right passage into context, the generator has enough information to answer. This assumption is reasonable for simple factual questions. If a document states that the filing deadline is April 15 and the user asks for the filing deadline, retrieval plus generation is often sufficient.
+
+Many real documents are not organized as isolated facts. They are organized as relational systems. A policy contains a general rule and an exception. A tax code contains a threshold, a special-case exclusion, and a dependency on filing status. A clinical guideline contains a recommended medication, a contraindication, and a sequencing requirement. A procedural manual contains a step that must happen only after a prerequisite is satisfied. A school policy contains a permission, a restriction, and a category of students for whom the restriction is modified.
+
+In such cases, the answer is not stored in any single fragment. It is produced by composing fragments. Retrieval can provide the fragments, but it does not by itself provide the relation among them. The model must reconstruct that relation at generation time.
+
+This observation reframes a class of RAG errors. The error is not that the system lacks access to information. It is that the system is asked to perform structural inference over prose every time the query is asked. In domains where consequences are high and relations are dense, this is a fragile design.
+
+The phrase \emph{composition hallucination} highlights three aspects of the problem.
+
+First, the output is hallucination-like because it is incompatible with source-grounded knowledge~\cite{maynez2020faithfulness,min2023factscore}. It may cite a real rule and still reach a false conclusion because it ignores a relation that changes the rule's applicability.
+
+Second, the failure is compositional because it concerns relations among fragments, not the fragments themselves. The model may demonstrate correct local comprehension and still fail the composed task.
+
+Third, the failure is operationally important because RAG systems are increasingly embedded in agents. In a conversational assistant, a composition hallucination yields a wrong answer. In an agent, it may yield a wrong action: approving what should be blocked, denying what should be allowed, executing steps out of order, ignoring prerequisites, or applying an expired policy.
+
+% =================================================================
+\section{Related Work}
+% =================================================================
+
+\subsection{Hallucination and Faithfulness}
+
+The literature on hallucination in language generation distinguishes several forms of unsupported or source-inconsistent output. Surveys by Ji et al.~\cite{ji2023survey} and Huang et al.~\cite{huang2023hallucination} organize hallucination in terms of factual inconsistency, faithfulness to source, and the origin of unsupported claims. Work on summarization faithfulness, including Maynez et al.~\cite{maynez2020faithfulness}, similarly distinguishes between content that is entailed by a source and content that is not. Fine-grained factuality benchmarks such as FActScore~\cite{min2023factscore}, FELM~\cite{chen2023felm}, HaluEval~\cite{li2023halueval}, and TruthfulQA~\cite{lin2022truthfulqa} provide complementary lenses on factual precision.
+
+Composition hallucination is compatible with this literature but cuts across its categories. It can appear as an unfaithful answer because the output contradicts source-grounded evidence. But its mechanism is more specific: the contradiction arises even though the relevant fragments are present, because the model fails to compose their implicit relations. Existing factuality and faithfulness evaluations often detect the final error but do not isolate the missing operation.
+
+\subsection{Retrieval-Augmented Generation}
+
+RAG~\cite{lewis2020rag} connects parametric language models with non-parametric external memory. The generator receives retrieved evidence and produces an answer grounded in that evidence. Subsequent work has improved retrieval, reranking, query rewriting, self-reflection~\cite{asai2024selfrag}, and verification, with dedicated benchmarks targeting RAG-specific hallucinations~\cite{niu2024ragtruth}. These advances are essential, but they primarily operate on the question of \emph{what content enters the context}.
+
+Composition hallucination asks a different question: \emph{what happens after the right content is already present?} The benchmark protocol proposed here therefore assumes or enforces evidence sufficiency. It is designed to hold retrieval constant so that failures cannot be attributed to missing passages.
+
+\subsection{Long Context and Positional Failures}
+
+Long-context research shows that models may fail to use information depending on where it appears in the input. The \emph{lost in the middle} effect~\cite{liu2024lost} is a positional context-use failure: information may be present but underused because of its location or surrounding noise.
+
+Composition hallucination is related but distinct. It can occur in short contexts where positional decay is implausible. Conversely, a long-context failure may involve a single fact that requires no composition. A benchmark that aims to isolate composition must therefore include position controls and short-context subsets.
+
+\subsection{Knowledge Representation and Explicit Relations}
+
+Knowledge representation research has long emphasized that the form of representation determines which inferences are easy and which are hard~\cite{davis1993kr}. A rule written as prose requires interpretation. A rule represented as a typed object with fields for scope, priority, exceptions, and preconditions makes some operations explicit. Earlier visions of machine-readable knowledge on the web~\cite{bernerslee2001semantic} pursued a related intuition: structured relations enable inferences that prose alone obscures.
+
+The LLM era has revived the use of natural language as a general-purpose knowledge medium. This is powerful, but it reintroduces ambiguity that formal and semi-formal representations were designed to reduce. Composition hallucination is one empirical consequence of leaving relational structure implicit in prose.
+
+This paper does not argue for a return to purely symbolic expert systems. It argues that \emph{relation explicitness} is a measurable variable. A benchmark should therefore vary relational explicitness while holding information constant.
+
+\subsection{GraphRAG, Structured Retrieval, and Compiled Knowledge}
+
+GraphRAG~\cite{edge2024graphrag} and related systems construct graph structures from corpora to support retrieval over entities, relationships, and communities. These methods are relevant because they make some relations explicit before generation. However, graph representations often focus on entity--relation--entity structures and global summarization, while composition hallucination frequently depends on normative, procedural, or priority relations such as override, exception, applicability, obligation, precondition, and sequence.
+
+Compiled knowledge approaches, including CKF~\cite{tomazinho2026ckf}, propose typed intermediate representations for knowledge that can include rules, exceptions, procedures, decision rules, causal chains, source excerpts, and traceability. Such approaches are candidate interventions, not assumptions of the benchmark. The protocol below is designed so that raw RAG, GraphRAG, CKF-aware retrieval, and other structured systems can be compared on the same cases.
+
+% =================================================================
+\section{Composition Hallucination: Definition and Taxonomy}
+% =================================================================
+
+\subsection{Formal Definition}
+
+Let $C$ denote the context provided to a model $M$, consisting of a set of fragments $F = \{f_1, f_2, \ldots, f_n\}$. Let $Q$ be a query. Let $A^*(Q,C)$ be the answer entailed by $C$ under correct relational interpretation. Let $A_M(Q,C)$ be the model's output.
+
+A \emph{composition hallucination} occurs when:
+
+\begin{equation}
+A_M(Q,C) \not\equiv A^*(Q,C)
+\end{equation}
+
+and the following four conditions hold:
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Evidence sufficiency.} Every fragment necessary to derive $A^*(Q,C)$ is present in $C$.
+    \item \textbf{Local legibility.} Each necessary fragment, considered in isolation, can be interpreted correctly by the model or by a comparable evaluator.
+    \item \textbf{Relational dependence.} Correct answering requires composing two or more fragments through a relation such as exception, override, scope, precondition, precedence, temporal dependency, contraindication, or procedural order.
+    \item \textbf{Relational failure.} The model output is wrong because it fails to infer, apply, or prioritize the required relation.
+\end{enumerate}
+
+The definition deliberately excludes several adjacent cases. If the relevant exception was not retrieved, the failure is a retrieval failure. If the model cannot interpret the exception even when asked directly, the failure is local comprehension or contextual legibility. If the information is present only in an extremely long context and the model fails because of positional decay, the failure is contextual~\cite{liu2024lost}. If the model invents facts unsupported by the context, the failure is parametric or unsupported generation~\cite{ji2023survey,huang2023hallucination}.
+
+\subsection{A Four-Cell Operational Taxonomy}
+
+Table~\ref{tab:taxonomy} places composition hallucination alongside three adjacent failure modes.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.16\textwidth} L{0.22\textwidth} L{0.20\textwidth} X@{}}
+\toprule
+\textbf{Type} & \textbf{Primary source} & \textbf{Evidence in context?} & \textbf{Canonical case} \\
+\midrule
+Parametric  & Model memory          & No                       & Unsupported factual claim \\
+Retrieval   & Search / ranking      & No                       & Relevant exception missing \\
+Contextual  & Context use / position & Yes, degraded            & Relevant fact buried in long input \\
+Composition & Relational integration & Yes, present and legible & Rule and exception present; rule misapplied \\
+\bottomrule
+\end{tabularx}
+\caption{Operational taxonomy of hallucination-relevant failures in RAG settings.}
+\label{tab:taxonomy}
+\end{table}
+
+The taxonomy is not exhaustive. It does not cover all forms of instruction-following failure, tool misuse, adversarial prompting, or stylistic error. Its purpose is narrower: to separate four common explanations for wrong answers in RAG systems so that evaluation can attribute failures correctly.
+
+\subsection{Minimal Diagnostic Test}
+
+A practical diagnostic for composition hallucination has four steps:
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+    \item Verify that all evidence fragments required for the correct answer are present in the final context.
+    \item Probe the model's local understanding of each fragment independently.
+    \item Identify the relation that must be composed across fragments.
+    \item Compare performance on the original case with a counterfactual version in which the relation is explicit.
+\end{enumerate}
+
+A case is a strong candidate for composition hallucination if the model succeeds on local probes, fails the composed question, and succeeds when the relation is made explicit without adding new substantive information.
+
+% =================================================================
+\section{Illustrative Case}
+% =================================================================
+
+\subsection{Source Document}
+
+A simplified corporate travel policy contains the following sections.
+
+\begin{quote}
+\textbf{Section 3. Department approval.} Department managers may approve ordinary operating expenses up to \$5,000 when the expense is domestic, within the department budget, and related to routine business activity.
+\end{quote}
+
+\begin{quote}
+\textbf{Section 6. International travel.} Expenses incurred during international travel require pre-approval from the Chief Financial Officer regardless of amount or expense category. The request must be submitted at least fourteen calendar days before departure and must include the itinerary, business justification, and project or cost-center allocation.
+\end{quote}
+
+\subsection{Query}
+
+\begin{quote}
+\emph{I am a department manager planning an international business trip to Berlin next month. The estimated hotel and meal cost is \$3,200. Who needs to approve this expense request?}
+\end{quote}
+
+\subsection{Gold Answer}
+
+The correct answer is that CFO pre-approval is required. Although \$3,200 is below the ordinary \$5,000 threshold for department-manager approval, Section~6 overrides the threshold for international travel expenses regardless of amount or category. The request must also be submitted at least fourteen calendar days before departure with the required supporting information.
+
+\subsection{Failure Modes}
+
+A response is classified as a composition hallucination if it exhibits one of the following errors:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Pure rule application.} The response applies Section~3 and concludes that the department manager can approve the expense because the amount is below \$5,000.
+    \item \textbf{Acknowledged-but-ignored exception.} The response mentions international travel but still concludes that department-manager approval is sufficient.
+\end{itemize}
+
+The following errors are recorded separately:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Wrong escalation.} The response escalates to a vice president, legal department, or audit office rather than the CFO.
+    \item \textbf{Non-answer or refusal.} The response declines to answer despite sufficient information.
+    \item \textbf{Retrieval failure.} The response is produced without Section~6 in context.
+\end{itemize}
+
+% =================================================================
+\section{Benchmark Protocol}
+% =================================================================
+
+The benchmark protocol is designed to isolate composition as the operative variable. It does not require a specific benchmark name, release date, or preregistered analysis. It specifies how benchmark cases should be constructed, validated, and reported.
+
+\subsection{Case Requirements}
+
+A benchmark case must satisfy six requirements.
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Fragment separation.} The required evidence must be distributed across at least two fragments.
+    \item \textbf{Local answerability.} Each fragment must be understandable and answerable in isolation.
+    \item \textbf{Relational necessity.} The correct answer must require applying a relation among fragments.
+    \item \textbf{No external knowledge requirement.} The answer must be derivable from the provided document alone.
+    \item \textbf{Unambiguous gold answer.} The correct answer must be stable under independent human review.
+    \item \textbf{Counterfactual explicitness.} The same case must be expressible in a version where the relation is explicitly marked without changing substantive content.
+\end{enumerate}
+
+\subsection{Relation Types}
+
+The benchmark should cover at least the relation types in Table~\ref{tab:relations}.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}L{0.20\textwidth} L{0.36\textwidth} X@{}}
+\toprule
+\textbf{Relation type} & \textbf{Description} & \textbf{Example} \\
+\midrule
+Exception              & A special case modifies a general rule          & International travel overrides amount threshold \\
+Override               & One rule has priority over another              & Emergency policy supersedes routine policy \\
+Scope                  & A rule applies only within a domain             & Benefit applies only to full-time employees \\
+Precondition           & A step is valid only after another condition    & Approval requires prior risk review \\
+Sequence               & Steps must occur in a specific order            & Submit form before reimbursement \\
+Contraindication       & A recommended action is blocked by a condition  & Drug recommended except with renal impairment \\
+Temporal dependency    & Rule depends on date or version                 & New policy applies after July~1 \\
+Exception of exception & A special case modifies an exception            & International travel exempt only for grant-funded trips \\
+\bottomrule
+\end{tabularx}
+\caption{Relation types suitable for composition-hallucination benchmark cases.}
+\label{tab:relations}
+\end{table}
+
+\subsection{Domains}
+
+The protocol recommends domains where relational structure is common and consequential:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item corporate policies and compliance manuals;
+    \item legal, tax, and regulatory texts;
+    \item clinical guidelines and contraindication rules;
+    \item educational policies and pedagogical procedures;
+    \item technical manuals and operational playbooks;
+    \item eligibility rules for benefits, grants, or programs.
+\end{itemize}
+
+The benchmark should report results by domain because models may differ in their ability to parse particular registers. A failure in clinical guideline composition, for example, may not have the same distribution as a failure in corporate policy composition.
+
+\subsection{Representation Conditions}
+
+Each case should be represented in at least three matched conditions.
+
+\paragraph{R: Raw prose.} The document is written in natural prose, similar to how policies, guidelines, or manuals are normally drafted. Relations may be inferable but are not explicitly typed.
+
+\paragraph{A: Relation-annotated prose.} The same text is presented with lightweight inline tags that mark relations without adding new facts. For example:
+
+\begin{verbatim}
+<rule id="R1">Managers may approve expenses up to $5,000.</rule>
+<exception id="E1" overrides="R1" condition="international travel">
+  International travel expenses require CFO approval
+  regardless of amount.
+</exception>
+\end{verbatim}
+
+\paragraph{C: Structurally compiled representation.} The same content is represented as typed objects. For example:
+
+\begin{verbatim}
+rules:
+  - id: R1
+    statement: Managers may approve expenses up to $5,000.
+    applies_when:
+      travel_type: domestic
+exceptions:
+  - id: E1
+    overrides: R1
+    condition:
+      travel_type: international
+    required_approval: CFO
+    priority: higher_than_R1
+\end{verbatim}
+
+The core comparison is not between prose and YAML as formats. It is between implicit and explicit relational structure while holding informational content constant.
+
+\subsection{Query Types}
+
+A balanced benchmark should include the following query types:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Rule-only controls.} Questions answerable by a single general rule.
+    \item \textbf{Exception composition.} Questions requiring an exception to override a general rule.
+    \item \textbf{Scope composition.} Questions requiring the model to determine whether a rule applies within a stated scope.
+    \item \textbf{Precondition composition.} Questions requiring a prerequisite or sequence to be applied.
+    \item \textbf{Multi-relation composition.} Questions requiring two or more relations, such as exception plus temporal dependency.
+    \item \textbf{Negative controls.} Questions where the exception is not triggered and the general rule should apply.
+\end{itemize}
+
+Negative controls are essential. A model that always escalates to a stricter rule may appear safe on exception cases while failing permissive cases. The benchmark should distinguish correct relational reasoning from conservative defaulting.
+
+\subsection{Complexity Levels}
+
+The protocol proposes three complexity levels:
+
+\begin{description}[style=nextline,leftmargin=1em,itemsep=2pt]
+    \item[Level 1.] One general rule and one exception or override.
+    \item[Level 2.] One general rule and two competing exceptions, or an exception plus a scope constraint.
+    \item[Level 3.] Chained relations involving preconditions, temporal dependency, or exception-of-exception structures.
+\end{description}
+
+A central prediction for future empirical work is that the performance gap between raw prose and explicit relational representation should increase with complexity. However, this paper does not report such results.
+
+% =================================================================
+\section{Controls for Isolating Composition}
+% =================================================================
+
+\subsection{Sufficiency Control}
+
+For each case, the benchmark must record which fragments are necessary for the gold answer. A run should be marked as composition-evaluable only when all necessary fragments are present in the model context. If a necessary fragment is absent, the error is a retrieval failure and should not be counted as composition hallucination.
+
+\subsection{Local-Legibility Probes}
+
+Each necessary fragment should have one or more local probes. For the expense example:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item What is the ordinary approval threshold for department managers?
+    \item What approval is required for international travel expenses?
+\end{itemize}
+
+If the model fails the local probe, its composed answer should not be used to classify composition hallucination. The failure may be comprehension, extraction, or context-use failure rather than relational integration.
+
+\subsection{Counterfactual Explicitness Control}
+
+A key control is the explicit-relation counterfactual. The benchmark provides a version of the same evidence in which the relation is marked. If the model fails raw prose but succeeds when the relation is explicit, the case supports a composition interpretation. If the model fails both, the case may be too hard, underspecified, or affected by another failure mode.
+
+\subsection{Position Control}
+
+To distinguish composition from positional context effects~\cite{liu2024lost}, the benchmark should vary the order of fragments. At minimum, each case should have two orders:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item general rule before exception;
+    \item exception before general rule.
+\end{itemize}
+
+For longer contexts, the relevant fragments should also be placed at beginning, middle, and end positions. Position-sensitive failures should be reported separately.
+
+\subsection{Retrieval Control}
+
+The primary composition test should use perfect retrieval: all necessary fragments are included, and irrelevant fragments are minimized or controlled. A secondary condition may add distractor fragments to measure whether retrieval noise amplifies composition failure. But the core phenomenon must be demonstrable with retrieval held constant.
+
+\subsection{Parametric Control}
+
+Each case should include a no-context or insufficient-context run. If a model answers correctly without the relevant context, the item may be contaminated by parametric knowledge or common-sense priors~\cite{lin2022truthfulqa}. Such items should be flagged, because the benchmark aims to evaluate source-grounded composition, not prior knowledge.
+
+% =================================================================
+\section{Scoring and Reporting}
+% =================================================================
+
+\subsection{Primary Outcome}
+
+The primary outcome is \textbf{composition error rate} on composition-sensitive queries under evidence-sufficient conditions. A response is counted as a composition error when it applies an incorrect relation, fails to apply a required relation, or applies the wrong priority among relations.
+
+\subsection{Secondary Outcomes}
+
+Secondary outcomes include:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item \textbf{answer accuracy}: whether the final answer matches the gold answer;
+    \item \textbf{exception detection rate}: whether the relevant exception or override is identified and applied;
+    \item \textbf{relation citation accuracy}: whether cited evidence includes the relation-bearing fragment;
+    \item \textbf{local probe accuracy}: whether fragments are understood in isolation;
+    \item \textbf{counterfactual recovery}: whether performance improves when relations are explicit;
+    \item \textbf{position sensitivity}: whether answer accuracy changes with fragment order or position;
+    \item \textbf{conservative default rate}: whether the model avoids errors by over-escalating or refusing.
+\end{itemize}
+
+\subsection{Failure-Mode Labels}
+
+Each incorrect response should be assigned one primary label:
+
+\begin{description}[style=nextline,leftmargin=1em,itemsep=2pt]
+    \item[Retrieval failure.] Necessary evidence absent from context.
+    \item[Local comprehension failure.] Evidence present but local probe fails.
+    \item[Contextual failure.] Evidence present but likely degraded by length or position.
+    \item[Composition hallucination.] Evidence present and locally legible, but relation not composed correctly.
+    \item[Wrong escalation.] Response applies an unsupported stricter authority or requirement.
+    \item[Refusal / non-answer.] Response declines to answer despite sufficient evidence.
+    \item[Other.] Error not captured by the above categories.
+\end{description}
+
+The distinction between composition hallucination and wrong escalation is important. Overly conservative answers may be safer in some applications but are still incorrect. They should not be counted as successful composition.
+
+\subsection{Human and Model Judging}
+
+The protocol recommends human adjudication for benchmark construction and at least partial human verification for scoring. LLM-as-judge can be used for scale, but should be validated against human labels and should not be the same model family as the evaluated system when avoidable~\cite{chen2023felm,li2023halueval}.
+
+For each benchmark release, the following should be reported:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item annotator instructions;
+    \item number of annotators;
+    \item agreement statistics;
+    \item adjudication procedure;
+    \item examples of accepted and rejected cases;
+    \item model-judge prompts, if used.
+\end{itemize}
+
+% =================================================================
+\section{Benchmark Datasheet}
+% =================================================================
+
+A composition-hallucination benchmark should include a datasheet~\cite{gebru2021datasheets} with at least the following fields:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item domain;
+    \item source or synthetic status;
+    \item relation type;
+    \item complexity level;
+    \item necessary fragments;
+    \item local probes;
+    \item gold answer;
+    \item acceptable answer variants;
+    \item failure-mode examples;
+    \item raw representation;
+    \item annotated representation;
+    \item compiled representation;
+    \item position-control variants;
+    \item counterfactual explicitness variant;
+    \item known ambiguity notes;
+    \item license and usage restrictions.
+\end{itemize}
+
+This metadata is not administrative overhead. It is what makes the benchmark capable of isolating composition rather than merely collecting hard RAG questions.
+
+% =================================================================
+\section{How the Protocol Evaluates Interventions}
+% =================================================================
+
+\subsection{Standard RAG}
+
+A standard RAG baseline~\cite{lewis2020rag} retrieves unstructured chunks and gives them to a generator. Under the protocol, this system is evaluated primarily in the raw-prose condition. If it fails while all necessary fragments are present, the failure is not retrieval coverage but composition.
+
+\subsection{Prompted Relational Reasoning}
+
+A procedural intervention asks the model to extract rules, exceptions, and relations before answering. For example, the model may be instructed to produce an intermediate table of applicable rules, exceptions, and priorities. The protocol can evaluate whether such prompting reduces composition error without changing the underlying representation. Self-reflective RAG variants~\cite{asai2024selfrag} sit naturally in this category.
+
+\subsection{GraphRAG}
+
+GraphRAG systems~\cite{edge2024graphrag} can be evaluated by mapping benchmark relations into graph edges and measuring whether graph-based retrieval or summarization improves relation application. The protocol should distinguish entity relations from normative relations. A graph that connects \emph{international travel} to \emph{CFO approval} may still need explicit edge semantics such as \texttt{requires\_approval} and \texttt{overrides}.
+
+\subsection{Compiled Knowledge Formats}
+
+CKF-style systems~\cite{tomazinho2026ckf} can be evaluated by compiling raw documents into typed units such as concepts, rules, decision rules, exceptions, procedures, causal chains, and source traceability~\cite{davis1993kr,bernerslee2001semantic}. The benchmark can then compare raw chunks against compiled units. The protocol does not assume CKF will outperform other methods; it provides a way to test whether moving relational structure from inference time to compilation time reduces composition errors.
+
+\subsection{Agentic Systems}
+
+For agents, benchmark cases should include action-oriented queries. The outcome is not only whether the model states the right answer, but whether it would call the right tool, request the right approval, block the right action, or follow the right sequence. Composition hallucination in agents should therefore be scored both as answer failure and as policy-control failure.
+
+% =================================================================
+\section{Discussion}
+% =================================================================
+
+\subsection{Why This Failure Mode Is Easy to Miss}
+
+Composition hallucination is easy to miss because the model's answer often contains true statements. In the expense example, \emph{``managers may approve expenses up to \$5,000''} is true. The error lies in treating a true general rule as decisive when an exception applies. Standard factuality metrics~\cite{min2023factscore,chen2023felm} may give partial credit because the cited statement is real. Standard retrieval metrics may declare success because both passages were retrieved. Standard long-context diagnostics~\cite{liu2024lost} may miss the issue because the context is short.
+
+The failure therefore sits between retrieval, reasoning, and representation. It is not reducible to any one of them.
+
+\subsection{Why Longer Context Is Not a General Remedy}
+
+Longer context helps when the problem is missing information. It does not necessarily help when the problem is missing structure. Adding more chunks may increase the number of relations the model must infer. In domains dense with rules and exceptions, additional context can raise compositional burden rather than reduce it.
+
+This does not mean shorter context is always better. It means context should be organized around relations, not merely accumulated as passages. A context containing a typed exception relation may be more useful than a longer context containing both rule and exception as untyped prose.
+
+\subsection{Why Stronger Models Are Not a Complete Remedy}
+
+Stronger models may reduce composition errors, especially at low complexity. But if the benchmark shows a persistent gap between raw and explicit-relation conditions, then model scale is not the only relevant variable. The representation itself changes the task. In raw prose, the model must infer the relation. In a compiled representation, the relation is already part of the input.
+
+The point is not that models cannot reason. The point is that systems should not repeatedly ask models to reconstruct critical operational structure from prose when that structure can be represented explicitly.
+
+\subsection{The Representational Hypothesis}
+
+The benchmark protocol operationalizes a representational hypothesis:
+
+\begin{quote}
+\emph{For questions whose correctness depends on implicit relations among retrieved fragments, making those relations explicit before generation should reduce composition hallucination, holding substantive information constant.}
+\end{quote}
+
+This hypothesis is intentionally falsifiable. If models perform equally well across raw, annotated, and compiled conditions after retrieval and position are controlled, then explicit relational structure may not be necessary for the tested cases. If performance improves only because annotated conditions add information not present in raw prose, the case construction is invalid. If improvements disappear under noisy annotation or real-world corpora, the practical value of the intervention is limited.
+
+% =================================================================
+\section{Limitations}
+% =================================================================
+
+This paper is a protocol paper, not an empirical results paper. It does not report model scores, statistical significance, or benchmark release statistics. Its claims are definitional and methodological.
+
+Second, the boundary between contextual and compositional failure can be difficult to draw in long documents. A model may fail both because the exception appears far away~\cite{liu2024lost} and because the relation is implicit. The protocol addresses this through position controls and short-context subsets, but real deployments may involve overlapping failure modes.
+
+Third, explicit relational representations may introduce their own errors. A compiler or annotator may extract the wrong relation, overstate a weak implication, or create false priority among rules. Any evaluation of compiled knowledge must therefore include traceability and source-grounding checks~\cite{niu2024ragtruth}.
+
+Fourth, some domains resist unambiguous gold answers. Legal and clinical texts often contain uncertainty, discretion, or jurisdiction-specific interpretation. Such cases can be included only when ambiguity is documented and when gold answers are validated by appropriate experts.
+
+Fifth, composition hallucination is not claimed to be the largest source of RAG error. Its importance depends on the domain. The paper claims only that it is separable, operationally common in rule-bearing domains, and currently under-isolated by standard evaluation protocols.
+
+% =================================================================
+\section{Conclusion}
+% =================================================================
+
+RAG systems are often evaluated as if the central question were whether the right evidence enters the context. In many practical domains, that is only the first question. The harder question is whether the system composes the relations among retrieved fragments correctly.
+
+This paper defined composition hallucination as a failure in which all necessary evidence is present and locally legible, but the answer is wrong because the model fails to infer or apply implicit relations among fragments. We distinguished this failure from parametric hallucination, retrieval failure, and contextual position effects. We then specified a benchmark protocol that isolates the phenomenon through evidence sufficiency checks, local-legibility probes, counterfactual explicitness, position controls, retrieval controls, and relation-type metadata.
+
+The contribution is methodological. Composition hallucination should be measurable, not merely anecdotal. Once measured, it can become an evaluation target for RAG, GraphRAG, structured retrieval, agentic workflows, and knowledge-compilation approaches. The broader lesson is simple: retrieved text is not yet operational knowledge. Knowledge requires relations. When those relations remain implicit, even a context that contains the right fragments may not be enough.
+
+% =================================================================
+\section*{Acknowledgments}
+% =================================================================
+
+The author thanks the CKF Research and CITAP AI Lab communities for discussions that shaped the terminology and benchmark framing. Any errors remain the author's responsibility.
+
+% =================================================================
+\section*{Availability Statement}
+% =================================================================
+
+This paper specifies a benchmark protocol but does not claim that a complete benchmark dataset or empirical evaluation has already been released. Future releases should include case files, representation variants, gold answers, annotator instructions, scoring scripts, and datasheets sufficient to reproduce all reported evaluations.
+
+% =================================================================
+\section*{Ethics Statement}
+% =================================================================
+
+Composition-sensitive benchmarks may include legal, clinical, financial, or policy-like examples. Such examples should be constructed or selected to avoid providing operational advice for real cases unless reviewed by qualified experts. Benchmark items should be treated as evaluation artifacts, not as professional guidance. When real documents are used, licenses, privacy constraints, and domain-specific risks must be respected.
+
+% =================================================================
+\begin{thebibliography}{99}
+% =================================================================
+
+\bibitem{asai2024selfrag}
+Asai, A., Wu, Z., Wang, Y., Sil, A., and Hajishirzi, H. (2024).
+Self-RAG: Learning to retrieve, generate, and critique through self-reflection.
+\emph{International Conference on Learning Representations (ICLR)}.
+
+\bibitem{bernerslee2001semantic}
+Berners-Lee, T., Hendler, J., and Lassila, O. (2001).
+The Semantic Web.
+\emph{Scientific American}, 284(5), 34--43.
+
+\bibitem{chen2023felm}
+Chen, S., Zhao, Y., Zhang, J., Chern, I-C., Gao, S., Liu, P., and He, J. (2023).
+FELM: Benchmarking factuality evaluation of large language models.
+\emph{Advances in Neural Information Processing Systems (NeurIPS)}.
+
+\bibitem{davis1993kr}
+Davis, R., Shrobe, H., and Szolovits, P. (1993).
+What is a knowledge representation?
+\emph{AI Magazine}, 14(1), 17--33.
+
+\bibitem{edge2024graphrag}
+Edge, D., Trinh, H., Cheng, N., Bradley, J., Chao, A., Mody, A., Truitt, S., and Larson, J. (2024).
+From local to global: A Graph RAG approach to query-focused summarization.
+\emph{arXiv preprint} arXiv:2404.16130.
+
+\bibitem{gebru2021datasheets}
+Gebru, T., Morgenstern, J., Vecchione, B., Vaughan, J. W., Wallach, H., Daum\'e III, H., and Crawford, K. (2021).
+Datasheets for datasets.
+\emph{Communications of the ACM}, 64(12), 86--92.
+
+\bibitem{huang2023hallucination}
+Huang, L., Yu, W., Ma, W., Zhong, W., Feng, Z., Wang, H., Chen, Q., Peng, W., Feng, X., Qin, B., and Liu, T. (2023).
+A survey on hallucination in large language models: Principles, taxonomy, challenges, and open questions.
+\emph{arXiv preprint} arXiv:2311.05232.
+
+\bibitem{ji2023survey}
+Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., Ishii, E., Bang, Y. J., Madotto, A., and Fung, P. (2023).
+Survey of hallucination in natural language generation.
+\emph{ACM Computing Surveys}, 55(12), 1--38.
+
+\bibitem{lewis2020rag}
+Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., K\"uttler, H., Lewis, M., Yih, W., Rockt\"aschel, T., Riedel, S., and Kiela, D. (2020).
+Retrieval-augmented generation for knowledge-intensive NLP tasks.
+\emph{Advances in Neural Information Processing Systems (NeurIPS)}, 33, 9459--9474.
+
+\bibitem{li2023halueval}
+Li, J., Cheng, X., Zhao, W. X., Nie, J.-Y., and Wen, J.-R. (2023).
+HaluEval: A large-scale hallucination evaluation benchmark for large language models.
+\emph{Proceedings of EMNLP}.
+
+\bibitem{lin2022truthfulqa}
+Lin, S., Hilton, J., and Evans, O. (2022).
+TruthfulQA: Measuring how models mimic human falsehoods.
+\emph{Proceedings of ACL}.
+
+\bibitem{liu2024lost}
+Liu, N. F., Lin, K., Hewitt, J., Paranjape, A., Bevilacqua, M., Petroni, F., and Liang, P. (2024).
+Lost in the middle: How language models use long contexts.
+\emph{Transactions of the Association for Computational Linguistics (TACL)}, 12, 157--173.
+
+\bibitem{maynez2020faithfulness}
+Maynez, J., Narayan, S., Bohnet, B., and McDonald, R. (2020).
+On faithfulness and factuality in abstractive summarization.
+\emph{Proceedings of ACL}.
+
+\bibitem{min2023factscore}
+Min, S., Krishna, K., Lyu, X., Lewis, M., Yih, W.-t., Koh, P. W., Iyyer, M., Zettlemoyer, L., and Hajishirzi, H. (2023).
+FActScore: Fine-grained atomic evaluation of factual precision in long-form text generation.
+\emph{Proceedings of EMNLP}.
+
+\bibitem{niu2024ragtruth}
+Niu, C., Wu, Y., Zhu, J., Xu, S., Shum, K., Zhong, R., Song, J., and Zhang, T. (2024).
+RAGTruth: A hallucination corpus for developing trustworthy retrieval-augmented language models.
+\emph{Proceedings of ACL}.
+
+\bibitem{tomazinho2026ckf}
+Tomazinho, P. (2026).
+Compiled Knowledge Format: Toward an intermediate representation for operational knowledge.
+\emph{CKF Research technical report}.
+
+\end{thebibliography}
+
+\appendix
+
+% =================================================================
+\section{Case Template}
+% =================================================================
+
+\subsection*{A.1 Metadata}
+
+\begin{verbatim}
+case_id:
+domain:
+relation_type:
+complexity_level:
+source_status: synthetic | real | adapted
+license:
+\end{verbatim}
+
+\subsection*{A.2 Raw Source}
+
+\begin{verbatim}
+[Insert raw prose document here.]
+\end{verbatim}
+
+\subsection*{A.3 Necessary Fragments}
+
+\begin{verbatim}
+fragment_1:
+fragment_2:
+fragment_3_optional:
+\end{verbatim}
+
+\subsection*{A.4 Query}
+
+\begin{verbatim}
+[Insert user query here.]
+\end{verbatim}
+
+\subsection*{A.5 Gold Answer}
+
+\begin{verbatim}
+[Insert complete gold answer.]
+\end{verbatim}
+
+\subsection*{A.6 Minimal Acceptable Answer}
+
+\begin{verbatim}
+[Insert minimal answer for strict binary scoring.]
+\end{verbatim}
+
+\subsection*{A.7 Local Probes}
+
+\begin{verbatim}
+probe_1:
+expected_answer_1:
+probe_2:
+expected_answer_2:
+\end{verbatim}
+
+\subsection*{A.8 Failure Labels}
+
+\begin{verbatim}
+composition_failure_examples:
+wrong_escalation_examples:
+refusal_examples:
+retrieval_failure_notes:
+\end{verbatim}
+
+% =================================================================
+\section{Recommended Prompt Skeleton}
+% =================================================================
+
+\begin{verbatim}
+You are answering using only the provided source material.
+First identify the applicable rule, exception, scope,
+and preconditions.
+Then answer the user's question.
+Cite the source fragments that support the answer.
+If the source material is insufficient, say so.
+\end{verbatim}
+
+% =================================================================
+\section{Reporting Checklist}
+% =================================================================
+
+A paper using this benchmark protocol should report:
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item number of cases and queries;
+    \item domain distribution;
+    \item relation-type distribution;
+    \item complexity-level distribution;
+    \item representation conditions used;
+    \item retrieval setting;
+    \item prompt templates;
+    \item model names and versions;
+    \item decoding settings;
+    \item number of repetitions;
+    \item judge method;
+    \item human agreement statistics;
+    \item primary and secondary metrics;
+    \item examples of each failure mode;
+    \item availability of code and data.
+\end{itemize}
+
+\end{document}
