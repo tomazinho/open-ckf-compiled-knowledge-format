@@ -1,0 +1,126 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "sequence_dailymed_ketorolac_oral_initial_duration",
+    "title": "Sequence Dailymed Ketorolac Oral Initial Duration",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "clinical",
+    "relation_type": "sequence",
+    "complexity_level": 2,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Ketorolac Tromethamine label",
+      "source_organization": "DailyMed / U.S. National Library of Medicine",
+      "source_url": "https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=40d145e6-13f7-41ac-e054-00144ff8d46c",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "Q1"
+      },
+      {
+        "id": "F2",
+        "description": "C1"
+      },
+      {
+        "id": "F3",
+        "description": "C2"
+      }
+    ],
+    "raw_representation_sha256": "5716042a8655aa4ddb3f9c7811801529817b3a312424bc86d7f5dac8be07ca03",
+    "annotated_representation_sha256": "6495f08a5773c965930d38a845848427fb6b68e5b122a386e7ee43eeb58cb451",
+    "compiled_representation_sha256": "e5e19447e156ae651d3116370a3e5e7e6bbc93d09cd8a8fdd3ef2ea036e000aa"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Ketorolac use note.\n\nSection A. Route sequence. Oral ketorolac is not used as the initial dose. It is used only as continuation treatment after IV or IM ketorolac when continuation is appropriate.\n\nSection B. Total duration. The combined duration of IV, IM, and oral ketorolac therapy in adults must not exceed five days.\n\nSection C. Concomitant contraindications. Concomitant use with probenecid or pentoxifylline is contraindicated."
+      },
+      {
+        "id": "annotated",
+        "text": "Ketorolac use note.\n\n<sequence id=\"Q1\">Section A. Route sequence. Oral ketorolac is not used as the initial dose. It is used only as continuation treatment after IV or IM ketorolac when continuation is appropriate.</sequence>\n\n<contraindication id=\"C1\" applies_to=\"Q1\" condition=\"combined duration > 5 days\">Section B. Total duration. The combined duration of IV, IM, and oral ketorolac therapy in adults must not exceed five days.</contraindication>\n\n<contraindication id=\"C2\" condition=\"concomitant probenecid or pentoxifylline\">Section C. Concomitant contraindications. Concomitant use with probenecid or pentoxifylline is contraindicated.</contraindication>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "sequence_rules:\n  - id: Q1\n    oral_ketorolac:\n      initial_dose_allowed: false\n      continuation_after: [IV_ketorolac, IM_ketorolac]\ncontraindications:\n  - id: C1\n    condition:\n      combined_duration_all_routes_days: '>5'\n    effect: therapy_not_allowed\n  - id: C2\n    condition:\n      concomitant_medication_in: [probenecid, pentoxifylline]\n    effect: contraindicated"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "sequence",
+        "description": "Adapted from a DailyMed ketorolac label. Clinical evaluation artifact only. Level-2 sequence: oral formulation is continuation, total duration limit applies across routes."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "An adult patient received IM ketorolac for four days and is now proposed to continue oral ketorolac for three more days. There is no probenecid or pentoxifylline use. Is the oral continuation allowed under the note?",
+        "expected_decision": "No. The continuation sequence is otherwise correct, but the combined duration would exceed five days.",
+        "rationale": "No. Oral ketorolac can be continuation after IM therapy, but the combined duration across IM and oral routes would be seven days, exceeding the five-day total duration limit."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "An adult patient received IM ketorolac for four days and is now proposed to continue oral ketorolac for three more days. There is no probenecid or pentoxifylline use. Is the oral continuation allowed under the note?",
+        "answer": "No. Oral ketorolac can be continuation after IM therapy, but the combined duration across IM and oral routes would be seven days, exceeding the five-day total duration limit."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "No. It is only continuation after IV or IM therapy."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "Five days."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "Probenecid and pentoxifylline."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes, because oral ketorolac is a different route and gets a new five-day clock.",
+        "Yes, because the patient already received IM ketorolac so the sequence requirement is satisfied."
+      ],
+      "wrong_escalation": [
+        "Never use oral ketorolac after IM therapy under any circumstances."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "Q1",
+        "C1",
+        "C2"
+      ],
+      "negative_control_query": "An adult patient received IM ketorolac for two days and is proposed to use oral ketorolac for two more days, with no contraindicated concomitant medicines. Does the duration rule block continuation?",
+      "negative_control_gold": "No. The combined duration would be four days, within the five-day limit, assuming all other conditions are met.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "30_sequence_dailymed_ketorolac_oral_initial_duration.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

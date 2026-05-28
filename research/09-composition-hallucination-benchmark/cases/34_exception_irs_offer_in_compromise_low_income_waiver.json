@@ -1,0 +1,66 @@
+{
+  "case_id": "exception_irs_offer_in_compromise_low_income_waiver",
+  "metadata": {
+    "domain": "regulatory",
+    "relation_type": "exception",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from IRS offer-in-compromise fee/payment guidance. Tax evaluation artifact only. Level-2 exception: low-income certification waives application fee and initial payment."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Offer in compromise FAQs",
+    "source_organization": "Internal Revenue Service",
+    "source_url": "https://www.irs.gov/businesses/small-businesses-self-employed/offer-in-compromise-faqs",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "IRS offer-in-compromise submission note.\n\nSection A. Standard submission payments. An offer in compromise normally requires an application fee and a required offer payment. For a lump-sum offer, the initial offer payment is twenty percent of the offer amount. For a periodic-payment offer, the taxpayer submits the first periodic payment and continues monthly payments while the offer is considered.\n\nSection B. Low-income certification exception. A taxpayer who qualifies for the low-income certification does not have to include the application fee or the initial offer payment with the submission.",
+    "annotated": "IRS offer-in-compromise submission note.\n\n<rule id=\"R1\">Section A. Standard submission payments. An offer in compromise normally requires an application fee and a required offer payment. For a lump-sum offer, the initial offer payment is twenty percent of the offer amount. For a periodic-payment offer, the taxpayer submits the first periodic payment and continues monthly payments while the offer is considered.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"low-income certification qualifies\">Section B. Low-income certification exception. A taxpayer who qualifies for the low-income certification does not have to include the application fee or the initial offer payment with the submission.</exception>",
+    "compiled": "rules:\n  - id: R1\n    normal_offer_submission_requires:\n      - application_fee\n      - required_offer_payment\n    lump_sum_initial_payment: 20_percent_of_offer_amount\n    periodic_initial_payment: first_periodic_payment\n    periodic_during_review: continue_monthly_payments\nexceptions:\n  - id: E1\n    overrides: R1\n    condition: qualifies_for_low_income_certification\n    waived_items: [application_fee, initial_offer_payment]"
+  },
+  "query": "A taxpayer qualifies for the low-income certification and submits a lump-sum offer in compromise. Must the taxpayer include the application fee and the 20% initial payment with the submission?",
+  "gold_answer": {
+    "full": "No. Those are normally required for a lump-sum offer, but the low-income certification exception waives both the application fee and the initial offer payment.",
+    "minimal": "No. Low-income certification waives the application fee and initial offer payment.",
+    "required_relations": [
+      "exception:E1 waives standard payment requirements R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What does a standard lump-sum offer normally require at submission?",
+      "expected_answer": "An application fee and an initial payment equal to 20% of the offer amount."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "What does the low-income certification change?",
+      "expected_answer": "It waives the application fee and initial offer payment."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, the taxpayer must include 20% because the offer is lump-sum.",
+      "No, low-income certification waives all future payments if the offer is accepted."
+    ],
+    "wrong_escalation": [
+      "The taxpayer must abandon the offer and request a payment plan."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1"
+    ],
+    "negative_control_query": "A taxpayer does not qualify for low-income certification and submits a lump-sum offer. Must they include the standard fee and 20% initial payment?",
+    "negative_control_gold": "Yes. Without the low-income exception, the standard lump-sum submission requirements apply.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

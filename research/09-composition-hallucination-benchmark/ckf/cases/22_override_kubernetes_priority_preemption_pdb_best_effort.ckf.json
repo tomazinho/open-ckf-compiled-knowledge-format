@@ -1,0 +1,126 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "override_kubernetes_priority_preemption_pdb_best_effort",
+    "title": "Override Kubernetes Priority Preemption Pdb Best Effort",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 3,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Pod Priority and Preemption; Disruptions",
+      "source_organization": "Kubernetes",
+      "source_url": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "R2"
+      },
+      {
+        "id": "F3",
+        "description": "O1"
+      }
+    ],
+    "raw_representation_sha256": "c4cc49ee2005b321a46a9087b7f76e99b5b726b467fec9b76927f61baa0911cb",
+    "annotated_representation_sha256": "fd769356d65c985b2817c088d674d732457a560e03da681000a706ec4b5ac982",
+    "compiled_representation_sha256": "651c456466bde4d3a6eefc04eeba62b7b1934de2fff6e2a45085fe7c59757dd1"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Kubernetes scheduling note.\n\nSection A. Priority scheduling. Pods may have priorities. When a pending Pod cannot be scheduled, the scheduler may try to make room by preempting lower-priority Pods.\n\nSection B. Disruption budgets. A PodDisruptionBudget expresses how many Pods of an application should remain available during disruptions. Operators should use PDBs to protect availability during planned voluntary disruptions.\n\nSection C. Preemption interaction. During scheduler preemption, Kubernetes attempts to choose victims in a way that respects PDBs when possible, but respecting a PDB is not guaranteed. If no feasible set of lower-priority victims satisfies both scheduling and PDB preferences, preemption can still select lower-priority Pods whose eviction violates the PDB."
+      },
+      {
+        "id": "annotated",
+        "text": "Kubernetes scheduling note.\n\n<rule id=\"R1\">Section A. Priority scheduling. Pods may have priorities. When a pending Pod cannot be scheduled, the scheduler may try to make room by preempting lower-priority Pods.</rule>\n\n<rule id=\"R2\">Section B. Disruption budgets. A PodDisruptionBudget expresses how many Pods of an application should remain available during disruptions. Operators should use PDBs to protect availability during planned voluntary disruptions.</rule>\n\n<override id=\"O1\" priority=\"higher_than_R2_for_scheduler_preemption\" applies_to=\"R1\">Section C. Preemption interaction. During scheduler preemption, Kubernetes attempts to choose victims in a way that respects PDBs when possible, but respecting a PDB is not guaranteed. If no feasible set of lower-priority victims satisfies both scheduling and PDB preferences, preemption can still select lower-priority Pods whose eviction violates the PDB.</override>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    name: scheduler_preemption\n    trigger: high_priority_pod_pending_unschedulable\n    action: may_preempt_lower_priority_pods\n  - id: R2\n    name: pod_disruption_budget\n    purpose: preserve_application_availability\n    normally_applies_to: planned_voluntary_disruptions\noverrides:\n  - id: O1\n    relation: preemption_attempts_to_respect_pdb_but_not_guaranteed\n    affects: [R1, R2]\n    trigger:\n      no_feasible_victim_set_satisfies_scheduling_and_pdb_preferences: true\n    result: lower_priority_pod_may_be_preempted_even_if_pdb_is_violated"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "override",
+        "description": "Adapted from Kubernetes docs on priority/preemption and disruptions. Complexity 3: PDB guides voluntary disruption but scheduler preemption may evict lower-priority Pods when a higher-priority Pod cannot schedule."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A high-priority Pod is pending because the cluster has no room. The only lower-priority victim candidate is protected by a PDB that would be violated if that Pod were evicted. The scheduler has no other feasible victim set. Does the PDB absolutely prevent scheduler preemption?",
+        "expected_decision": "No. In scheduler preemption, Kubernetes tries to respect PDBs but may violate one if no feasible alternative exists.",
+        "rationale": "No. The PDB should be respected when possible, but in scheduler preemption it is a best-effort preference, not an absolute bar. If no feasible victim set both schedules the high-priority Pod and preserves the PDB, the lower-priority Pod may still be preempted."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A high-priority Pod is pending because the cluster has no room. The only lower-priority victim candidate is protected by a PDB that would be violated if that Pod were evicted. The scheduler has no other feasible victim set. Does the PDB absolutely prevent scheduler preemption?",
+        "answer": "No. The PDB should be respected when possible, but in scheduler preemption it is a best-effort preference, not an absolute bar. If no feasible victim set both schedules the high-priority Pod and preserves the PDB, the lower-priority Pod may still be preempted."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "It may preempt lower-priority Pods to make scheduling possible."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "It expresses desired availability during disruptions."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "No. Kubernetes attempts to respect PDBs when possible, but it is not guaranteed."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "The PDB absolutely blocks preemption, so the high-priority Pod must remain pending.",
+        "The high-priority Pod can preempt any Pod without considering the PDB at all."
+      ],
+      "wrong_escalation": [
+        "Delete the PDB before scheduling the high-priority Pod."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "R2",
+        "O1"
+      ],
+      "negative_control_query": "A high-priority Pod is pending and there are two lower-priority victim sets; one would respect the PDB and the other would violate it. Which set should be preferred?",
+      "negative_control_gold": "The victim set that respects the PDB should be preferred when it is feasible.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "22_override_kubernetes_priority_preemption_pdb_best_effort.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

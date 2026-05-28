@@ -1,0 +1,116 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "override_aws_s3_lifecycle_same_day_precedence",
+    "title": "Override Aws S3 Lifecycle Same Day Precedence",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 2,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Amazon S3 Lifecycle configuration examples",
+      "source_organization": "Amazon Web Services",
+      "source_url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-configuration-examples.html",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "O1"
+      }
+    ],
+    "raw_representation_sha256": "ed997e81b57e91681df8817e5103985c20c43d21494adb60d14d38cd4086cf7a",
+    "annotated_representation_sha256": "1be3f94b4446f9fee0abcbd46da5f6b54a716f18ce6a5f88589fab2ef83e7f6f",
+    "compiled_representation_sha256": "3a85e547fe0acb09de62729694de9b40e05fbecb34df259f6a9712a4ead2aaa2"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "S3 lifecycle note.\n\nSection A. Lifecycle actions. A bucket can have multiple lifecycle rules that make an object eligible for actions such as transition to another storage class, expiration, or creation of a delete marker.\n\nSection B. Same-day precedence. If multiple lifecycle rules make the same object eligible for more than one action on the same day, S3 follows precedence rules: permanent deletion takes precedence over transition, and transition takes precedence over creating a delete marker."
+      },
+      {
+        "id": "annotated",
+        "text": "S3 lifecycle note.\n\n<rule id=\"R1\">Section A. Lifecycle actions. A bucket can have multiple lifecycle rules that make an object eligible for actions such as transition to another storage class, expiration, or creation of a delete marker.</rule>\n\n<override id=\"O1\" applies_to=\"R1\" condition=\"same object eligible for multiple lifecycle actions on same day\">Section B. Same-day precedence. If multiple lifecycle rules make the same object eligible for more than one action on the same day, S3 follows precedence rules: permanent deletion takes precedence over transition, and transition takes precedence over creating a delete marker.</override>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    lifecycle_actions: [transition, expiration, create_delete_marker, permanent_deletion]\noverrides:\n  - id: O1\n    trigger: same_object_same_day_multiple_actions\n    precedence_order:\n      - permanent_deletion\n      - transition\n      - create_delete_marker"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "override",
+        "description": "Adapted from AWS S3 Lifecycle precedence rules. Level-2 override: same-day lifecycle actions have fixed precedence."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "An S3 object becomes eligible today for both permanent deletion and transition to another storage class under two lifecycle rules. Which lifecycle action takes precedence?",
+        "expected_decision": "Permanent deletion takes precedence over transition.",
+        "rationale": "Permanent deletion takes precedence. The general availability of transition does not control when the same object is also eligible for permanent deletion on the same day."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "An S3 object becomes eligible today for both permanent deletion and transition to another storage class under two lifecycle rules. Which lifecycle action takes precedence?",
+        "answer": "Permanent deletion takes precedence. The general availability of transition does not control when the same object is also eligible for permanent deletion on the same day."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "Actions such as transition, expiration, delete marker creation, or permanent deletion."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "Permanent deletion takes precedence over transition."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Transition it first because lifecycle transitions are configured for the object.",
+        "Create a delete marker because expiration is one of the rules."
+      ],
+      "wrong_escalation": [
+        "Disable all lifecycle rules to avoid conflict."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "O1"
+      ],
+      "negative_control_query": "An S3 object becomes eligible today for transition and creation of a delete marker, but not permanent deletion. Which action takes precedence?",
+      "negative_control_gold": "Transition takes precedence over creation of a delete marker.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "26_override_aws_s3_lifecycle_same_day_precedence.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

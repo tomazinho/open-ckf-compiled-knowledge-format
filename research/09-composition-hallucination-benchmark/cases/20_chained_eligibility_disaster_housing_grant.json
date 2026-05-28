@@ -1,0 +1,75 @@
+{
+  "case_id": "chained_eligibility_disaster_housing_grant",
+  "metadata": {
+    "domain": "eligibility",
+    "relation_type": "precondition",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic benefits/grants case. Level-3 chained scope, exception, temporal dependency, and preconditions."
+  },
+  "representations": {
+    "raw": "Emergency Housing Stabilization Grant Manual.\n\nSection 1. Basic Eligibility. Households may receive an Emergency Housing Stabilization Grant of up to $3,000 when their primary residence is in the Blue River flood zone and the household was displaced by the declared flood event. Both homeowners and renters may apply.\n\nSection 2. Occupancy Documentation. Renters ordinarily must provide a signed lease showing that the flooded address was their primary residence on the date of the flood. A renter who cannot produce a signed lease may use the alternate-occupancy path if they provide both a utility bill for the flooded address and a school, employment, or clinic record showing the same address.\n\nSection 3. Inspection Precondition. No grant may be approved until a municipal damage inspection has been completed and marked eligible in the grant portal. A pending inspection, a scheduled inspection, or a private contractor estimate does not satisfy this precondition.\n\nSection 5. Photo Evidence Cutover. Applications submitted before 15 September 2026 do not require applicant-supplied photo evidence. For applications submitted on or after 15 September 2026, the applicant must upload at least two photos of flood damage before approval. The photo requirement is based on the application submission date, not on the flood date or inspection date.",
+    "annotated": "Emergency Housing Stabilization Grant Manual.\n\n<rule id=\"R1\">Section 1. Basic Eligibility. Households may receive an Emergency Housing Stabilization Grant of up to $3,000 when their primary residence is in the Blue River flood zone and the household was displaced by the declared flood event. Both homeowners and renters may apply.</rule>\n\n<exception id=\"E1\" overrides=\"standard lease documentation\" condition=\"renter lacks signed lease but has alternate occupancy documents\">Section 2. Occupancy Documentation. Renters ordinarily must provide a signed lease showing that the flooded address was their primary residence on the date of the flood. A renter who cannot produce a signed lease may use the alternate-occupancy path if they provide both a utility bill for the flooded address and a school, employment, or clinic record showing the same address.</exception>\n\n<precondition id=\"P1\" required_for=\"grant approval\" condition=\"municipal damage inspection completed and marked eligible\">Section 3. Inspection Precondition. No grant may be approved until a municipal damage inspection has been completed and marked eligible in the grant portal. A pending inspection, a scheduled inspection, or a private contractor estimate does not satisfy this precondition.</precondition>\n\n<temporal_dependency id=\"T1\" governs=\"photo evidence requirement\" cutover_date=\"2026-09-15\" anchor=\"application_submission_date\">Section 5. Photo Evidence Cutover. Applications submitted before 15 September 2026 do not require applicant-supplied photo evidence. For applications submitted on or after 15 September 2026, the applicant must upload at least two photos of flood damage before approval. The photo requirement is based on the application submission date, not on the flood date or inspection date.</temporal_dependency>",
+    "compiled": "rules:\n  - id: R1\n    name: emergency_housing_stabilization_grant\n    max_grant_usd: 3000\n    eligible_when:\n      primary_residence_in: Blue River flood zone\n      displaced_by_declared_flood_event: true\n      applicant_household_type_in: [homeowner, renter]\nexceptions:\n  - id: E1\n    name: alternate_occupancy_path_for_renters\n    overrides: standard_signed_lease_requirement\n    triggers_when:\n      applicant_type: renter\n      signed_lease_available: false\n    requires:\n      utility_bill_for_flooded_address: true\n      one_record_showing_same_address_in: [school, employment, clinic]\npreconditions:\n  - id: P1\n    required_for: grant_approval\n    name: eligible_municipal_damage_inspection\n    satisfies_when:\n      municipal_damage_inspection_status: completed_and_marked_eligible_in_portal\n    does_not_satisfy_when:\n      inspection_status_in: [pending, scheduled]\n      evidence_type: private_contractor_estimate\ntemporal_dependencies:\n  - id: T1\n    governs: applicant_photo_evidence_requirement\n    anchor: application_submission_date\n    before: 2026-09-15\n    photos_required: false\n    on_or_after: 2026-09-15\n    photos_required: true\n    minimum_photos: 2\n    flood_date_irrelevant: true\n    inspection_date_irrelevant: true"
+  },
+  "query": "A renter displaced from a primary residence in the Blue River flood zone applies on 20 September 2026. She has no signed lease, but she uploads a utility bill for the flooded address and an employment record showing the same address. The municipal inspection was completed and marked eligible. She has not uploaded any flood-damage photos. Can the grant be approved now?",
+  "gold_answer": {
+    "full": "No, not yet. The household satisfies basic eligibility, and the missing lease can be handled through the alternate-occupancy path because the renter provided both a utility bill and an employment record showing the flooded address. The inspection precondition is also satisfied because the municipal inspection is completed and marked eligible. However, the application was submitted on 20 September 2026, after the 15 September cutover, so at least two flood-damage photos are required before approval. Because no photos were uploaded, the grant cannot be approved now.",
+    "minimal": "No. Basic eligibility, alternate occupancy, and inspection are satisfied, but the post-15 September photo requirement is unmet.",
+    "required_relations": [
+      "E1 substitutes alternate occupancy documentation for a signed lease when both required documents are present",
+      "P1 must be satisfied before approval and is satisfied by completed eligible municipal inspection",
+      "T1 selects the photo requirement based on application submission date",
+      "Post-cutover photo requirement blocks approval when no photos are uploaded"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Who may receive the Emergency Housing Stabilization Grant under Section 1?",
+      "expected_answer": "Households displaced by the declared flood whose primary residence is in the Blue River flood zone; both homeowners and renters may apply."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "What alternate documents can a renter use if they cannot produce a signed lease?",
+      "expected_answer": "Both a utility bill for the flooded address and a school, employment, or clinic record showing the same address."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "What inspection status is required before approval?",
+      "expected_answer": "A municipal damage inspection must be completed and marked eligible in the grant portal."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Which date determines whether applicant-supplied photos are required?",
+      "expected_answer": "The application submission date determines the photo requirement."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes. The renter meets basic eligibility, used the alternate-occupancy path, and has an eligible inspection.",
+      "Yes. Photos are not required because the flood and inspection occurred before 15 September 2026."
+    ],
+    "wrong_escalation": [
+      "The renter is categorically ineligible without a signed lease.",
+      "The grant must be approved by a federal disaster court before any payment can occur."
+    ],
+    "refusal": [
+      "The manual does not say whether the photo rule uses application date or flood date."
+    ],
+    "retrieval_failure_note": "If Section 5 is absent, omitting the photo requirement is not composition-evaluable. If Section 2 is absent, evaluating the lease exception is incomplete."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1",
+      "P1",
+      "T1"
+    ],
+    "negative_control_query": "A renter with the same eligibility facts submits on 10 September 2026, uses the alternate-occupancy path, and has a completed eligible municipal inspection but no photos. Can the grant be approved now?",
+    "negative_control_gold": "Yes, assuming all stated documents are valid. The application was submitted before 15 September 2026, so applicant-supplied photo evidence is not required.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

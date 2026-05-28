@@ -1,0 +1,76 @@
+{
+  "case_id": "precondition_university_student_visa_leave_completion",
+  "metadata": {
+    "domain": "education",
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a universidade estudante-visa absence page. Immigration/institutional política evaluation artifact only. Level-2 pré-condição: days alone are insufficient; degree completion within visa period deve also hold.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Absence requests - Student Visa holders",
+    "source_organization": "University of York",
+    "source_url": "https://www.york.ac.uk/students/studying/student-visa/absence-requests/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Student visa absence note.\n\nSeção A. Short formal leave. A Student Visa holder pode take a formal Leave of Absence of up to sixty days without visa impact.\n\nSeção B. Completion condition. The no-impact treatment for a formal Leave of Absence depends on the estudante still being able to complete the degree within the current period of Student Visa permission.\n\nSeção C. Longer or incompatible absence. If the absence is longer than the permitido period or prevents completion within current permission, the estudante não deve treat it as a simple no-impact leave under this note.",
+    "annotated": "Student visa absence note.\n\n<rule id=\"R1\">Seção A. Short formal leave. A Student Visa holder pode take a formal Leave of Absence of up to sixty days without visa impact.</rule>\n\n<precondition id=\"P1\" applies_to=\"R1\">Seção B. Completion condition. The no-impact treatment for a formal Leave of Absence depends on the estudante still being able to complete the degree within the current period of Student Visa permission.</precondition>\n\n<contraindication id=\"C1\" blocks=\"R1\" condition=\"leave exceeds 60 days or prevents completion within current permission\">Seção C. Longer or incompatible absence. If the absence is longer than the permitido period or prevents completion within current permission, the estudante não deve treat it as a simple no-impact leave under this note.</contraindication>",
+    "compiled": "regras:\n  - id: R1\n    status: Student_Visa_holder\n    formal_leave_days_max: 60\n    effect: no_visa_impact\npré-condiçãos:\n  - id: P1\n    applies_to: R1\n    exige: degree_can_be_completed_within_current_visa_permission\ncontraindicaçãos:\n  - id: C1\n    blocks: R1\n    triggers_when_any:\n      - leave_days: '>60'\n      - cannot_complete_degree_within_current_permission: true"
+  },
+  "query": "A Student Visa holder requests a formal 45-day Leave of Absence. However, the department says the estudante cannot complete the degree within the current visa permission if the leave is taken. Deve-se the leave be treated as no-impact merely porque it is under 60 days?",
+  "gold_answer": {
+    "full": "No. The leave duration is within sixty days, but the no-impact treatment also depends on being able to complete the degree within the current visa permission. That pré-condição is not satisfied.",
+    "minimal": "No. Under 60 days is not enough; completion within current visa permission is also exigido.",
+    "required_relations": [
+      "pré-condição:P1 deve be satisfied in addition to duration regra R1",
+      "contraindicação:C1 blocks no-impact treatment when completion condition fails"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que is the maximum short formal leave duration in this note?",
+      "expected_answer": "Up to sixty days."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Qual/O que additional condition is exigido for no visa impact?",
+      "expected_answer": "The estudante deve be able to complete the degree within the current visa permission."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "Qual/O que blocks treating the leave as simple no-impact?",
+      "expected_answer": "A leave over sixty days or a leave that prevents completion within current permission."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, porque 45 days is less than 60 days.",
+      "No, porque any leave by a Student Visa holder affects the visa regardless of duration."
+    ],
+    "wrong_escalation": [
+      "Assume the visa deve be cancelled immediately without checking institutional process."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1",
+      "C1"
+    ],
+    "negative_control_query": "A Student Visa holder requests a formal 45-day leave and can still complete the degree within current visa permission. É the completion pré-condição satisfied?",
+    "negative_control_gold": "Yes. The leave is within sixty days and the completion condition is satisfied under this note.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

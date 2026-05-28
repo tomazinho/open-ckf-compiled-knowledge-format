@@ -1,0 +1,73 @@
+{
+  "case_id": "exception_of_exception_software_procurement",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "exception_of_exception",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Three-layer composition. R1 sets the general rule. E1 carves out an exception that imposes a stricter requirement. E1_of_E1 carves out an exception WITHIN E1 that returns to the general rule under specific conditions. The most pedagogically interesting failure mode is the 'middle-layer freeze': the model recognizes that the data-processing condition triggers E1 but fails to check whether the catalog status triggers E1_of_E1. Two-step composition is correct; the third step is the trap."
+  },
+  "representations": {
+    "raw": "Procurement Policy — Software Acquisition.\n\nDepartment managers may approve software purchases for their team up to an annual total of $10,000 per vendor, provided the spend is within the team's approved budget for the fiscal year. Standard approval is registered in the Procurement Portal with a brief justification and the vendor invoice. Approval is reflected in NetSuite within one business day.\n\nSoftware that processes customer-identifiable data — including personally identifiable information, payment data, and authentication credentials — requires independent review and written approval from the Information Security team (the CISO's office), regardless of the purchase amount and regardless of whether the purchase falls within the manager's standard authority. The Security review assesses vendor security posture, data-flow exposure, sub-processor disclosures, and compliance with the company's data-processing requirements. Purchases requiring Security review may take up to fifteen business days for completion.\n\nSoftware listed in the Pre-Vetted Vendor Catalog does not require Security review on a per-purchase basis, even when the software processes customer-identifiable data. Inclusion in the Pre-Vetted Vendor Catalog requires a one-time Security review by the CISO's office, after which the vendor is added to the catalog and is exempt from per-purchase Security review for a renewable two-year period. The catalog is maintained by Procurement and is accessible to all managers in the Procurement Portal under 'Approved Vendors'. Managers must still register the purchase normally in the Procurement Portal; the catalog exemption removes the Security-review requirement but not the registration requirement. The catalog exemption is invalidated if the vendor's catalog entry has expired or has been revoked by the CISO's office, in which case standard Security review applies for any new purchase.",
+    "annotated": "Procurement Policy — Software Acquisition.\n\n<rule id=\"R1\">Department managers may approve software purchases for their team up to an annual total of $10,000 per vendor, provided the spend is within the team's approved budget for the fiscal year. Standard approval is registered in the Procurement Portal with a brief justification and the vendor invoice. Approval is reflected in NetSuite within one business day.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"software processes customer-identifiable data\">Software that processes customer-identifiable data — including personally identifiable information, payment data, and authentication credentials — requires independent review and written approval from the Information Security team (the CISO's office), regardless of the purchase amount and regardless of whether the purchase falls within the manager's standard authority. The Security review assesses vendor security posture, data-flow exposure, sub-processor disclosures, and compliance with the company's data-processing requirements. Purchases requiring Security review may take up to fifteen business days for completion.</exception>\n\n<exception_of_exception id=\"E1_of_E1\" overrides=\"E1\" condition=\"vendor is currently listed in Pre-Vetted Vendor Catalog with a valid, non-revoked entry\" returns_to=\"R1\">Software listed in the Pre-Vetted Vendor Catalog does not require Security review on a per-purchase basis, even when the software processes customer-identifiable data. Inclusion in the Pre-Vetted Vendor Catalog requires a one-time Security review by the CISO's office, after which the vendor is added to the catalog and is exempt from per-purchase Security review for a renewable two-year period. The catalog is maintained by Procurement and is accessible to all managers in the Procurement Portal under 'Approved Vendors'. Managers must still register the purchase normally in the Procurement Portal; the catalog exemption removes the Security-review requirement but not the registration requirement. The catalog exemption is invalidated if the vendor's catalog entry has expired or has been revoked by the CISO's office, in which case standard Security review applies for any new purchase.</exception_of_exception>",
+    "compiled": "rules:\n  - id: R1\n    name: manager_standard_software_purchase_authority\n    annual_cap_usd_per_vendor: 10000\n    must_be_within: team_fy_budget\n    registration:\n      channel: procurement_portal\n      required_artifacts: [brief_justification, vendor_invoice]\n      reflected_in_netsuite_within_business_days: 1\n\nexceptions:\n  - id: E1\n    overrides: R1\n    triggers_when:\n      software_processes_data_in:\n        - personally_identifiable_information\n        - payment_data\n        - authentication_credentials\n    additional_requirement:\n      action: security_review\n      performed_by: ciso_office\n      assessment_covers:\n        - vendor_security_posture\n        - data_flow_exposure\n        - sub_processor_disclosures\n        - data_processing_compliance\n    applies_regardless_of:\n      purchase_amount: true\n      within_manager_standard_authority: true\n    expected_duration_business_days: 15\n\nexception_of_exceptions:\n  - id: E1_of_E1\n    overrides: E1\n    returns_to: R1\n    triggers_when:\n      vendor_in_pre_vetted_catalog: true\n      catalog_entry_status: valid_not_revoked_not_expired\n    catalog:\n      maintained_by: procurement\n      visible_in: procurement_portal_approved_vendors\n      entry_validity_period_years: 2\n      entry_validity_renewable: true\n    effect:\n      removes_requirement: security_review_per_purchase\n      retains_requirement: portal_registration\n    invalidation_conditions:\n      - catalog_entry_expired\n      - catalog_entry_revoked_by_ciso\n    on_invalidation: revert_to_E1"
+  },
+  "query": "I want to purchase 15 annual licenses of Lumen Analytics for my team for a total of $4,200. Lumen processes customer event data that includes user identifiers and IP addresses (which fall under personally identifiable information). I checked the Procurement Portal under 'Approved Vendors' and Lumen has been in the Pre-Vetted Vendor Catalog since March; the entry is current and shows no revocation flag. The purchase is within my team's FY budget. Can I approve this purchase as the manager via the Procurement Portal, or do I need to send it for Security review first?",
+  "gold_answer": {
+    "full": "You can approve this purchase as the manager via the Procurement Portal. No Security review is required. The reasoning runs through all three layers of the policy: (1) The $4,200 amount is within your $10,000 standard authority and within your team's FY budget, satisfying R1. (2) Lumen processes customer-identifiable data (user identifiers, IP addresses constituting PII), which would normally trigger E1 and require CISO Security review regardless of amount. (3) However, Lumen is currently listed in the Pre-Vetted Vendor Catalog with a valid, non-revoked entry — which triggers E1_of_E1 and overrides E1, returning the purchase to the standard R1 path. You still need to register the purchase in the Procurement Portal with a brief justification and the vendor invoice (the catalog exemption removes the Security-review requirement, not the registration requirement). The approval will be reflected in NetSuite within one business day.",
+    "minimal": "You can approve as manager via the Procurement Portal. No Security review needed because Lumen has a valid Pre-Vetted Vendor Catalog entry, which overrides the data-processing exception. Register normally with justification and invoice.",
+    "required_relations": ["R1 standard authority applies (within amount and budget)", "E1 normally triggered by PII processing", "E1_of_E1 overrides E1 when vendor has valid catalog entry", "result returns to R1 path"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What is the annual per-vendor cap on manager-approved software purchases under standard authority?",
+      "expected_answer": "$10,000 per vendor per year, provided the spend is within the team's approved FY budget."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "What kinds of data, when processed by a software vendor, trigger the requirement for Information Security review?",
+      "expected_answer": "Personally identifiable information, payment data, and authentication credentials."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Does the Security-review requirement depend on the purchase amount or on whether the purchase is within the manager's standard authority?",
+      "expected_answer": "No — it applies regardless of amount and regardless of whether the purchase is within the manager's standard authority."
+    },
+    {
+      "fragment_id": "E1_of_E1",
+      "probe": "What happens when a vendor that processes customer-identifiable data is listed in the Pre-Vetted Vendor Catalog?",
+      "expected_answer": "The per-purchase Security review is not required; the manager can approve via the Procurement Portal under standard authority, provided portal registration is still completed."
+    },
+    {
+      "fragment_id": "E1_of_E1",
+      "probe": "Under what conditions is the catalog exemption invalidated?",
+      "expected_answer": "When the catalog entry has expired or has been revoked by the CISO's office. In those cases, standard Security review applies for any new purchase."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "No — Lumen processes user identifiers and IP addresses, which constitute personally identifiable information. Per the policy, software that processes customer-identifiable data requires CISO Security review regardless of amount. Submit the request to the Information Security team and expect up to fifteen business days for completion.",
+      "Send this to the CISO's office for review. The fact that the purchase is small ($4,200) and within your standard authority does not waive the Security review requirement when PII is involved.",
+      "You'll need to wait for Security review. The data-processing exception is triggered, and the amount is irrelevant to that requirement.",
+      "Yes, approve via Portal — the amount is well under your $10k cap. Just register the invoice as usual."
+    ],
+    "wrong_escalation": [
+      "This requires not only Security review but also Legal review and CFO sign-off, because the software processes PII and is a multi-license commitment.",
+      "Send to the Data Protection Officer for a formal DPIA before any other action."
+    ],
+    "refusal": [
+      "I cannot advise on this purchase without reviewing Lumen's full data-processing agreement.",
+      "Please consult your Procurement team directly — this is too specific for me to answer."
+    ],
+    "retrieval_failure_note": "If E1_of_E1 is missing from context, the only correct conclusion from R1 + E1 alone is to require Security review. Such a result must be scored as retrieval failure, not composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (manager standard authority)", "E1 (PII/payment/auth data triggers Security review)", "E1_of_E1 (catalog exemption returns to R1)"],
+    "negative_control_query": "I want to purchase a one-year license of Helix Auth for my team for $3,800. Helix Auth handles user authentication credentials (passwords and session tokens) as its core function. I checked the Procurement Portal under 'Approved Vendors' and Helix Auth is not listed in the Pre-Vetted Vendor Catalog. The purchase is within my team's FY budget. Can I approve this purchase as the manager via the Procurement Portal?",
+    "negative_control_gold": "No — you cannot approve this directly as manager. Although the $3,800 amount is well within your $10,000 standard authority and within your team's FY budget, Helix Auth processes authentication credentials, which triggers E1 and requires written approval from the CISO's Security team regardless of amount. Helix Auth is not in the Pre-Vetted Vendor Catalog, so the E1_of_E1 exemption does not apply. Submit the request for Security review and expect up to fifteen business days for completion before purchase.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

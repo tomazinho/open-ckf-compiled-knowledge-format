@@ -1,0 +1,116 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "override_kubernetes_statefulset_ondelete_update",
+    "title": "Override Kubernetes Statefulset Ondelete Update",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 1,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "StatefulSets",
+      "source_organization": "Kubernetes",
+      "source_url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "O1"
+      }
+    ],
+    "raw_representation_sha256": "7accd716ef60a6050dcd9e93d18e33412576e5af72f643d5db29e28bc43826ea",
+    "annotated_representation_sha256": "4fa8f27ad9d14aec56c94719fde1645ac862ee5c8594fc66ee6a43e4933a70e7",
+    "compiled_representation_sha256": "090c07ba2d711272ee5edfc9ff0b939f36c5d8f8bdba31f802895116d2208879"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "StatefulSet update note.\n\nSection A. RollingUpdate. The default StatefulSet update strategy performs automated rolling updates when the Pod template changes.\n\nSection B. OnDelete. When a StatefulSet uses the OnDelete update strategy, the controller does not automatically update existing Pods after a template change. Users must manually delete Pods for the controller to recreate them from the updated template."
+      },
+      {
+        "id": "annotated",
+        "text": "StatefulSet update note.\n\n<rule id=\"R1\">Section A. RollingUpdate. The default StatefulSet update strategy performs automated rolling updates when the Pod template changes.</rule>\n\n<override id=\"O1\" overrides=\"R1\" condition=\"updateStrategy.type == OnDelete\">Section B. OnDelete. When a StatefulSet uses the OnDelete update strategy, the controller does not automatically update existing Pods after a template change. Users must manually delete Pods for the controller to recreate them from the updated template.</override>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    controller: StatefulSet\n    default_update_strategy: RollingUpdate\n    effect: automatically_updates_pods_after_template_change\noverrides:\n  - id: O1\n    condition:\n      updateStrategy.type: OnDelete\n    overrides: R1\n    effect: no_automatic_update_of_existing_pods\n    required_user_action: manually_delete_pods_to_recreate_from_new_template"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "override",
+        "description": "Adapted from Kubernetes StatefulSet docs. Level-1 override: OnDelete update strategy overrides automatic RollingUpdate behavior."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A StatefulSet template was changed, but the StatefulSet has updateStrategy.type set to OnDelete. Will the controller automatically roll existing Pods to the new template?",
+        "expected_decision": "No. OnDelete prevents automatic update of existing StatefulSet Pods after a template change.",
+        "rationale": "No. Although RollingUpdate is the default automated behavior, the OnDelete strategy overrides it. Existing Pods will not be automatically updated; they must be manually deleted for the controller to recreate them using the new template."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A StatefulSet template was changed, but the StatefulSet has updateStrategy.type set to OnDelete. Will the controller automatically roll existing Pods to the new template?",
+        "answer": "No. Although RollingUpdate is the default automated behavior, the OnDelete strategy overrides it. Existing Pods will not be automatically updated; they must be manually deleted for the controller to recreate them using the new template."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "It automatically performs rolling updates when the StatefulSet Pod template changes."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "Existing Pods are not automatically updated; manual deletion is required for recreation from the new template."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes, StatefulSets automatically roll updates after any template change.",
+        "The Pods will update only after the next scheduled restart, without manual deletion."
+      ],
+      "wrong_escalation": [
+        "Delete the whole StatefulSet object immediately."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "O1"
+      ],
+      "negative_control_query": "A StatefulSet uses the default RollingUpdate strategy and its Pod template changes. Will the controller perform an automated rolling update?",
+      "negative_control_gold": "Yes. With the default RollingUpdate strategy, the controller performs automated rolling updates.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "24_override_kubernetes_statefulset_ondelete_update.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

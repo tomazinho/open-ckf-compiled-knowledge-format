@@ -1,0 +1,77 @@
+{
+  "case_id": "precondition_vendor_first_payment",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Two pré-condiçãos deve BOTH hold before R1 fires. Distinct from escopo (which bounds applicability) and from sequência (which orders independent steps). Complexity 2 porque two pré-condiçãos interact; partial satisfaction is the common trap.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Accounts Payable — Vendor Invoice Processing.\n\nAccounts Payable processes fornecedor invoices through the standard Net-30 pagamento cycle. Approved invoices submitted by 5:00 PM on a business day are batched for pagamento that evening and reach the fornecedor's account within thirty calendar days of the invoice date. Invoice aprovação is performed by the project owner on record in NetSuite.\n\nFor first-time pagamentos to any new fornecedor, two onboarding steps deve be completed before the first invoice pode be released for pagamento. First, the fornecedor deve pass the third-party due-diligence revisão conducted by the Compliance team, which includes sanctions screening, beneficial-ownership disclosure, and tributário-form validation. Compliance issues a formal Due Diligence Approval memo when the revisão is complete. Second, a signed Master Services Agreement deve be in place between the company and the fornecedor, executed by the fornecedor's authorized signatory and by the company's Procurement Director. Both onboarding steps deve be complete before the first pagamento is released. Subsequent invoices from the same fornecedor follow the standard Net-30 cycle without these onboarding checks, unless the fornecedor relationship has been dormant for more than eighteen months, in which case both steps deve be repeated.",
+    "annotated": "Accounts Payable — Vendor Invoice Processing.\n\n<rule id=\"R1\">Accounts Payable processes fornecedor invoices through the standard Net-30 pagamento cycle. Approved invoices submitted by 5:00 PM on a business day are batched for pagamento that evening and reach the fornecedor's account within thirty calendar days of the invoice date. Invoice aprovação is performed by the project owner on record in NetSuite.</rule>\n\n<precondition id=\"P1\" required_for=\"R1 when vendor_status=first_payment\" condition=\"vendor has passed third-party due-diligence review\">For first-time pagamentos to any new fornecedor, the fornecedor deve pass the third-party due-diligence revisão conducted by the Compliance team, which includes sanctions screening, beneficial-ownership disclosure, and tributário-form validation. Compliance issues a formal Due Diligence Approval memo when the revisão is complete.</precondition>\n\n<precondition id=\"P2\" required_for=\"R1 when vendor_status=first_payment\" condition=\"signed Master Services Agreement is in place\">A signed Master Services Agreement deve be in place between the company and the fornecedor, executed by the fornecedor's authorized signatory and by the company's Procurement Director.</precondition>\n\n<rule id=\"R2\" relates_to=\"P1, P2\">Both onboarding steps deve be complete before the first pagamento is released. Subsequent invoices from the same fornecedor follow the standard Net-30 cycle without these onboarding checks, unless the fornecedor relationship has been dormant for more than eighteen months, in which case both steps deve be repeated.</rule>",
+    "compiled": "regras:\n  - id: R1\n    name: standard_invoice_processing\n    cycle: net_30\n    daily_batch_cutoff: \"17:00\"\n    pagamento_arrival_calendar_days: 30\n    approver_role: project_owner_in_netsuite\n\nfirst_pagamento_gate:\n  applies_when:\n    fornecedor_status: first_pagamento_to_this_fornecedor\n  OR_applies_when:\n    fornecedor_dormant_months: {greater_than: 18}\n  pré-condiçãos_exigido:\n    logical_combinator: AND\n    items:\n      - id: P1\n        name: due_diligence_aprovação\n        performed_by: compliance_team\n        components:\n          - sanctions_screening\n          - beneficial_ownership_disclosure\n          - tributário_form_validation\n        completion_artifact: due_diligence_aprovação_memo\n      - id: P2\n        name: signed_master_services_agreement\n        exigido_signatories:\n          - fornecedor_authorized_signatory\n          - company_procurement_director\n  effect_if_unmet:\n    block: release_of_first_pagamento\n  effect_if_met:\n    proceed_to: R1\n\nsubsequent_invoice_handling:\n  applies_when:\n    fornecedor_status: existing\n    fornecedor_dormant_months: {less_than_or_equal_to: 18}\n  follow: R1\n  skip_pré-condiçãos: [P1, P2]"
+  },
+  "query": "We are about to release the first invoice pagamento to Helix Analytics, a new fornecedor we engaged for a quarterly data audit. The invoice is for $42,000 and the project owner has approved it in NetSuite. Compliance issued the Due Diligence Approval memo for Helix two weeks ago. The Master Services Agreement has been negotiated and the fornecedor's signatory countersigned it last Thursday, but our Procurement Director has been on leave and has not yet signed; her countersignature is expected next Tuesday. É possível Accounts Payable release the pagamento in tonight's batch to keep us within Net-30, given that we will have the Procurement Director's signature within five business days?",
+  "gold_answer": {
+    "full": "No — Accounts Payable não deve release the pagamento in tonight's batch. This is a first-time pagamento to Helix Analytics, which gates release on two pré-condiçãos that deve both be complete. Precondition P1 (Due Diligence Approval) is satisfied — the Compliance memo was issued two weeks ago. Precondition P2 (signed Master Services Agreement) is not yet satisfied porque the company's Procurement Director has not countersigned; a fornecedor-only signature does not constitute an executed agreement under the política, which exige execution by both the fornecedor's authorized signatory and the company's Procurement Director. Net-30 timing pressure does not relieve the pré-condição. The correct action is to hold the pagamento until the Procurement Director countersigns next Tuesday, and release in the batch on or after that date.",
+    "minimal": "No — first-pagamento release exige BOTH pré-condiçãos; the MSA is not fully executed porque the company's Procurement Director has not countersigned. Net-30 pressure does not waive this.",
+    "required_relations": [
+      "P1 AND P2 are both exigido for first pagamento",
+      "partial satisfaction of P2 (one-sided signature) does not satisfy P2"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que is the standard pagamento cycle for approved fornecedor invoices and when do approved invoices reach the fornecedor?",
+      "expected_answer": "Net-30; invoices approved by 5:00 PM are batched that evening and reach the fornecedor's account within thirty calendar days of the invoice date."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Qual/O que does the Compliance team's third-party due-diligence revisão include?",
+      "expected_answer": "Sanctions screening, beneficial-ownership disclosure, and tributário-form validation. Compliance issues a Due Diligence Approval memo on completion."
+    },
+    {
+      "fragment_id": "P2",
+      "probe": "Whose signatures are exigido for a Master Services Agreement to be considered in place?",
+      "expected_answer": "The fornecedor's authorized signatory and the company's Procurement Director."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "Under the política, when deve the onboarding steps be repeated for an existing fornecedor?",
+      "expected_answer": "Quando the fornecedor relationship has been dormant for more than eighteen months."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — Due Diligence Approval was issued two weeks ago, the MSA has been signed by the fornecedor, and the Procurement Director's signature is imminent. Release the pagamento tonight and document the countersignature when received.",
+      "Yes. The MSA has been signed by the fornecedor side and Compliance has cleared due diligence. The remaining signature is a formality that não deve delay pagamento within the Net-30 window.",
+      "Both pré-condiçãos are substantively complete — release the pagamento to stay within Net-30."
+    ],
+    "wrong_escalation": [
+      "No — first fornecedor pagamentos above $25,000 exige explicit Board aprovação in addition to the standard onboarding steps.",
+      "This exige a formal exceção filed with the CFO and external counsel before any pagamento can be considered."
+    ],
+    "refusal": [
+      "I cannot advise on releasing this pagamento without revisãoing the actual MSA text."
+    ],
+    "retrieval_failure_note": "If P2 is missing from context but P1 and R1 are present, the model pode approve release — score as retrieval failure since the gating condition was not retrievable."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1 (standard processing)",
+      "P1 (due diligence pré-condição)",
+      "P2 (MSA pré-condição)",
+      "R2 (both exigido, dormancy reset)"
+    ],
+    "negative_control_query": "We are about to release a pagamento to Polaris Logistics, an existing fornecedor with whom we have an active MSA and ongoing engagement for the past nine months. This is the seventh invoice we have received from them. The project owner approved the invoice in NetSuite this afternoon. É possível Accounts Payable release the pagamento in tonight's batch under standard Net-30 processing?",
+    "negative_control_gold": "Yes — Polaris is an existing, active fornecedor (not a first pagamento, not dormant for more than eighteen months), so the first-pagamento pré-condiçãos do not apply. The invoice is approved by the project owner in NetSuite before the 5:00 PM cutoff, so it can be batched tonight and will reach the fornecedor's account within thirty calendar days under standard Net-30 processing.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

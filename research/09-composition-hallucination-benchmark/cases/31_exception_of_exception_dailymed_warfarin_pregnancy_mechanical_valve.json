@@ -1,0 +1,73 @@
+{
+  "case_id": "exception_of_exception_dailymed_warfarin_pregnancy_mechanical_valve",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "exception_of_exception",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a DailyMed warfarin label. Clinical evaluation artifact only. Complexity 3 exception-of-exception: pregnancy avoidance rule is modified by mechanical heart valve risk category."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Warfarin Sodium label",
+    "source_organization": "DailyMed / U.S. National Library of Medicine",
+    "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=541c9a70-adaf-4ef3-94ba-ad4e70dfa057",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "Warfarin pregnancy note.\n\nSection A. General pregnancy warning. Warfarin exposure during pregnancy can cause fetal harm, and the label says to avoid warfarin during pregnancy.\n\nSection B. Mechanical heart valve exception. The pregnancy avoidance instruction has an exception for pregnant patients with mechanical heart valves, who are at high risk of thromboembolism.\n\nSection C. Risk counseling. Patients who can become pregnant should use effective measures to avoid pregnancy while taking warfarin, and pregnancy-related use requires careful risk-benefit discussion rather than casual continuation.",
+    "annotated": "Warfarin pregnancy note.\n\n<rule id=\"R1\">Section A. General pregnancy warning. Warfarin exposure during pregnancy can cause fetal harm, and the label says to avoid warfarin during pregnancy.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"pregnant patient has mechanical heart valve\">Section B. Mechanical heart valve exception. The pregnancy avoidance instruction has an exception for pregnant patients with mechanical heart valves, who are at high risk of thromboembolism.</exception>\n\n<precondition id=\"P1\" applies_to=\"E1\">Section C. Risk counseling. Patients who can become pregnant should use effective measures to avoid pregnancy while taking warfarin, and pregnancy-related use requires careful risk-benefit discussion rather than casual continuation.</precondition>",
+    "compiled": "rules:\n  - id: R1\n    condition: pregnancy\n    default_instruction: avoid_warfarin\n    rationale: fetal_harm_risk\nexceptions:\n  - id: E1\n    overrides: R1\n    condition:\n      pregnancy: true\n      mechanical_heart_valve: true\n    rationale: high_thromboembolism_risk\n    result: not_simple_avoidance_rule\npreconditions:\n  - id: P1\n    applies_to: E1\n    requires: careful_risk_benefit_discussion_and_pregnancy_risk_management"
+  },
+  "query": "A patient is pregnant and has a mechanical heart valve. Should the benchmark answer apply the simple rule “warfarin must be avoided in all pregnancy cases” without qualification?",
+  "gold_answer": {
+    "full": "No. The general pregnancy warning says to avoid warfarin during pregnancy, but the mechanical-heart-valve category is an exception because of thromboembolism risk. The correct answer must mention that this is not the simple all-pregnancy avoidance case and that the exception requires careful risk-benefit handling, not casual continuation.",
+    "minimal": "No. Pregnancy generally triggers avoidance, but mechanical heart valve status is an exception requiring qualified risk-benefit handling.",
+    "required_relations": [
+      "exception:E1 modifies general pregnancy avoidance R1",
+      "precondition:P1 requires qualified risk-benefit handling"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What is the general pregnancy instruction in this note?",
+      "expected_answer": "Avoid warfarin during pregnancy because of fetal harm risk."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "What pregnancy-related exception is described?",
+      "expected_answer": "Pregnant patients with mechanical heart valves are treated as an exception due to thromboembolism risk."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Does the exception mean casual continuation without risk management?",
+      "expected_answer": "No. It requires careful risk-benefit discussion and pregnancy risk management."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Warfarin is always avoided in pregnancy, so the mechanical valve does not matter.",
+      "The mechanical valve exception means warfarin is simply safe in pregnancy."
+    ],
+    "wrong_escalation": [
+      "Ignore the label and use a non-specified anticoagulant plan."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1",
+      "P1"
+    ],
+    "negative_control_query": "A patient is pregnant and does not have a mechanical heart valve. Does the mechanical-valve exception apply?",
+    "negative_control_gold": "No. Without a mechanical heart valve, the general pregnancy avoidance warning applies.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

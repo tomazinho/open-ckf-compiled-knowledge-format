@@ -1,0 +1,794 @@
+{
+  "name": "composition-hallucination-bench",
+  "version": "0.5.0",
+  "authors": [
+    "CKF Research",
+    "Paulo Tomazinho"
+  ],
+  "license": "CC-BY-4.0",
+  "generated": "2026-05-28",
+  "python_runner_included": true,
+  "file_count": 156,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 116,
+      "sha256": "b2dc813793c8ba4d7571829eaa0744dae55e73551557a9aa8fa1b9e70eba687d"
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "bytes": 626,
+      "sha256": "a91305dc81be2e9fc706e8f3b4a4626e50181e2c2a88e817ce872b7850a251eb"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 62,
+      "sha256": "db27d42c4db3c39fc85bbed33222f1e218c46a270d8547caf3de9b007eb83819"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 2375,
+      "sha256": "dc324f527bfabfc42bccebb80ecf17d4059e5590483e44500bfc2e6e4c68883b"
+    },
+    {
+      "path": "CITATION.cff",
+      "bytes": 1028,
+      "sha256": "2f4b15d9b9ee5e195ea704b9abe4dfe34e8fe3215c687ca627889e9a26f148f6"
+    },
+    {
+      "path": "CONTENT_EQUIVALENCE_AUDIT.md",
+      "bytes": 4458,
+      "sha256": "47d2ada0cce2ba48a31551046799dda2fc91133ee17b196bcf4a3687e019ed4f"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 680,
+      "sha256": "1fd23ba849b7bae9015f3bc4914d1f96a6f1ce801157c033a1774b594af1b996"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10909,
+      "sha256": "9cbe043cd7b75e07bd4c245bca2c16566efdc4d1dfb13fd03e34836314baf8e4"
+    },
+    {
+      "path": "README.pt-BR.md",
+      "bytes": 4117,
+      "sha256": "5630493173f69ee691921ec8517ba0d4e17117c479e3fb4e956cb3e7654e4ece"
+    },
+    {
+      "path": "cases/01_exception_education_reimbursement.json",
+      "bytes": 8637,
+      "sha256": "663d5adddfee372dc93c8774d3c4a76fda209d19a4ce2e7e2b5e445b1462a627"
+    },
+    {
+      "path": "cases/02_override_incident_severity.json",
+      "bytes": 9571,
+      "sha256": "6fb36ad4691230bf5dc71fc4b54b2e66574ecabbb3dedfbe8361e15b8ba64751"
+    },
+    {
+      "path": "cases/03_scope_childcare_subsidy.json",
+      "bytes": 8230,
+      "sha256": "a545f36fe563f85f8a5ea37fd2e22d5f131ccd682ba14131a0c6f3e45bee4784"
+    },
+    {
+      "path": "cases/04_precondition_vendor_payment.json",
+      "bytes": 9927,
+      "sha256": "8c935785403df84b2d0016e961f2c77b8cb4ded90f1452f75fa172dd0144c121"
+    },
+    {
+      "path": "cases/05_sequence_deploy_migration.json",
+      "bytes": 11203,
+      "sha256": "a1bdb325898279f9d8af58fd20473a59d20e941e278b9c97b083a8f064451123"
+    },
+    {
+      "path": "cases/06_contraindication_postgres_config.json",
+      "bytes": 10918,
+      "sha256": "7e86d8c82e8dcffa7706b5ea4870f57fe811fc8a2844a631ee25622ef32ea323"
+    },
+    {
+      "path": "cases/07_temporal_data_retention_cutover.json",
+      "bytes": 10046,
+      "sha256": "0c5cc3841d6ef53db7ac20ac13b51115b441b69b05a14def9ba7c9cce8db2785"
+    },
+    {
+      "path": "cases/08_exception_of_exception_software_procurement.json",
+      "bytes": 13124,
+      "sha256": "7f1c93929d1dd1d58ef2fff1aa430ff5b98b71746dcb6aa48c8d6140873c7468"
+    },
+    {
+      "path": "cases/09_chained_education_loan_program.json",
+      "bytes": 14989,
+      "sha256": "b170bccfb31572fd37069d67bfddc4a2d0f063fa221e99a6332678ed08169526"
+    },
+    {
+      "path": "cases/10_chained_change_management_emergency.json",
+      "bytes": 15287,
+      "sha256": "27f2464968d9ac4785fdd40308439f8edd5942ef587e724ea41b00d2de98bbee"
+    },
+    {
+      "path": "cases/11_exception_lease_repair_access_pause.json",
+      "bytes": 6551,
+      "sha256": "14d4ac3ac2a78dcc206b266ed1d4073f259e80d548c2337419a40c196f1f6b1b"
+    },
+    {
+      "path": "cases/12_contraindication_clinical_lumaren_renal.json",
+      "bytes": 5572,
+      "sha256": "3261875c21535d9de092faf1b5f57f7684d3df6e3f51e993083d136fb09baec9"
+    },
+    {
+      "path": "cases/13_scope_arts_microgrant_project_location.json",
+      "bytes": 5550,
+      "sha256": "74b86becc15f508919cf92381db950d4beaf834309c2a6f63fa0b5ed05ea6e14"
+    },
+    {
+      "path": "cases/14_temporal_regulatory_breach_reporting_cutover.json",
+      "bytes": 7422,
+      "sha256": "d5c20dbd0da6b6986c65d9ea6042fed985cbb982c1f56acb9d975bf0cf3746ce"
+    },
+    {
+      "path": "cases/15_precondition_clinical_aurelin_infusion_kit.json",
+      "bytes": 7203,
+      "sha256": "68abb7a44db98a25832a01dc400a7880899da73005237e23dc990c48cf4600e2"
+    },
+    {
+      "path": "cases/16_sequence_education_exam_accommodation_packet.json",
+      "bytes": 6847,
+      "sha256": "92458206800f457e6f6ca3318221366cdc1ee3a7873f91ffc466eb040f837d64"
+    },
+    {
+      "path": "cases/17_override_technical_ops_firewall_freeze.json",
+      "bytes": 7313,
+      "sha256": "2953c619f8b370745835116e23ee88b18e775ee9186c3bb32f809acc051d80f0"
+    },
+    {
+      "path": "cases/18_exception_of_exception_tax_research_credit_contractor.json",
+      "bytes": 9842,
+      "sha256": "8198369c22b1e54037d96e681a291b15bae77f658e7eda9429f1e66fe461c577"
+    },
+    {
+      "path": "cases/19_chained_clinical_discharge_renal_cutover.json",
+      "bytes": 8608,
+      "sha256": "d3318d225cbd470dd23620f409dfdfc1ba4117e60b7e1f640fe574a4f4f6f040"
+    },
+    {
+      "path": "cases/20_chained_eligibility_disaster_housing_grant.json",
+      "bytes": 8933,
+      "sha256": "3fa4f6836a49b1f5b0de83b05be2182a374d6cb906366b2d1729702b32b7a651"
+    },
+    {
+      "path": "cases/21_contraindication_kubernetes_pdb_zero_evictions.json",
+      "bytes": 5401,
+      "sha256": "a10aebacf85cb701eba461fa6d3d206752bf760897645f71c0ac30c2cf2def54"
+    },
+    {
+      "path": "cases/22_override_kubernetes_priority_preemption_pdb_best_effort.json",
+      "bytes": 6234,
+      "sha256": "a9eb0677eb2a5bf40e8ae10021d4e7d6989f6e49e6024100be97f68866a13910"
+    },
+    {
+      "path": "cases/23_exception_kubernetes_nonpreempting_priorityclass.json",
+      "bytes": 5435,
+      "sha256": "d5a6fc72c361829f12c575a48aaab306c8a20af5f83be51ac94dbb137608b4d9"
+    },
+    {
+      "path": "cases/24_override_kubernetes_statefulset_ondelete_update.json",
+      "bytes": 4653,
+      "sha256": "3a69924e86b7f7a8d91f87c3ec00fab693cbeecfe2ac7380baa87b377382b9b5"
+    },
+    {
+      "path": "cases/25_override_aws_iam_explicit_deny_scp_boundary.json",
+      "bytes": 5622,
+      "sha256": "1e088883cac24fbf81fa89d8f0df6b39551c714e5ab30e4be0ce9a48cb19c707"
+    },
+    {
+      "path": "cases/26_override_aws_s3_lifecycle_same_day_precedence.json",
+      "bytes": 4634,
+      "sha256": "7ab7ec9b904f9408226dec49ca90e9de4c1c8f31c37c20ea69084cc3eb335b00"
+    },
+    {
+      "path": "cases/27_scope_aws_cloudformation_nested_termination_protection.json",
+      "bytes": 4556,
+      "sha256": "1133592ffbfe1ae74e9bafe70590b3057c3defa88d5fbfa19577c480cca16afa"
+    },
+    {
+      "path": "cases/28_contraindication_dailymed_metformin_egfr_initiation.json",
+      "bytes": 5235,
+      "sha256": "b1020801f2867548172df26989e352df6ebdbf2ffb7fb4301c856b6b4127fc89"
+    },
+    {
+      "path": "cases/29_precondition_dailymed_paxlovid_renal_dose.json",
+      "bytes": 5297,
+      "sha256": "0926563cb9d9b32e873b23d23822f8c8b1ff489fa97f29c3f6db0892d4074420"
+    },
+    {
+      "path": "cases/30_sequence_dailymed_ketorolac_oral_initial_duration.json",
+      "bytes": 5234,
+      "sha256": "c59481ab6888974b7dd1b228854fd952d080a237c39204ee8ed2b0eb54ca3f57"
+    },
+    {
+      "path": "cases/31_exception_of_exception_dailymed_warfarin_pregnancy_mechanical_valve.json",
+      "bytes": 5731,
+      "sha256": "c159c6e3bbf3ada2298e2d21b47f4ffcf6503d1a91aa76c88f9f886a8ad6479c"
+    },
+    {
+      "path": "cases/32_exception_of_exception_dailymed_clozapine_ben_anc_threshold.json",
+      "bytes": 5299,
+      "sha256": "a41fb1543ecb2709fa4dd5fd1f59e60cccaeda70a3c275aefc8d1db37cc36a60"
+    },
+    {
+      "path": "cases/33_scope_irs_online_payment_plan_thresholds.json",
+      "bytes": 5674,
+      "sha256": "6512bba31f43fe13b3b83851b81113109ad803fa19c94c50f6e8aa0532cf81be"
+    },
+    {
+      "path": "cases/34_exception_irs_offer_in_compromise_low_income_waiver.json",
+      "bytes": 5075,
+      "sha256": "a1530ddd87db29999c3bda7529bfde16e3bf83eb2a983e8679d594a631deb982"
+    },
+    {
+      "path": "cases/35_temporal_irs_clean_vehicle_credit_prior_year_magi.json",
+      "bytes": 5537,
+      "sha256": "248f509560abf6d41a87268772a77a3143efdd580082dd076f9befed57214281"
+    },
+    {
+      "path": "cases/36_scope_university_prerequisite_override_authority.json",
+      "bytes": 4423,
+      "sha256": "9eb5392d49c593e13c6c412f343f704431066ebb0104f556f32cd9252847c176"
+    },
+    {
+      "path": "cases/37_precondition_university_student_visa_leave_completion.json",
+      "bytes": 5586,
+      "sha256": "984a34f4674cde621dd6b0c49a5738d9ad086174accd78cbbd1e04933fd4e568"
+    },
+    {
+      "path": "cases/38_temporal_university_housing_contract_release_deadline.json",
+      "bytes": 4660,
+      "sha256": "625eca2c8bd2d4a864585e93dd06165efd5ff481bf35e275528bac32f6821b6e"
+    },
+    {
+      "path": "cases/39_override_rfc9111_cache_control_no_store.json",
+      "bytes": 4466,
+      "sha256": "b745db1a779af7b8c993c908fd6ee49606c209a0aa33b9bf32d47cce6ec7e303"
+    },
+    {
+      "path": "cases/40_exception_rfc6749_invalid_redirect_uri_no_redirect.json",
+      "bytes": 6493,
+      "sha256": "63b28d2636701001117367efa922de173c3d5a0ae3361b56a5b2362fabc68904"
+    },
+    {
+      "path": "cases_pt-br/01_exception_education_reimbursement.json",
+      "bytes": 9044,
+      "sha256": "0be43ab2ef23f24c487f61897dd03c2d02d7630e164fbe00df60daa12b0e8ca1"
+    },
+    {
+      "path": "cases_pt-br/02_override_incident_severity.json",
+      "bytes": 9954,
+      "sha256": "eeb10106e5b566adfc6972e9d4a9f200915468f76e4d24f85428754f08442fd5"
+    },
+    {
+      "path": "cases_pt-br/03_scope_childcare_subsidy.json",
+      "bytes": 8616,
+      "sha256": "29e4cbfa14b6d34e2fa9933f10323867ffbad95224ab1516d59af251ca303d5c"
+    },
+    {
+      "path": "cases_pt-br/04_precondition_vendor_payment.json",
+      "bytes": 10544,
+      "sha256": "d089f2cfec6eae9f10d246da3ec6a8e3643cdb423b424025ea02fa2b1c69eca8"
+    },
+    {
+      "path": "cases_pt-br/05_sequence_deploy_migration.json",
+      "bytes": 11515,
+      "sha256": "15de3225c5e716ffa5f6fc93e91d8dc65587212d40798307d1a018d2e5acb011"
+    },
+    {
+      "path": "cases_pt-br/06_contraindication_postgres_config.json",
+      "bytes": 11242,
+      "sha256": "6b24978017887c619cfc6f82c5e3247fdd16de561f8bcf49c928332d46811143"
+    },
+    {
+      "path": "cases_pt-br/07_temporal_data_retention_cutover.json",
+      "bytes": 10548,
+      "sha256": "4d7ad5ed0a00af6adc59b994cc92e9ecc24777431049028ee8b77c525a6ae683"
+    },
+    {
+      "path": "cases_pt-br/08_exception_of_exception_software_procurement.json",
+      "bytes": 13613,
+      "sha256": "ba8d94bf8c0ab034253a8920d9f8f1c097f86161be546fb4a868b0f475c03154"
+    },
+    {
+      "path": "cases_pt-br/09_chained_education_loan_program.json",
+      "bytes": 15601,
+      "sha256": "e2df4e5ea9f4cbadd2f9ffd00ef2faef24ef622e9ae9c844988b95b2426f4f50"
+    },
+    {
+      "path": "cases_pt-br/10_chained_change_management_emergency.json",
+      "bytes": 15961,
+      "sha256": "22fd88e8b0e5c4f8b96df8fdff8d0cd84bdff9812fe39a68726fd58cf0cbf508"
+    },
+    {
+      "path": "cases_pt-br/11_exception_lease_repair_access_pause.json",
+      "bytes": 6886,
+      "sha256": "009faaf12fa08748fd14216f722e68681988d06fdc149f8ebabd1c229c363f8e"
+    },
+    {
+      "path": "cases_pt-br/12_contraindication_clinical_lumaren_renal.json",
+      "bytes": 5832,
+      "sha256": "80171a5964710741cf4d7edeab5dfe36c3be743aadb42ca08ee5e8ed584434b1"
+    },
+    {
+      "path": "cases_pt-br/13_scope_arts_microgrant_project_location.json",
+      "bytes": 5948,
+      "sha256": "2c9ed9ba580dd1787c6070e090ae1e28dbf452b03a3b9b47d301f2526ac372ab"
+    },
+    {
+      "path": "cases_pt-br/14_temporal_regulatory_breach_reporting_cutover.json",
+      "bytes": 7706,
+      "sha256": "6ca0cb3d23e8cb33a058fa127f3bc8cddf212442c6192fea9d65ec7e790f358a"
+    },
+    {
+      "path": "cases_pt-br/15_precondition_clinical_aurelin_infusion_kit.json",
+      "bytes": 7466,
+      "sha256": "25ba537418416a6235b8f41ac595d280576194af19670331f63a7a2e8a90a5c9"
+    },
+    {
+      "path": "cases_pt-br/16_sequence_education_exam_accommodation_packet.json",
+      "bytes": 7187,
+      "sha256": "9b8fe8003623f338891cb97417db672ebb44907402b2b3c1119a991569f7a352"
+    },
+    {
+      "path": "cases_pt-br/17_override_technical_ops_firewall_freeze.json",
+      "bytes": 7818,
+      "sha256": "1fa3b4cf96c6df02b7fe0b50296af9e7e3aecf6bd8c756de8692a936973c6f01"
+    },
+    {
+      "path": "cases_pt-br/18_exception_of_exception_tax_research_credit_contractor.json",
+      "bytes": 10142,
+      "sha256": "d8094e112c5f1e4cbd1890a34f0fd693d94018d3f52130e48334fc0d54c978bc"
+    },
+    {
+      "path": "cases_pt-br/19_chained_clinical_discharge_renal_cutover.json",
+      "bytes": 8891,
+      "sha256": "e38f88b6f5d28c5c94957b52c57813a7323361ea258ee33c5ad77c209d99cca7"
+    },
+    {
+      "path": "cases_pt-br/20_chained_eligibility_disaster_housing_grant.json",
+      "bytes": 9389,
+      "sha256": "5d7604d822bc07eff34dd51a78a4b128c6220351fba546faad4c995c5cbe7c38"
+    },
+    {
+      "path": "cases_pt-br/21_contraindication_kubernetes_pdb_zero_evictions.json",
+      "bytes": 6316,
+      "sha256": "8c02b47692859c2d5a10455dde2dbadccf93b1bcd93fd19cb9549b55e98aa419"
+    },
+    {
+      "path": "cases_pt-br/22_override_kubernetes_priority_preemption_pdb_best_effort.json",
+      "bytes": 6612,
+      "sha256": "2b89840ca4dbedb75ce31119738f161bc883bc3a91f5cd4cbc8a971f5550db7b"
+    },
+    {
+      "path": "cases_pt-br/23_exception_kubernetes_nonpreempting_priorityclass.json",
+      "bytes": 5849,
+      "sha256": "2f4a36a8b57811e0e8e77704666d47edfa371da8b700b28c4f4bae8c1974aa93"
+    },
+    {
+      "path": "cases_pt-br/24_override_kubernetes_statefulset_ondelete_update.json",
+      "bytes": 5003,
+      "sha256": "8b92de9ca5c340d15b88a2bae2a66f06123f7459cadfccdd950571b2f97c62b9"
+    },
+    {
+      "path": "cases_pt-br/25_override_aws_iam_explicit_deny_scp_boundary.json",
+      "bytes": 6153,
+      "sha256": "008ae47e1a91748883f93b488c238e4dd20f834f43085e965625b33b4b51516f"
+    },
+    {
+      "path": "cases_pt-br/26_override_aws_s3_lifecycle_same_day_precedence.json",
+      "bytes": 4954,
+      "sha256": "40fba021746336c9cd04f08d88d5320367711041720aaf3ddc81ca66a69bbef5"
+    },
+    {
+      "path": "cases_pt-br/27_scope_aws_cloudformation_nested_termination_protection.json",
+      "bytes": 5017,
+      "sha256": "05c9a95c5c79d69fb100d27d189ffa31442e61f3d534b54469b9814930f35604"
+    },
+    {
+      "path": "cases_pt-br/28_contraindication_dailymed_metformin_egfr_initiation.json",
+      "bytes": 5518,
+      "sha256": "9f5cb521a58434dab00cfb4319ebe1e9173ffd4e2cd6077099df6236eff85e7c"
+    },
+    {
+      "path": "cases_pt-br/29_precondition_dailymed_paxlovid_renal_dose.json",
+      "bytes": 5607,
+      "sha256": "1c004febcff1eca8b6ff5b3deaacf4d881b14130ec3a2f45c0f91cca0a02d282"
+    },
+    {
+      "path": "cases_pt-br/30_sequence_dailymed_ketorolac_oral_initial_duration.json",
+      "bytes": 5541,
+      "sha256": "5e61939997b106a49450d92a53e19bc1a56a6fc152dd21730c3e44fcff4e7b1b"
+    },
+    {
+      "path": "cases_pt-br/31_exception_of_exception_dailymed_warfarin_pregnancy_mechanical_valve.json",
+      "bytes": 5979,
+      "sha256": "2115f21e815f3d62215e95a51a295a9f34b2fc9643d9d023413c27d169ba8ed9"
+    },
+    {
+      "path": "cases_pt-br/32_exception_of_exception_dailymed_clozapine_ben_anc_threshold.json",
+      "bytes": 5603,
+      "sha256": "d06096e08be3d98394a7861b9bb0399fb010426d22cc00072bea24fd1e5fd424"
+    },
+    {
+      "path": "cases_pt-br/33_scope_irs_online_payment_plan_thresholds.json",
+      "bytes": 6058,
+      "sha256": "10b732ee05927398fd55a8f541750ac3eba025864acc5d3532ca9cbbc5076c4c"
+    },
+    {
+      "path": "cases_pt-br/34_exception_irs_offer_in_compromise_low_income_waiver.json",
+      "bytes": 5449,
+      "sha256": "5b9423f241a0869d23129e189dbfc91aff4dcb73057e6a477f977735900eda2c"
+    },
+    {
+      "path": "cases_pt-br/35_temporal_irs_clean_vehicle_credit_prior_year_magi.json",
+      "bytes": 5831,
+      "sha256": "b9c4fea5828f9a0d63f71aac2bae811aaa88fd29e731a008d12f3fd71711bbd4"
+    },
+    {
+      "path": "cases_pt-br/36_scope_university_prerequisite_override_authority.json",
+      "bytes": 4858,
+      "sha256": "31c994d6b65ce0eaeefb804e4c53db15cab3606b9327ad33e966f29816f4a65a"
+    },
+    {
+      "path": "cases_pt-br/37_precondition_university_student_visa_leave_completion.json",
+      "bytes": 5912,
+      "sha256": "77fe021c1799ec82a21efebd9f43fe251e59c125b4e3bffa32c6d302c51b8d76"
+    },
+    {
+      "path": "cases_pt-br/38_temporal_university_housing_contract_release_deadline.json",
+      "bytes": 5065,
+      "sha256": "6ed71395802901abc67159b49d35acb4f41165b0431220737f148e107038533b"
+    },
+    {
+      "path": "cases_pt-br/39_override_rfc9111_cache_control_no_store.json",
+      "bytes": 4816,
+      "sha256": "86b32192588e39387b8f618ecfa8106c3eace48054ea44f496585ab473d1ea90"
+    },
+    {
+      "path": "cases_pt-br/40_exception_rfc6749_invalid_redirect_uri_no_redirect.json",
+      "bytes": 6858,
+      "sha256": "30b9ad0fe5edd68ebd2f0ca51275219ebc9bdf3de3610a01c3e6eb5bf57f233a"
+    },
+    {
+      "path": "ckf/README.md",
+      "bytes": 499,
+      "sha256": "f2a3a177a083dc55f59916a0c7228a68f0d691b936c853760796ec3c9da23a6e"
+    },
+    {
+      "path": "ckf/cases/01_exception_education_reimbursement.ckf.json",
+      "bytes": 10794,
+      "sha256": "654581f3bad9de0014692886a3f5a28c1ef1d833aab8f7478d01dd49f48e1e40"
+    },
+    {
+      "path": "ckf/cases/02_override_incident_severity.ckf.json",
+      "bytes": 11708,
+      "sha256": "6eae16d69c97798573b09125331a226b964c2adc69adb0e7dcdc7c7213b1012d"
+    },
+    {
+      "path": "ckf/cases/03_scope_childcare_subsidy.ckf.json",
+      "bytes": 10553,
+      "sha256": "7f80e2e3806a696988ead8efaf04dcaae35f425cc21131e7b2578d1bd98409ac"
+    },
+    {
+      "path": "ckf/cases/04_precondition_vendor_payment.ckf.json",
+      "bytes": 12799,
+      "sha256": "8f8bd50a17b5d214c5d2b86bb7eba6a21fa8af8313a8447f6014cef5bccc35b4"
+    },
+    {
+      "path": "ckf/cases/05_sequence_deploy_migration.ckf.json",
+      "bytes": 13837,
+      "sha256": "52d54029f03a4af8f2afd0f96f4f0e3856f83d05030ff3f27594aa318fe51a5f"
+    },
+    {
+      "path": "ckf/cases/06_contraindication_postgres_config.ckf.json",
+      "bytes": 13271,
+      "sha256": "1154ec76a4ef237af9fc85f78aa8e99cc0e4c6af5c1bfbca382cb907e909438c"
+    },
+    {
+      "path": "ckf/cases/07_temporal_data_retention_cutover.ckf.json",
+      "bytes": 12212,
+      "sha256": "f33b747b2c18a0ee3114dfc0051669954c62daaab27621653224bbf59f8e8ee6"
+    },
+    {
+      "path": "ckf/cases/08_exception_of_exception_software_procurement.ckf.json",
+      "bytes": 15739,
+      "sha256": "1fa9134c469b94f596baaabc964f4fa6bbff44f8b161e65cdcf3dd4efbefcd4b"
+    },
+    {
+      "path": "ckf/cases/09_chained_education_loan_program.ckf.json",
+      "bytes": 17713,
+      "sha256": "edec0e657b958a23d14626e8b643c48d0527164cc9d4bb1c60c606e7c484a5d3"
+    },
+    {
+      "path": "ckf/cases/10_chained_change_management_emergency.ckf.json",
+      "bytes": 18212,
+      "sha256": "c8093e5344f9f427e62d887f4d3688a5077f73d202a91e895203aff0b4ead531"
+    },
+    {
+      "path": "ckf/cases/11_exception_lease_repair_access_pause.ckf.json",
+      "bytes": 8555,
+      "sha256": "79c86373b997c8ad9978b323d0536c20dcd175b8214f3be9c1c0d232686f9322"
+    },
+    {
+      "path": "ckf/cases/12_contraindication_clinical_lumaren_renal.ckf.json",
+      "bytes": 7523,
+      "sha256": "46a100e8be03dead3444fdbe5dfbe0ce064377b04537ea8b85877f582c6037d3"
+    },
+    {
+      "path": "ckf/cases/13_scope_arts_microgrant_project_location.ckf.json",
+      "bytes": 7546,
+      "sha256": "68407724b3d3fa33a9519d6fb5dd5ec80204a2ee437aaaedddea4d82e4d0c3fc"
+    },
+    {
+      "path": "ckf/cases/14_temporal_regulatory_breach_reporting_cutover.ckf.json",
+      "bytes": 9353,
+      "sha256": "494861e55fd837be6aede75e331563efc929c2b383cfa90032b874bcbe97a8b1"
+    },
+    {
+      "path": "ckf/cases/15_precondition_clinical_aurelin_infusion_kit.ckf.json",
+      "bytes": 9249,
+      "sha256": "fce2b5afffaf2682462cd1ad0d47713b7107ee9ce1ddd8426d7d846b5a5429df"
+    },
+    {
+      "path": "ckf/cases/16_sequence_education_exam_accommodation_packet.ckf.json",
+      "bytes": 8814,
+      "sha256": "6e0ad9cc025db2f2dcaaba4734448cd0f51353040148b287367d87b379127728"
+    },
+    {
+      "path": "ckf/cases/17_override_technical_ops_firewall_freeze.ckf.json",
+      "bytes": 9340,
+      "sha256": "f83f7c859091946c3418c929ef091d7ab11276d85b4d7db1e5763bfa3f64c438"
+    },
+    {
+      "path": "ckf/cases/18_exception_of_exception_tax_research_credit_contractor.ckf.json",
+      "bytes": 12096,
+      "sha256": "df19ae7783a73eb0c67e680b0bd29ca4bbbb765e909a50b5f2a8a90c7f0cd18e"
+    },
+    {
+      "path": "ckf/cases/19_chained_clinical_discharge_renal_cutover.ckf.json",
+      "bytes": 10738,
+      "sha256": "951862ef95c0c24d8dd27d110256bf7142427d23ee5cd8ef60fc803019c3976e"
+    },
+    {
+      "path": "ckf/cases/20_chained_eligibility_disaster_housing_grant.ckf.json",
+      "bytes": 10933,
+      "sha256": "f0ac56bc1968aa4c292a067c6a632927472cd1588d002fad5a1d1e6719abdadc"
+    },
+    {
+      "path": "ckf/cases/21_contraindication_kubernetes_pdb_zero_evictions.ckf.json",
+      "bytes": 7272,
+      "sha256": "067ef873fd708937dd7918a477b21c4e6680fda3613ec0fc57763c7c6fdccedb"
+    },
+    {
+      "path": "ckf/cases/22_override_kubernetes_priority_preemption_pdb_best_effort.ckf.json",
+      "bytes": 8065,
+      "sha256": "9fbd657dbef4e67c79c8572861bfc1181ae39119c833839415f61980a86a6e54"
+    },
+    {
+      "path": "ckf/cases/23_exception_kubernetes_nonpreempting_priorityclass.ckf.json",
+      "bytes": 7281,
+      "sha256": "881630e8149add7b1f4baf13a18e414af86667cc4042ffcf628d874b1037b039"
+    },
+    {
+      "path": "ckf/cases/24_override_kubernetes_statefulset_ondelete_update.ckf.json",
+      "bytes": 6462,
+      "sha256": "a5b3505864a81d72c66e4b5d425d3acb6f99f2b5b40caf96234f993c59a08900"
+    },
+    {
+      "path": "ckf/cases/25_override_aws_iam_explicit_deny_scp_boundary.ckf.json",
+      "bytes": 7414,
+      "sha256": "cbbd4863aacc45eedff1c5541dd5507423a5e7d62ff35328e5c3515c91dcdc0d"
+    },
+    {
+      "path": "ckf/cases/26_override_aws_s3_lifecycle_same_day_precedence.ckf.json",
+      "bytes": 6347,
+      "sha256": "a57e2aa8bf7530fc1706c5dc29fa3500a280679efb6fbe5c8962939a2402d42d"
+    },
+    {
+      "path": "ckf/cases/27_scope_aws_cloudformation_nested_termination_protection.ckf.json",
+      "bytes": 6399,
+      "sha256": "50d74b3090fc92c8524d69dd5460010ca71fc169fc2bb65b0118f4cb8f4df84f"
+    },
+    {
+      "path": "ckf/cases/28_contraindication_dailymed_metformin_egfr_initiation.ckf.json",
+      "bytes": 6988,
+      "sha256": "1fc1a624be70b7a00a080a96d5cea16346f36895146f16f28eb04de55f30bf72"
+    },
+    {
+      "path": "ckf/cases/29_precondition_dailymed_paxlovid_renal_dose.ckf.json",
+      "bytes": 7025,
+      "sha256": "e9804d4d7688ce2ab4006cd27492a6ab0c4c049fdb5bf77edc78f22f54e251ba"
+    },
+    {
+      "path": "ckf/cases/30_sequence_dailymed_ketorolac_oral_initial_duration.ckf.json",
+      "bytes": 6918,
+      "sha256": "10b42b17aab16b07793bd18be410b57a044245db493698d9230989d32b4a73b0"
+    },
+    {
+      "path": "ckf/cases/31_exception_of_exception_dailymed_warfarin_pregnancy_mechanical_valve.ckf.json",
+      "bytes": 7654,
+      "sha256": "8df87ae4d7601f1840ba0fd788460b227a2354f8aef8dafd5f6e1e6017361154"
+    },
+    {
+      "path": "ckf/cases/32_exception_of_exception_dailymed_clozapine_ben_anc_threshold.ckf.json",
+      "bytes": 7081,
+      "sha256": "640d13798dbfadb8981584c678a65dfb426e31130d39eba0e86a30b7b2ce6b58"
+    },
+    {
+      "path": "ckf/cases/33_scope_irs_online_payment_plan_thresholds.ckf.json",
+      "bytes": 7483,
+      "sha256": "449d86f916aefea06d841b28c3854a6150068ce4f8b13cade9fbcdc0a5456208"
+    },
+    {
+      "path": "ckf/cases/34_exception_irs_offer_in_compromise_low_income_waiver.ckf.json",
+      "bytes": 6831,
+      "sha256": "852ebdf8c10a1a3ca6856b2b11e5591557e3f3e969d0e30e005d359679ceb29f"
+    },
+    {
+      "path": "ckf/cases/35_temporal_irs_clean_vehicle_credit_prior_year_magi.ckf.json",
+      "bytes": 7343,
+      "sha256": "fb8ac666c9f7af6bc713ff77f62f6d94bd3235d154c7fdd9c36a5c08a40d74dc"
+    },
+    {
+      "path": "ckf/cases/36_scope_university_prerequisite_override_authority.ckf.json",
+      "bytes": 6224,
+      "sha256": "72e158ec5346ccc3e98b2a6d43acb4fec7a63c0cd079288c91926c3a48589515"
+    },
+    {
+      "path": "ckf/cases/37_precondition_university_student_visa_leave_completion.ckf.json",
+      "bytes": 7375,
+      "sha256": "9922c44e1b56a9c6068202cde5cb8576480d1875c21762083c60756194c73ae2"
+    },
+    {
+      "path": "ckf/cases/38_temporal_university_housing_contract_release_deadline.ckf.json",
+      "bytes": 6483,
+      "sha256": "f0aa1735a4e59007e46ad09e0b594a0ba35a6f30b288935a0b65432e0fa56c6d"
+    },
+    {
+      "path": "ckf/cases/39_override_rfc9111_cache_control_no_store.ckf.json",
+      "bytes": 6240,
+      "sha256": "9d29cf141d4575da96a594884088d7ffffe48586b2209fa0ba81102001bef76c"
+    },
+    {
+      "path": "ckf/cases/40_exception_rfc6749_invalid_redirect_uri_no_redirect.ckf.json",
+      "bytes": 8360,
+      "sha256": "4cf29c086145d5e5c01e38fd437cbe6976dedc3a19f1d152821a5aadba2f80f2"
+    },
+    {
+      "path": "ckf/ckf_schema_mapping.md",
+      "bytes": 2508,
+      "sha256": "0aba2f7a91f6005fcb91ea103afd2743993ab39405b24ac7a2384c489515a5eb"
+    },
+    {
+      "path": "data/case_index.csv",
+      "bytes": 6435,
+      "sha256": "c0e10d6f7d9c08fa6afa2299ff4f0b8e35ee300d8baf3d69a761dafc5dd4e7c6"
+    },
+    {
+      "path": "data/cases.jsonl",
+      "bytes": 278786,
+      "sha256": "0e3a2f36d803521c7d0f09fcfe2f8f26e24cb653ff63440d1dbfbab0d9670efc"
+    },
+    {
+      "path": "data/cases_pt-br.jsonl",
+      "bytes": 293768,
+      "sha256": "28a1933756b446a357d0377a5aea114724929fefd4000469b306784828cb9e46"
+    },
+    {
+      "path": "data/dataset_summary.json",
+      "bytes": 736,
+      "sha256": "d5a464ad0b458f57a44f75697423770eeadf83417a7240dc0f8116ad4e5a8c94"
+    },
+    {
+      "path": "dataset_infos.json",
+      "bytes": 843,
+      "sha256": "2162f607260bd486dd18a612d6bc63728acad01b64e815bb66f54d5ed057086c"
+    },
+    {
+      "path": "docs/ADAPTED_REAL_CASES_21_40.md",
+      "bytes": 1959,
+      "sha256": "0ef58997e2dcc62bcb273e41b9d77f7e8c7537de381437d54c0b5e94bf4f348f"
+    },
+    {
+      "path": "docs/ANNOTATOR_GUIDELINES.md",
+      "bytes": 862,
+      "sha256": "3669b4657cc3427fab4cc3acb3b9fdd3014446aa6851a8469465cab24ffdc19e"
+    },
+    {
+      "path": "docs/CONTENT_EQUIVALENCE_AUDIT.md",
+      "bytes": 1254,
+      "sha256": "0d0a66acbf7772139e2453574fb0c21b6e13d56eaa0f68cc27f7f2b73f7bc6c2"
+    },
+    {
+      "path": "docs/DATASHEET.md",
+      "bytes": 3474,
+      "sha256": "dddc67329d5e9ddef62997b8b9927b2e61a3436440071dfe33093c0c1a0bf195"
+    },
+    {
+      "path": "docs/NEW_CASES_11_20.md",
+      "bytes": 3163,
+      "sha256": "9813762c459b0d9e8888da09943ddb8ef3b9cb84ee78feaf6b6c2b79650f34e1"
+    },
+    {
+      "path": "docs/ORIGINAL_BUNDLE_NOTES.md",
+      "bytes": 406,
+      "sha256": "61d0c693d30745da82b9634852ab836ae368e73a19328e1f60226bf66f1e4f67"
+    },
+    {
+      "path": "docs/PROMPT_SKELETONS.md",
+      "bytes": 671,
+      "sha256": "13c02c80a3eeb4e12ecff11b98c87d34850faa93da9cb7221bb53d956678c157"
+    },
+    {
+      "path": "docs/SCORING.md",
+      "bytes": 1722,
+      "sha256": "026ebe2c5a545b895c5596ad450f55c4943a5f0a50d7d98b827b7a8e587d610b"
+    },
+    {
+      "path": "docs/SOURCE_PROVENANCE.md",
+      "bytes": 3595,
+      "sha256": "961660dea0769855252906f1ad244a35cbb2332e06482133a24f3d1f45363ed5"
+    },
+    {
+      "path": "docs/TRANSLATION_PT_BR.md",
+      "bytes": 849,
+      "sha256": "a37b60ea2382b2d34d1ff83ba2be185d39bb1a0aa05b714efa9969c0cb2cab4a"
+    },
+    {
+      "path": "docs/composition_hallucination_protocol_paper_2026.pdf",
+      "bytes": 174169,
+      "sha256": "4fd96790582f9169d169b62c1c93567f1cc8d630bdfd360c731b4a9066bd8d64"
+    },
+    {
+      "path": "schema/case_schema.json",
+      "bytes": 6522,
+      "sha256": "ff7aba6d3880352a42a96b635ffb0d3b2746160bdd0754e1caf11c95612cfaac"
+    },
+    {
+      "path": "scripts/README.md",
+      "bytes": 8381,
+      "sha256": "c8b8f77e1fe14f9c6f95148ef40433325c42a33de670314ad165340460660be8"
+    },
+    {
+      "path": "scripts/build_jsonl.py",
+      "bytes": 6040,
+      "sha256": "4ce5e87b3ea3c9f2489e718b9f6d8c74cfbdfd72954e08f74c238424741fff9f"
+    },
+    {
+      "path": "scripts/classifier.py",
+      "bytes": 13826,
+      "sha256": "c93cfff2e3d284a55611316225baaccc61779b6e5aa2736c9c25cd2180b1cb77"
+    },
+    {
+      "path": "scripts/providers.py",
+      "bytes": 9501,
+      "sha256": "4934ed071cdb974bd0cb56b8cf98d6c54afe16499ae2b03d1d817107a7cbf450"
+    },
+    {
+      "path": "scripts/requirements.txt",
+      "bytes": 239,
+      "sha256": "2616dd8e668eaeb538a5c77366ad0445f1471ac5b6fd6f9ae425079167d5aceb"
+    },
+    {
+      "path": "scripts/run_eval.py",
+      "bytes": 19058,
+      "sha256": "2023aaa48f2ab2adb747dc74d4557b9180a47a8ccd58f5fd9cb275b773580fa2"
+    },
+    {
+      "path": "scripts/score_outputs.py",
+      "bytes": 6951,
+      "sha256": "8538bd1e071b84aadfe29f9488d41ef81a23ca66dc75139e75b58dec26c83036"
+    },
+    {
+      "path": "scripts/validate_cases.py",
+      "bytes": 5269,
+      "sha256": "f32912b069acea21872d833e53ef3d6ac1e7a91c9d9c61e5aed783d86cdd8ef7"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "scope_aws_cloudformation_nested_termination_protection",
+    "title": "Scope Aws Cloudformation Nested Termination Protection",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "technical_ops",
+    "relation_type": "scope",
+    "complexity_level": 2,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Protect CloudFormation stacks from being deleted",
+      "source_organization": "Amazon Web Services",
+      "source_url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-protect-stacks.html",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "S1"
+      }
+    ],
+    "raw_representation_sha256": "4acb734f2872c6256cd8a8a13843011f924b6d6962ac8794f0134f06f02282fd",
+    "annotated_representation_sha256": "3bbb662786f6f5060024d60d52c95e5986c7b1802ad48893adfd65637ffc5b5a",
+    "compiled_representation_sha256": "bd46fb06df66c9896b55066522b94f9894118a357f28989a12b67231b74200b3"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "CloudFormation protection note.\n\nSection A. Termination protection. When termination protection is enabled on a stack, attempts to delete that stack fail and the stack remains unchanged.\n\nSection B. Nested stack scope. For a nested stack, termination protection is controlled on the root stack to which the nested stack belongs. The nested stack cannot have termination protection changed directly."
+      },
+      {
+        "id": "annotated",
+        "text": "CloudFormation protection note.\n\n<rule id=\"R1\">Section A. Termination protection. When termination protection is enabled on a stack, attempts to delete that stack fail and the stack remains unchanged.</rule>\n\n<scope id=\"S1\" restricts=\"R1\" condition=\"stack is nested\">Section B. Nested stack scope. For a nested stack, termination protection is controlled on the root stack to which the nested stack belongs. The nested stack cannot have termination protection changed directly.</scope>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    setting: termination_protection\n    effect_when_enabled: delete_stack_fails_and_stack_unchanged\nscope_constraints:\n  - id: S1\n    applies_when:\n      stack_type: nested\n    control_location: root_stack\n    direct_change_on_nested_stack_allowed: false"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "scope",
+        "description": "Adapted from AWS CloudFormation termination protection docs. Level-2 scope/precondition: nested stack setting is controlled at root stack."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A nested CloudFormation stack has termination protection inherited from its root stack. An operator tries to disable termination protection directly on the nested stack before deletion. Is that the correct operation?",
+        "expected_decision": "No. For nested stacks, termination protection must be changed on the root stack.",
+        "rationale": "No. Termination protection can block stack deletion, but for a nested stack the setting is controlled on the root stack. The operator must change termination protection on the root stack, not directly on the nested stack."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A nested CloudFormation stack has termination protection inherited from its root stack. An operator tries to disable termination protection directly on the nested stack before deletion. Is that the correct operation?",
+        "answer": "No. Termination protection can block stack deletion, but for a nested stack the setting is controlled on the root stack. The operator must change termination protection on the root stack, not directly on the nested stack."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "It causes delete attempts to fail and leaves the stack unchanged."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "On the root stack, not directly on the nested stack."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes, disable termination protection directly on the nested stack and then delete it.",
+        "No deletion can ever happen because nested stacks cannot have termination protection changed."
+      ],
+      "wrong_escalation": [
+        "Delete the nested stack outside CloudFormation."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "S1"
+      ],
+      "negative_control_query": "A standalone root stack has termination protection enabled. Can an operator disable termination protection directly on that root stack before deletion?",
+      "negative_control_gold": "Yes. The nested-stack scope restriction does not apply to a standalone/root stack.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "27_scope_aws_cloudformation_nested_termination_protection.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

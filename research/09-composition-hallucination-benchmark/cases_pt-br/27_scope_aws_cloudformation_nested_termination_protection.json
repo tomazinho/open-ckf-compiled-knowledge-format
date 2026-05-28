@@ -1,0 +1,69 @@
+{
+  "case_id": "scope_aws_cloudformation_nested_termination_protection",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "scope",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from AWS CloudFormation proteção contra encerramento docs. Level-2 escopo/pré-condição: nested stack setting is controlled at root stack.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Protect CloudFormation stacks from being deleted",
+    "source_organization": "Amazon Web Services",
+    "source_url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-protect-stacks.html",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "CloudFormation protection note.\n\nSeção A. Termination protection. Quando proteção contra encerramento is enabled on a stack, attempts to delete that stack fail and the stack remains unmudançad.\n\nSeção B. Nested stack escopo. For a nested stack, proteção contra encerramento is controlled on the root stack to which the nested stack belongs. The nested stack cannot have proteção contra encerramento mudançad directly.",
+    "annotated": "CloudFormation protection note.\n\n<rule id=\"R1\">Seção A. Termination protection. Quando proteção contra encerramento is enabled on a stack, attempts to delete that stack fail and the stack remains unmudançad.</rule>\n\n<scope id=\"S1\" restricts=\"R1\" condition=\"stack is nested\">Seção B. Nested stack escopo. For a nested stack, proteção contra encerramento is controlled on the root stack to which the nested stack belongs. The nested stack cannot have proteção contra encerramento mudançad directly.</scope>",
+    "compiled": "regras:\n  - id: R1\n    setting: termination_protection\n    effect_when_enabled: delete_stack_fails_and_stack_unmudançad\nescopo_constraints:\n  - id: S1\n    applies_when:\n      stack_type: nested\n    control_location: root_stack\n    direct_mudança_on_nested_stack_permitido: false"
+  },
+  "query": "A nested CloudFormation stack has proteção contra encerramento inherited from its root stack. An operator tries to disable proteção contra encerramento directly on the nested stack before deletion. É that the correct operation?",
+  "gold_answer": {
+    "full": "No. Termination protection can block stack deletion, but for a nested stack the setting is controlled on the root stack. The operator deve mudança proteção contra encerramento on the root stack, not directly on the nested stack.",
+    "minimal": "No. For nested stacks, proteção contra encerramento deve be mudançad on the root stack.",
+    "required_relations": [
+      "escopo:S1 restricts where R1 can be mudançad for nested stacks"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que does enabled proteção contra encerramento do?",
+      "expected_answer": "It causes delete attempts to fail and leaves the stack unmudançad."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Where is proteção contra encerramento controlled for a nested stack?",
+      "expected_answer": "On the root stack, not directly on the nested stack."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, disable proteção contra encerramento directly on the nested stack and then delete it.",
+      "No deletion can ever happen porque nested stacks cannot have proteção contra encerramento mudançad."
+    ],
+    "wrong_escalation": [
+      "Delete the nested stack outside CloudFormation."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1"
+    ],
+    "negative_control_query": "A standalone root stack has proteção contra encerramento enabled. É possível an operator disable proteção contra encerramento directly on that root stack before deletion?",
+    "negative_control_gold": "Yes. The nested-stack escopo restriction does not apply to a standalone/root stack.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "case_id": "precondition_vendor_first_payment",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Two preconditions must BOTH hold before R1 fires. Distinct from scope (which bounds applicability) and from sequence (which orders independent steps). Complexity 2 because two preconditions interact; partial satisfaction is the common trap."
+  },
+  "representations": {
+    "raw": "Accounts Payable — Vendor Invoice Processing.\n\nAccounts Payable processes vendor invoices through the standard Net-30 payment cycle. Approved invoices submitted by 5:00 PM on a business day are batched for payment that evening and reach the vendor's account within thirty calendar days of the invoice date. Invoice approval is performed by the project owner on record in NetSuite.\n\nFor first-time payments to any new vendor, two onboarding steps must be completed before the first invoice may be released for payment. First, the vendor must pass the third-party due-diligence review conducted by the Compliance team, which includes sanctions screening, beneficial-ownership disclosure, and tax-form validation. Compliance issues a formal Due Diligence Approval memo when the review is complete. Second, a signed Master Services Agreement must be in place between the company and the vendor, executed by the vendor's authorized signatory and by the company's Procurement Director. Both onboarding steps must be complete before the first payment is released. Subsequent invoices from the same vendor follow the standard Net-30 cycle without these onboarding checks, unless the vendor relationship has been dormant for more than eighteen months, in which case both steps must be repeated.",
+    "annotated": "Accounts Payable — Vendor Invoice Processing.\n\n<rule id=\"R1\">Accounts Payable processes vendor invoices through the standard Net-30 payment cycle. Approved invoices submitted by 5:00 PM on a business day are batched for payment that evening and reach the vendor's account within thirty calendar days of the invoice date. Invoice approval is performed by the project owner on record in NetSuite.</rule>\n\n<precondition id=\"P1\" required_for=\"R1 when vendor_status=first_payment\" condition=\"vendor has passed third-party due-diligence review\">For first-time payments to any new vendor, the vendor must pass the third-party due-diligence review conducted by the Compliance team, which includes sanctions screening, beneficial-ownership disclosure, and tax-form validation. Compliance issues a formal Due Diligence Approval memo when the review is complete.</precondition>\n\n<precondition id=\"P2\" required_for=\"R1 when vendor_status=first_payment\" condition=\"signed Master Services Agreement is in place\">A signed Master Services Agreement must be in place between the company and the vendor, executed by the vendor's authorized signatory and by the company's Procurement Director.</precondition>\n\n<rule id=\"R2\" relates_to=\"P1, P2\">Both onboarding steps must be complete before the first payment is released. Subsequent invoices from the same vendor follow the standard Net-30 cycle without these onboarding checks, unless the vendor relationship has been dormant for more than eighteen months, in which case both steps must be repeated.</rule>",
+    "compiled": "rules:\n  - id: R1\n    name: standard_invoice_processing\n    cycle: net_30\n    daily_batch_cutoff: \"17:00\"\n    payment_arrival_calendar_days: 30\n    approver_role: project_owner_in_netsuite\n\nfirst_payment_gate:\n  applies_when:\n    vendor_status: first_payment_to_this_vendor\n  OR_applies_when:\n    vendor_dormant_months: {greater_than: 18}\n  preconditions_required:\n    logical_combinator: AND\n    items:\n      - id: P1\n        name: due_diligence_approval\n        performed_by: compliance_team\n        components:\n          - sanctions_screening\n          - beneficial_ownership_disclosure\n          - tax_form_validation\n        completion_artifact: due_diligence_approval_memo\n      - id: P2\n        name: signed_master_services_agreement\n        required_signatories:\n          - vendor_authorized_signatory\n          - company_procurement_director\n  effect_if_unmet:\n    block: release_of_first_payment\n  effect_if_met:\n    proceed_to: R1\n\nsubsequent_invoice_handling:\n  applies_when:\n    vendor_status: existing\n    vendor_dormant_months: {less_than_or_equal_to: 18}\n  follow: R1\n  skip_preconditions: [P1, P2]"
+  },
+  "query": "We are about to release the first invoice payment to Helix Analytics, a new vendor we engaged for a quarterly data audit. The invoice is for $42,000 and the project owner has approved it in NetSuite. Compliance issued the Due Diligence Approval memo for Helix two weeks ago. The Master Services Agreement has been negotiated and the vendor's signatory countersigned it last Thursday, but our Procurement Director has been on leave and has not yet signed; her countersignature is expected next Tuesday. Can Accounts Payable release the payment in tonight's batch to keep us within Net-30, given that we will have the Procurement Director's signature within five business days?",
+  "gold_answer": {
+    "full": "No — Accounts Payable should not release the payment in tonight's batch. This is a first-time payment to Helix Analytics, which gates release on two preconditions that must both be complete. Precondition P1 (Due Diligence Approval) is satisfied — the Compliance memo was issued two weeks ago. Precondition P2 (signed Master Services Agreement) is not yet satisfied because the company's Procurement Director has not countersigned; a vendor-only signature does not constitute an executed agreement under the policy, which requires execution by both the vendor's authorized signatory and the company's Procurement Director. Net-30 timing pressure does not relieve the precondition. The correct action is to hold the payment until the Procurement Director countersigns next Tuesday, and release in the batch on or after that date.",
+    "minimal": "No — first-payment release requires BOTH preconditions; the MSA is not fully executed because the company's Procurement Director has not countersigned. Net-30 pressure does not waive this.",
+    "required_relations": ["P1 AND P2 are both required for first payment", "partial satisfaction of P2 (one-sided signature) does not satisfy P2"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What is the standard payment cycle for approved vendor invoices and when do approved invoices reach the vendor?",
+      "expected_answer": "Net-30; invoices approved by 5:00 PM are batched that evening and reach the vendor's account within thirty calendar days of the invoice date."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "What does the Compliance team's third-party due-diligence review include?",
+      "expected_answer": "Sanctions screening, beneficial-ownership disclosure, and tax-form validation. Compliance issues a Due Diligence Approval memo on completion."
+    },
+    {
+      "fragment_id": "P2",
+      "probe": "Whose signatures are required for a Master Services Agreement to be considered in place?",
+      "expected_answer": "The vendor's authorized signatory and the company's Procurement Director."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "Under the policy, when must the onboarding steps be repeated for an existing vendor?",
+      "expected_answer": "When the vendor relationship has been dormant for more than eighteen months."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — Due Diligence Approval was issued two weeks ago, the MSA has been signed by the vendor, and the Procurement Director's signature is imminent. Release the payment tonight and document the countersignature when received.",
+      "Yes. The MSA has been signed by the vendor side and Compliance has cleared due diligence. The remaining signature is a formality that should not delay payment within the Net-30 window.",
+      "Both preconditions are substantively complete — release the payment to stay within Net-30."
+    ],
+    "wrong_escalation": [
+      "No — first vendor payments above $25,000 require explicit Board approval in addition to the standard onboarding steps.",
+      "This requires a formal exception filed with the CFO and external counsel before any payment can be considered."
+    ],
+    "refusal": [
+      "I cannot advise on releasing this payment without reviewing the actual MSA text."
+    ],
+    "retrieval_failure_note": "If P2 is missing from context but P1 and R1 are present, the model may approve release — score as retrieval failure since the gating condition was not retrievable."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (standard processing)", "P1 (due diligence precondition)", "P2 (MSA precondition)", "R2 (both required, dormancy reset)"],
+    "negative_control_query": "We are about to release a payment to Polaris Logistics, an existing vendor with whom we have an active MSA and ongoing engagement for the past nine months. This is the seventh invoice we have received from them. The project owner approved the invoice in NetSuite this afternoon. Can Accounts Payable release the payment in tonight's batch under standard Net-30 processing?",
+    "negative_control_gold": "Yes — Polaris is an existing, active vendor (not a first payment, not dormant for more than eighteen months), so the first-payment preconditions do not apply. The invoice is approved by the project owner in NetSuite before the 5:00 PM cutoff, so it can be batched tonight and will reach the vendor's account within thirty calendar days under standard Net-30 processing.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

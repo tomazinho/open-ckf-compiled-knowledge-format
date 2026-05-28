@@ -1,0 +1,76 @@
+{
+  "case_id": "exception_rfc6749_invalid_redirect_uri_no_redirect",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "exception",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from OAuth 2.0 authorization endpoint error handling. Complexity 3: redirect-on-error regra is bloqueado when redirect_uri or client_id is invalid.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "RFC 6749: The OAuth 2.0 Authorization Framework",
+    "source_organization": "IETF OAuth Working Group",
+    "source_url": "https://datatracker.ietf.org/doc/html/rfc6749",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "OAuth authorization error note.\n\nSeção A. Authorization error redirect. During an authorization-code request, when the resource owner denies the request or the request fails for a reason that still leaves the authorization server with enough valid client and redirect information, the server can return an error response by redirecting the user-agent back to the client's redirection endpoint.\n\nSeção B. Invalid redirect target. If the request is invalid porque the URI de redirecionamento is missing, invalid, or mismatched, or porque the client identifier is invalid, the authorization server não deve automatically redirect the user-agent to the invalid redirection URI. It deve instead inform the resource owner of the error.\n\nSeção C. Code exmudança. An authorization code, if issued, is later exmudançad at the token endpoint. That later exmudança does not retroactively make an invalid authorization redirect target safe.",
+    "annotated": "OAuth authorization error note.\n\n<rule id=\"R1\">Seção A. Authorization error redirect. During an authorization-code request, when the resource owner denies the request or the request fails for a reason that still leaves the authorization server with enough valid client and redirect information, the server can return an error response by redirecting the user-agent back to the client's redirection endpoint.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"invalid redirect_uri or invalid client_id\">Seção B. Invalid redirect target. If the request is invalid porque the URI de redirecionamento is missing, invalid, or mismatched, or porque the client identifier is invalid, the authorization server não deve automatically redirect the user-agent to the invalid redirection URI. It deve instead inform the resource owner of the error.</exception>\n\n<sequence id=\"Q1\" after=\"R1 or E1\">Seção C. Code exmudança. An authorization code, if issued, is later exmudançad at the token endpoint. That later exmudança does not retroactively make an invalid authorization redirect target safe.</sequence>",
+    "compiled": "regras:\n  - id: R1\n    context: authorization_endpoint_error\n    default_error_response: redirect_to_client_redirection_endpoint\n    exige: enough_valid_client_and_redirect_information\nexceçãos:\n  - id: E1\n    sobreposiçãos: R1\n    condition_any: [redirect_uri_missing_invalid_or_mismatched, client_id_invalid]\n    result: do_not_auto_redirect_to_invalid_uri\n    alternative: inform_resource_owner\nsequência:\n  - id: Q1\n    later_step: token_endpoint_code_exmudança\n    does_not_repair: invalid_authorization_redirect_uri"
+  },
+  "query": "An OAuth authorization request has an invalid redirect_uri, but the server can detect the error. Deve-se the authorization server redirect the user-agent back to that supplied URI with an error code porque authorization errors are usually returned by redirect?",
+  "gold_answer": {
+    "full": "No. The general error-redirect behavior is bloqueado when the URI de redirecionamento is invalid or mismatched. The server não deve automatically redirect to the invalid URI; it deve inform the resource owner instead. A later token exmudança does not repair the invalid redirect target.",
+    "minimal": "No. Invalid redirect_uri triggers the exceção: do not redirect to that URI; inform the resource owner.",
+    "required_relations": [
+      "exceção:E1 sobreposiçãos general error redirect R1",
+      "sequência:token exmudança Q1 does not repair invalid authorization redirect"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Quando can an authorization error be returned by redirect?",
+      "expected_answer": "Quando the server has enough valid client and redirection information."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que deve happen if redirect_uri or client_id is invalid?",
+      "expected_answer": "The server não deve automatically redirect to the invalid URI and deve inform the resource owner."
+    },
+    {
+      "fragment_id": "Q1",
+      "probe": "Does the later token exmudança make an invalid URI de redirecionamento safe?",
+      "expected_answer": "No. The later exmudança does not repair the invalid authorization redirect target."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, all OAuth authorization errors are returned by redirect to the supplied redirect_uri.",
+      "No error handling is possible; the server deve silently drop the request."
+    ],
+    "wrong_escalation": [
+      "Issue an authorization code anyway and let the token endpoint reject it later."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1",
+      "Q1"
+    ],
+    "negative_control_query": "An OAuth authorization request has a valid registered redirect_uri, but the resource owner denies consent. É possível the server return the denial error by redirecting to the valid redirection endpoint?",
+    "negative_control_gold": "Yes. With valid redirect information, the general authorization error redirect behavior can apply.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

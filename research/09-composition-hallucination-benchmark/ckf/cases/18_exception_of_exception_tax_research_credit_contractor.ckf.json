@@ -1,0 +1,131 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "exception_of_exception_tax_research_credit_contractor",
+    "title": "Exception Of Exception Tax Research Credit Contractor",
+    "language": "en",
+    "license": "CC-BY-4.0",
+    "source_status": "synthetic",
+    "domain": "regulatory",
+    "relation_type": "exception_of_exception",
+    "complexity_level": 3,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {},
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "E1"
+      },
+      {
+        "id": "F3",
+        "description": "E2"
+      },
+      {
+        "id": "F4",
+        "description": "T1"
+      }
+    ],
+    "raw_representation_sha256": "13093678231221b4644ebeaa6a67a5a137ffb6a4de5c53473114aac6f2b73371",
+    "annotated_representation_sha256": "6d3384c38dde270d8fc007a769759c4557ef03f5255fa8f88dcaf99c673bae6b",
+    "compiled_representation_sha256": "7f525d3b3c056930f6fc250e38e637d9093b22d17c8f0766e7e87d088de5195c"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Synthetic Research Incentive Credit Manual.\n\nSection 1. Qualifying Research Expense Rule. A filer may include research expenses in the Synthetic Research Incentive Credit when the work is documented as technical experimentation for a product that the filer intends to commercialize. Qualifying expenses may include employee labor, prototype materials, and third-party development invoices.\n\nSection 2. Related Offshore Contractor Exclusion. Third-party development invoices are excluded when the contractor is both a related party and performs the invoiced work outside the filing jurisdiction. The exclusion applies even if the work is technical experimentation and even if the filer intends to commercialize the product.\n\nSection 3. Cost-Sharing Safe Harbor. The related-offshore-contractor exclusion does not apply if, before the invoiced work begins, the filer and contractor execute a cost-sharing agreement that assigns commercialization rights for the developed intellectual property to the filer. A cost-sharing agreement signed after the work begins does not activate the safe harbor.\n\nSection 6. Technical Uncertainty Memo Cutover. For claims filed on or after 1 March 2026, any third-party development invoice included in the credit must be supported by a technical-uncertainty memo dated no later than the invoice date. Claims filed before 1 March 2026 are not subject to the memo requirement. The cutover is anchored to the claim filing date, not the date the research work began."
+      },
+      {
+        "id": "annotated",
+        "text": "Synthetic Research Incentive Credit Manual.\n\n<rule id=\"R1\">Section 1. Qualifying Research Expense Rule. A filer may include research expenses in the Synthetic Research Incentive Credit when the work is documented as technical experimentation for a product that the filer intends to commercialize. Qualifying expenses may include employee labor, prototype materials, and third-party development invoices.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"third-party invoice from related party performing work outside filing jurisdiction\">Section 2. Related Offshore Contractor Exclusion. Third-party development invoices are excluded when the contractor is both a related party and performs the invoiced work outside the filing jurisdiction. The exclusion applies even if the work is technical experimentation and even if the filer intends to commercialize the product.</exception>\n\n<exception id=\"E2\" overrides=\"E1\" condition=\"pre-work cost-sharing agreement assigns commercialization rights to filer\">Section 3. Cost-Sharing Safe Harbor. The related-offshore-contractor exclusion does not apply if, before the invoiced work begins, the filer and contractor execute a cost-sharing agreement that assigns commercialization rights for the developed intellectual property to the filer. A cost-sharing agreement signed after the work begins does not activate the safe harbor.</exception>\n\n<temporal_dependency id=\"T1\" governs=\"third-party invoice support requirement\" cutover_date=\"2026-03-01\" anchor=\"claim_filing_date\">Section 6. Technical Uncertainty Memo Cutover. For claims filed on or after 1 March 2026, any third-party development invoice included in the credit must be supported by a technical-uncertainty memo dated no later than the invoice date. Claims filed before 1 March 2026 are not subject to the memo requirement. The cutover is anchored to the claim filing date, not the date the research work began.</temporal_dependency>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    name: qualifying_research_expense\n    may_include_when:\n      work_documented_as: technical_experimentation\n      product_intended_for_commercialization_by_filer: true\n    qualifying_categories: [employee_labor, prototype_materials, third_party_development_invoices]\nexceptions:\n  - id: E1\n    overrides: R1\n    name: related_offshore_contractor_exclusion\n    triggers_when:\n      expense_category: third_party_development_invoice\n      contractor_related_party: true\n      work_performed_outside_filing_jurisdiction: true\n    effect: invoice_excluded\n    applies_even_if:\n      technical_experimentation: true\n      commercialization_intent: true\n  - id: E2\n    overrides: E1\n    name: cost_sharing_safe_harbor\n    triggers_when:\n      agreement_executed_before_work_begins: true\n      agreement_assigns_commercialization_rights_to_filer: true\n    effect: E1_not_applied\n    not_triggered_when:\n      agreement_signed_after_work_begins: true\ntemporal_dependencies:\n  - id: T1\n    governs: memo_requirement_for_third_party_invoice\n    anchor: claim_filing_date\n    on_or_after: 2026-03-01\n    requires:\n      technical_uncertainty_memo: true\n      memo_date: no_later_than_invoice_date\n    before: 2026-03-01\n    memo_requirement: not_applicable"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "exception_of_exception",
+        "description": "Synthetic tax/regulatory policy case. It is an evaluation artifact only and not tax advice. Level-3: scope, exception, exception-of-exception, and temporal precondition."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A filer submits a credit claim on 10 March 2026. It wants to include a third-party development invoice for technical experimentation on a product it intends to commercialize. The contractor is a related party and performed the work outside the filing jurisdiction. A cost-sharing agreement assigning commercialization rights to the filer was signed two weeks after the contractor began the work. A technical-uncertainty memo dated before the invoice is present. May the invoice be included?",
+        "expected_decision": "No. The related offshore contractor exclusion applies, and the safe harbor is not triggered because the cost-sharing agreement was signed after work began.",
+        "rationale": "No. The invoice starts within the general qualifying category because it is a third-party development invoice for technical experimentation on a product the filer intends to commercialize. But the related-offshore-contractor exclusion applies because the contractor is both related and performed the work outside the filing jurisdiction. The cost-sharing safe harbor does not rescue the invoice because the agreement was signed after the work began; the safe harbor requires execution before the invoiced work begins. The post-cutover technical-uncertainty memo requirement is satisfied, but that only satisfies a separate support requirement and does not override the related-offshore exclusion."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A filer submits a credit claim on 10 March 2026. It wants to include a third-party development invoice for technical experimentation on a product it intends to commercialize. The contractor is a related party and performed the work outside the filing jurisdiction. A cost-sharing agreement assigning commercialization rights to the filer was signed two weeks after the contractor began the work. A technical-uncertainty memo dated before the invoice is present. May the invoice be included?",
+        "answer": "No. The invoice starts within the general qualifying category because it is a third-party development invoice for technical experimentation on a product the filer intends to commercialize. But the related-offshore-contractor exclusion applies because the contractor is both related and performed the work outside the filing jurisdiction. The cost-sharing safe harbor does not rescue the invoice because the agreement was signed after the work began; the safe harbor requires execution before the invoiced work begins. The post-cutover technical-uncertainty memo requirement is satisfied, but that only satisfies a separate support requirement and does not override the related-offshore exclusion."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "Employee labor, prototype materials, and third-party development invoices may qualify."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "When the contractor is both a related party and performs the invoiced work outside the filing jurisdiction."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "When before the invoiced work begins the filer and contractor execute a cost-sharing agreement assigning commercialization rights to the filer."
+      },
+      {
+        "id": "local_probe_4",
+        "question": "",
+        "answer": "A technical-uncertainty memo dated no later than the invoice date is required."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes. The invoice is for technical experimentation and has a technical-uncertainty memo dated before the invoice.",
+        "Yes. The cost-sharing agreement assigns rights to the filer, so the related-party offshore exclusion does not matter even though it was signed after work began."
+      ],
+      "wrong_escalation": [
+        "No third-party invoices can ever be included in the credit.",
+        "The invoice requires court approval before it can be included."
+      ],
+      "refusal": [
+        "The manual does not provide enough information to decide whether the safe harbor applies."
+      ],
+      "retrieval_failure_note": "If Section 3 is missing, the safe-harbor analysis is not composition-evaluable. If Section 6 is missing, the memo-support component is incomplete."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "E1",
+        "E2",
+        "T1"
+      ],
+      "negative_control_query": "A filer submits a credit claim on 10 March 2026 for the same type of related offshore contractor invoice, but the cost-sharing agreement assigning commercialization rights to the filer was executed before the invoiced work began and the technical-uncertainty memo is dated before the invoice. May the invoice be included?",
+      "negative_control_gold": "Yes, under the synthetic manual. The general qualifying rule applies, the related-offshore exclusion is neutralized by the pre-work cost-sharing safe harbor, and the post-cutover memo requirement is satisfied.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "low"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "18_exception_of_exception_tax_research_credit_contractor.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

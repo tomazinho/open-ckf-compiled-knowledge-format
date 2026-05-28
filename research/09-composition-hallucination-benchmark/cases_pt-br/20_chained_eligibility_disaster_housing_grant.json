@@ -1,0 +1,78 @@
+{
+  "case_id": "chained_eligibility_disaster_housing_grant",
+  "metadata": {
+    "domain": "eligibility",
+    "relation_type": "precondition",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic benefits/bolsa/subsídios case. Level-3 chained escopo, exceção, dependência temporal, and pré-condiçãos.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Emergency Housing Stabilization Grant Manual.\n\nSeção 1. Basic Eligibility. Households pode receive an Emergency Housing Stabilization Grant of up to $3,000 when their primary residence is in the Blue River flood zone and the household was displaced by the declared flood event. Both homeowners and renters pode apply.\n\nSeção 2. Occupancy Documentation. Renters ordinarily deve provide a signed lease showing that the flooded address was their primary residence on the date of the flood. A renter who cannot produce a signed lease pode use the alternate-occupancy path if they provide both a utility bill for the flooded address and a school, employment, or clinic record showing the same address.\n\nSeção 3. Inspection Precondition. No bolsa/subsídio pode be approved until a municipal damage inspection has been completed and marked elegível in the bolsa/subsídio portal. A pending inspection, a scheduled inspection, or a private contratoor estimate does not satisfy this pré-condição.\n\nSeção 5. Photo Evidence Cutover. Applications submitted before 15 September 2026 do not exige applicant-supplied photo evidence. For applications submitted on or after 15 September 2026, the applicant deve upload at least two photos of flood damage before aprovação. The photo exigement is based on the application submission date, not on the flood date or inspection date.",
+    "annotated": "Emergency Housing Stabilization Grant Manual.\n\n<rule id=\"R1\">Seção 1. Basic Eligibility. Households pode receive an Emergency Housing Stabilization Grant of up to $3,000 when their primary residence is in the Blue River flood zone and the household was displaced by the declared flood event. Both homeowners and renters pode apply.</rule>\n\n<exception id=\"E1\" overrides=\"standard lease documentation\" condition=\"renter lacks signed lease but has alternate occupancy documents\">Seção 2. Occupancy Documentation. Renters ordinarily deve provide a signed lease showing that the flooded address was their primary residence on the date of the flood. A renter who cannot produce a signed lease pode use the alternate-occupancy path if they provide both a utility bill for the flooded address and a school, employment, or clinic record showing the same address.</exception>\n\n<precondition id=\"P1\" required_for=\"grant approval\" condition=\"municipal damage inspection completed and marked eligible\">Seção 3. Inspection Precondition. No bolsa/subsídio pode be approved until a municipal damage inspection has been completed and marked elegível in the bolsa/subsídio portal. A pending inspection, a scheduled inspection, or a private contratoor estimate does not satisfy this pré-condição.</precondition>\n\n<temporal_dependency id=\"T1\" governs=\"photo evidence requirement\" cutover_date=\"2026-09-15\" anchor=\"application_submission_date\">Seção 5. Photo Evidence Cutover. Applications submitted before 15 September 2026 do not exige applicant-supplied photo evidence. For applications submitted on or after 15 September 2026, the applicant deve upload at least two photos of flood damage before aprovação. The photo exigement is based on the application submission date, not on the flood date or inspection date.</temporal_dependency>",
+    "compiled": "regras:\n  - id: R1\n    name: emergência_moradia estudantil_stabilization_bolsa/subsídio\n    max_bolsa/subsídio_usd: 3000\n    elegível_when:\n      primary_residence_in: Blue River flood zone\n      displaced_by_declared_flood_event: true\n      applicant_household_type_in: [homeowner, renter]\nexceçãos:\n  - id: E1\n    name: alternate_occupancy_path_for_renters\n    sobreposiçãos: standard_signed_lease_exigement\n    triggers_when:\n      applicant_type: renter\n      signed_lease_available: false\n    exige:\n      utility_bill_for_flooded_address: true\n      one_record_showing_same_address_in: [school, employment, clinic]\npré-condiçãos:\n  - id: P1\n    exigido_for: bolsa/subsídio_aprovação\n    name: elegível_municipal_damage_inspection\n    satisfies_when:\n      municipal_damage_inspection_status: completed_and_marked_elegível_in_portal\n    does_not_satisfy_when:\n      inspection_status_in: [pending, scheduled]\n      evidence_type: private_contratoor_estimate\ntemporal_dependencies:\n  - id: T1\n    governs: applicant_photo_evidence_exigement\n    anchor: application_submission_date\n    before: 2026-09-15\n    photos_exigido: false\n    on_or_after: 2026-09-15\n    photos_exigido: true\n    minimum_photos: 2\n    flood_date_irrelevant: true\n    inspection_date_irrelevant: true"
+  },
+  "query": "A renter displaced from a primary residence in the Blue River flood zone applies on 20 September 2026. She has no signed lease, but she uploads a utility bill for the flooded address and an employment record showing the same address. The municipal inspection was completed and marked elegível. She has not uploaded any flood-damage photos. É possível the bolsa/subsídio be approved now?",
+  "gold_answer": {
+    "full": "No, not yet. The household satisfies basic elegibilidade, and the missing lease can be handled through the alternate-occupancy path porque the renter provided both a utility bill and an employment record showing the flooded address. The inspection pré-condição is also satisfied porque the municipal inspection is completed and marked elegível. However, the application was submitted on 20 September 2026, after the 15 September cutover, so at least two flood-damage photos are exigido before aprovação. Because no photos were uploaded, the bolsa/subsídio cannot be approved now.",
+    "minimal": "No. Basic elegibilidade, alternate occupancy, and inspection are satisfied, but the post-15 September photo exigement is unmet.",
+    "required_relations": [
+      "E1 substitutes alternate occupancy documentation for a signed lease when both exigido documents are present",
+      "P1 deve be satisfied before aprovação and is satisfied by completed elegível municipal inspection",
+      "T1 selects the photo exigement based on application submission date",
+      "Post-cutover photo exigement blocks aprovação when no photos are uploaded"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Quem pode receive the Emergency Housing Stabilization Grant under Section 1?",
+      "expected_answer": "Households displaced by the declared flood whose primary residence is in the Blue River flood zone; both homeowners and renters pode apply."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que alternate documents can a renter use if they cannot produce a signed lease?",
+      "expected_answer": "Both a utility bill for the flooded address and a school, employment, or clinic record showing the same address."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Qual/O que inspection status is exigido before aprovação?",
+      "expected_answer": "A municipal damage inspection deve be completed and marked elegível in the bolsa/subsídio portal."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Which date determines whether applicant-supplied photos are exigido?",
+      "expected_answer": "The application submission date determines the photo exigement."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes. The renter meets basic elegibilidade, used the alternate-occupancy path, and has an elegível inspection.",
+      "Yes. Photos are not exigido porque the flood and inspection occurred before 15 September 2026."
+    ],
+    "wrong_escalation": [
+      "The renter is categorically inelegível without a signed lease.",
+      "The bolsa/subsídio deve be approved by a federal disaster court before any pagamento can occur."
+    ],
+    "refusal": [
+      "The manual does not say whether the photo regra uses application date or flood date."
+    ],
+    "retrieval_failure_note": "If Section 5 is absent, omitting the photo exigement is not composition-evaluable. If Section 2 is absent, evaluating the lease exceção is incomplete."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1",
+      "P1",
+      "T1"
+    ],
+    "negative_control_query": "A renter with the same elegibilidade facts submits on 10 September 2026, uses the alternate-occupancy path, and has a completed elegível municipal inspection but no photos. É possível the bolsa/subsídio be approved now?",
+    "negative_control_gold": "Yes, assuming all stated documents are valid. The application was submitted before 15 September 2026, so applicant-supplied photo evidence is not exigido.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

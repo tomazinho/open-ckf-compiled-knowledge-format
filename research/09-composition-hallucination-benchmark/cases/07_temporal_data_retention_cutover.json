@@ -1,0 +1,71 @@
+{
+  "case_id": "temporal_data_retention_cutover",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "temporal_dependency",
+    "complexity_level": 2,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Temporal-dependency case with a clean policy cutover date. The composition challenge is twofold: (a) recognizing that a date attached to a case (departure date) determines which regime applies, and (b) recognizing that the new regime is not retroactive. Both the cutover direction (post-cutover cases get new rule) and the non-retroactivity direction (pre-cutover cases keep old rule) must be handled. Complexity 2 because two regimes coexist and the query forces the model to map a date to a regime."
+  },
+  "representations": {
+    "raw": "Employee Records Retention Policy.\n\nPrior to 1 July 2025, the company retained all personnel records — including performance reviews, training history, internal communications, and contract-related documents — for a period of seven years after the employee's departure date. This was the single retention period applicable to all record categories under the prior policy.\n\nEffective 1 July 2025, the Updated Records Retention Policy took effect. For employees whose departure date is on or after 1 July 2025, personal records (performance reviews, training history, internal communications) are retained for three years after departure. Contract-related and tax-related documents (signed employment contract, payroll history, tax filings) continue to be retained for seven years for fiscal-compliance reasons. The updated policy thus distinguishes between two record categories with two different retention periods.\n\nThe updated policy applies prospectively only. Employees whose departure date is before 1 July 2025 remain under the prior policy: a single seven-year retention period applies to all record categories, with no category distinction. The People Operations team does not reclassify pre-cutover records retroactively. The cutover date refers to the employee's actual departure date as recorded in Workday, not to the date a record was created or the date a retention question is asked.",
+    "annotated": "Employee Records Retention Policy.\n\n<rule id=\"R1\" status=\"superseded_by_R2_for_post_cutover_cases\">Prior to 1 July 2025, the company retained all personnel records — including performance reviews, training history, internal communications, and contract-related documents — for a period of seven years after the employee's departure date. This was the single retention period applicable to all record categories under the prior policy.</rule>\n\n<rule id=\"R2\" effective_from=\"2025-07-01\">Effective 1 July 2025, the Updated Records Retention Policy took effect. For employees whose departure date is on or after 1 July 2025, personal records (performance reviews, training history, internal communications) are retained for three years after departure. Contract-related and tax-related documents (signed employment contract, payroll history, tax filings) continue to be retained for seven years for fiscal-compliance reasons. The updated policy thus distinguishes between two record categories with two different retention periods.</rule>\n\n<temporal_dependency id=\"T1\" governs=\"selection between R1 and R2\" cutover_date=\"2025-07-01\" anchor=\"employee_departure_date\" retroactive=\"false\">The updated policy applies prospectively only. Employees whose departure date is before 1 July 2025 remain under the prior policy: a single seven-year retention period applies to all record categories, with no category distinction. The People Operations team does not reclassify pre-cutover records retroactively. The cutover date refers to the employee's actual departure date as recorded in Workday, not to the date a record was created or the date a retention question is asked.</temporal_dependency>",
+    "compiled": "retention_regimes:\n  - id: R1\n    name: prior_unified_retention\n    effective_period:\n      cases_with_departure_date:\n        before: \"2025-07-01\"\n    record_categories:\n      - category: all_records\n        retention_years: 7\n    distinguishes_categories: false\n\n  - id: R2\n    name: updated_split_retention\n    effective_period:\n      cases_with_departure_date:\n        on_or_after: \"2025-07-01\"\n    record_categories:\n      - category: personal_records\n        includes: [performance_reviews, training_history, internal_communications]\n        retention_years: 3\n      - category: contract_and_tax_records\n        includes: [signed_employment_contract, payroll_history, tax_filings]\n        retention_years: 7\n    distinguishes_categories: true\n\ntemporal_selector:\n  id: T1\n  anchor_field: employee_departure_date_in_workday\n  cutover_date: \"2025-07-01\"\n  selection_rule:\n    if: departure_date < \"2025-07-01\"\n    then_apply: R1\n    else_apply: R2\n  retroactive_reclassification: false\n  not_anchor:\n    - record_creation_date\n    - retention_question_date"
+  },
+  "query": "I am completing a records inventory in November 2025. Janaína left the company on 12 February 2025. Under our current retention policy, how long should her personal records (performance reviews, training history, internal communications) be kept? Are they subject to the three-year period from the Updated Policy?",
+  "gold_answer": {
+    "full": "Janaína's records are not subject to the three-year period from the Updated Policy. Her departure date (12 February 2025) is before the 1 July 2025 cutover, which means she remains under the prior policy (R1). Under the prior policy, all personnel records — including her personal records — are retained for a single seven-year period after departure, with no distinction between record categories. The fact that the inventory is being completed in November 2025 (after the cutover) does not change this, because the cutover anchor is the employee's actual departure date, not the date of the retention question. The People Operations team does not reclassify pre-cutover records retroactively. Her personal records should therefore be retained until 12 February 2032.",
+    "minimal": "Seven years (until 12 February 2032) — she departed before the 1 July 2025 cutover, so the prior unified seven-year policy applies, not the new three-year period.",
+    "required_relations": ["T1 selects R1 when departure_date < cutover", "T1 selects R2 when departure_date >= cutover", "T1 anchors on departure_date, not on retention-question date"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Under the prior policy, what was the retention period and did it distinguish between record categories?",
+      "expected_answer": "Seven years after departure, applied uniformly to all personnel record categories with no distinction."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "Under the updated policy, how long are personal records (performance reviews, training history, internal communications) retained?",
+      "expected_answer": "Three years after departure."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "Under the updated policy, how long are contract-related and tax-related documents retained?",
+      "expected_answer": "Seven years, for fiscal-compliance reasons."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Which date is used to determine whether the prior or updated policy applies to an employee?",
+      "expected_answer": "The employee's actual departure date as recorded in Workday — not the record creation date and not the date the retention question is asked."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Does People Operations reclassify pre-cutover records retroactively when running inventories after 1 July 2025?",
+      "expected_answer": "No — the updated policy applies prospectively only; pre-cutover records remain under the prior policy."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Janaína's personal records should be retained for three years under the Updated Policy, so until February 2028.",
+      "Since the inventory is being conducted under the current policy (effective 1 July 2025), her personal records fall under the new three-year retention. Contract and tax records continue at seven years.",
+      "Three years for personal records, seven for contract and tax records — the updated policy is now in effect."
+    ],
+    "wrong_escalation": [
+      "Retain indefinitely until you receive guidance from Legal — retention policies for records pre-dating major policy changes require case-by-case review.",
+      "All records of departed employees should be retained for ten years to be safe, regardless of the policy in effect at the time of departure."
+    ],
+    "refusal": [
+      "I cannot determine the retention period without seeing Janaína's specific employment agreement."
+    ],
+    "retrieval_failure_note": "If T1 (the non-retroactivity clause) is missing, the model may correctly identify two regimes but lack the basis to assign Janaína to R1 — score as retrieval failure."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (prior unified policy)", "R2 (updated split policy)", "T1 (cutover selector and non-retroactivity)"],
+    "negative_control_query": "I am completing a records inventory in November 2025. André left the company on 5 October 2025. Under our current retention policy, how long should his personal records (performance reviews, training history, internal communications) be kept?",
+    "negative_control_gold": "Three years after his departure, until 5 October 2028. André's departure date (5 October 2025) is on or after the 1 July 2025 cutover, so the Updated Policy (R2) applies. Personal records are retained for three years; his contract-related and tax-related documents would be retained for seven years (until 5 October 2032).",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}
