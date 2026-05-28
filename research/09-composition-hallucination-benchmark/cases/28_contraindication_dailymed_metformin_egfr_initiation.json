@@ -1,0 +1,73 @@
+{
+  "case_id": "contraindication_dailymed_metformin_egfr_initiation",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "contraindication",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a DailyMed label. Clinical evaluation artifact only. Level-2 contraindication: eGFR thresholds distinguish contraindication from not-recommended initiation."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Metformin Hydrochloride tablet label",
+    "source_organization": "DailyMed / U.S. National Library of Medicine",
+    "source_url": "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=a2385bcd-0943-4411-8658-c22b50360385",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "Metformin renal-function note.\n\nSection A. Baseline renal check. Before initiating metformin, obtain an estimated glomerular filtration rate, or eGFR. During therapy, renal function should be monitored at least annually and more frequently in patients at risk for renal impairment.\n\nSection B. eGFR below 30. Metformin is contraindicated in patients whose eGFR is below 30 mL/min/1.73 m2.\n\nSection C. eGFR 30 to 45. Starting metformin is not recommended when eGFR is between 30 and 45 mL/min/1.73 m2, although this category is distinct from the below-30 contraindication.",
+    "annotated": "Metformin renal-function note.\n\n<precondition id=\"P1\">Section A. Baseline renal check. Before initiating metformin, obtain an estimated glomerular filtration rate, or eGFR. During therapy, renal function should be monitored at least annually and more frequently in patients at risk for renal impairment.</precondition>\n\n<contraindication id=\"C1\" condition=\"eGFR < 30\">Section B. eGFR below 30. Metformin is contraindicated in patients whose eGFR is below 30 mL/min/1.73 m2.</contraindication>\n\n<rule id=\"R1\" scope=\"30 <= eGFR <= 45\">Section C. eGFR 30 to 45. Starting metformin is not recommended when eGFR is between 30 and 45 mL/min/1.73 m2, although this category is distinct from the below-30 contraindication.</rule>",
+    "compiled": "preconditions:\n  - id: P1\n    before_initiation: obtain_eGFR\n    monitoring: at_least_annually_or_more_if_at_risk\ncontraindications:\n  - id: C1\n    condition:\n      eGFR: '<30 mL/min/1.73m2'\n    effect: metformin_contraindicated\nrules:\n  - id: R1\n    condition:\n      eGFR: '30-45 mL/min/1.73m2'\n    effect: initiation_not_recommended\n    distinct_from_contraindication: true"
+  },
+  "query": "A patient is being considered for new metformin therapy. Their eGFR is 38 mL/min/1.73 m2. Is this the below-30 contraindication, and should metformin be initiated as usual?",
+  "gold_answer": {
+    "full": "It is not the below-30 contraindication, but initiation should not proceed as usual. The eGFR 30–45 category is distinct from the contraindication threshold, yet the label says starting metformin is not recommended in that range.",
+    "minimal": "No below-30 contraindication, but initiation is not recommended because eGFR is 30–45.",
+    "required_relations": [
+      "precondition:eGFR must be checked before initiation",
+      "contraindication vs not-recommended threshold must be distinguished"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "P1",
+      "probe": "What should be obtained before initiating metformin?",
+      "expected_answer": "An eGFR."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "At what eGFR is metformin contraindicated in this note?",
+      "expected_answer": "Below 30 mL/min/1.73 m2."
+    },
+    {
+      "fragment_id": "R1",
+      "probe": "What does the note say about starting metformin at eGFR 30 to 45?",
+      "expected_answer": "Initiation is not recommended."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Start metformin as usual because the eGFR is above 30.",
+      "Metformin is absolutely contraindicated at eGFR 38 because it is below 45."
+    ],
+    "wrong_escalation": [
+      "Stop all diabetes medications because eGFR is below 45."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "P1",
+      "C1",
+      "R1"
+    ],
+    "negative_control_query": "A patient has eGFR 58 before starting metformin, with no other listed issue. Is the eGFR 30–45 initiation warning triggered?",
+    "negative_control_gold": "No. eGFR 58 does not trigger the 30–45 initiation-not-recommended rule or the below-30 contraindication.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

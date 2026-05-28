@@ -1,0 +1,73 @@
+{
+  "case_id": "scope_irs_online_payment_plan_thresholds",
+  "metadata": {
+    "domain": "regulatory",
+    "relation_type": "scope",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from IRS payment plan eligibility pages. Tax evaluation artifact only. Level-2 scope: short-term and long-term online plan thresholds differ."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Payment plans; installment agreements",
+    "source_organization": "Internal Revenue Service",
+    "source_url": "https://www.irs.gov/payments/payment-plans-installment-agreements",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "IRS online payment plan note.\n\nSection A. Short-term plan. An individual taxpayer may qualify online for a short-term payment plan if the total balance is less than $100,000 in combined tax, penalties, and interest and the taxpayer can pay in full within 180 days.\n\nSection B. Long-term plan. An individual taxpayer may qualify online for a long-term monthly installment agreement if the total balance is less than $50,000 in combined tax, penalties, and interest and returns are filed.\n\nSection C. Continuing charges. Interest and applicable penalties continue to accrue until the balance is paid in full, even when a payment plan is approved.",
+    "annotated": "IRS online payment plan note.\n\n<rule id=\"R1\" scope=\"individual short-term online plan\">Section A. Short-term plan. An individual taxpayer may qualify online for a short-term payment plan if the total balance is less than $100,000 in combined tax, penalties, and interest and the taxpayer can pay in full within 180 days.</rule>\n\n<rule id=\"R2\" scope=\"individual long-term online plan\">Section B. Long-term plan. An individual taxpayer may qualify online for a long-term monthly installment agreement if the total balance is less than $50,000 in combined tax, penalties, and interest and returns are filed.</rule>\n\n<rule id=\"R3\" applies_to=\"R1 R2\">Section C. Continuing charges. Interest and applicable penalties continue to accrue until the balance is paid in full, even when a payment plan is approved.</rule>",
+    "compiled": "rules:\n  - id: R1\n    plan_type: short_term\n    taxpayer_type: individual\n    max_balance_exclusive: 100000\n    max_payment_window_days: 180\n  - id: R2\n    plan_type: long_term_monthly\n    taxpayer_type: individual\n    max_balance_exclusive: 50000\n    requires_returns_filed: true\n  - id: R3\n    applies_to: [R1, R2]\n    continuing_charges: interest_and_applicable_penalties_until_paid_in_full"
+  },
+  "query": "An individual owes $72,000 including tax, penalties, and interest, has filed required returns, and wants an online monthly installment agreement over 24 months. Does the short-term threshold make them eligible for that long-term online plan?",
+  "gold_answer": {
+    "full": "No. The $100,000 threshold belongs to the short-term plan that must be paid in full within 180 days. A 24-month monthly agreement is the long-term plan, which has a less-than-$50,000 threshold, so the $72,000 balance does not qualify for that online long-term plan under this note.",
+    "minimal": "No. $72,000 may fit the short-term balance threshold, but not the long-term online plan threshold.",
+    "required_relations": [
+      "scope:short-term and long-term thresholds apply to different plan types",
+      "rule:interest/penalties continue even with a plan"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What balance and payment window apply to the short-term online plan?",
+      "expected_answer": "Less than $100,000 and payment in full within 180 days."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "What balance threshold applies to the long-term online monthly plan?",
+      "expected_answer": "Less than $50,000, with required returns filed."
+    },
+    {
+      "fragment_id": "R3",
+      "probe": "Do interest and penalties stop accruing once a plan is approved?",
+      "expected_answer": "No. They continue until the balance is paid in full."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, because $72,000 is below the $100,000 online payment plan threshold.",
+      "No, because no online plan is available unless the balance is below $50,000 even for 180-day full payment."
+    ],
+    "wrong_escalation": [
+      "File an offer in compromise because no payment plan can ever apply."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "negative_control_query": "An individual owes $42,000, has filed required returns, and wants a monthly online installment agreement. Does the long-term balance threshold block the request?",
+    "negative_control_gold": "No. $42,000 is below the less-than-$50,000 threshold, assuming the other stated requirements are met.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

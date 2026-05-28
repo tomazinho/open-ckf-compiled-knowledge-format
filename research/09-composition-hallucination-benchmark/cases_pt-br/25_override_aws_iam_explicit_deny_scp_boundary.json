@@ -1,0 +1,76 @@
+{
+  "case_id": "override_aws_iam_explicit_deny_scp_boundary",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from AWS IAM política evaluation logic. Complexity 3: identity permitir, organizational boundary/intersection, and negação explícita priority.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Policy evaluation logic",
+    "source_organization": "Amazon Web Services",
+    "source_url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "IAM evaluation note.\n\nSeção A. Identity-based permitir. An identity-based política can permitir a principal to perform an action on a resource.\n\nSeção B. Organizational política intersection. Quando an account is governed by organization-level controls, the effective permission deve also be permitido by the applicable service control or resource control policies. The result is an intersection rather than a simple union.\n\nSeção C. Explicit deny. An negação explícita in an applicable política takes priority over permitirs. If an identity-based política permitirs an action but an applicable SCP explicitly denies that action, the request is denied.",
+    "annotated": "IAM evaluation note.\n\n<rule id=\"R1\">Seção A. Identity-based permitir. An identity-based política can permitir a principal to perform an action on a resource.</rule>\n\n<scope id=\"S1\" applies_to=\"R1\" condition=\"account governed by organization-level controls\">Seção B. Organizational política intersection. Quando an account is governed by organization-level controls, the effective permission deve also be permitido by the applicable service control or resource control policies. The result is an intersection rather than a simple union.</scope>\n\n<override id=\"O1\" overrides=\"R1\" priority=\"highest\" condition=\"applicable explicit deny\">Seção C. Explicit deny. An negação explícita in an applicable política takes priority over permitirs. If an identity-based política permitirs an action but an applicable SCP explicitly denies that action, the request is denied.</override>",
+    "compiled": "regras:\n  - id: R1\n    política_type: identity_based\n    effect: Allow\n    action: pode_permitir_request\n  - id: S1\n    política_type: organization_controls\n    relation: effective_permissions_are_intersection\n    exige_permitido_by: [identity_política, applicable_scp_or_rcp]\nsobreposiçãos:\n  - id: O1\n    priority: highest\n    condition: explicit_deny_in_any_applicable_política\n    result: Deny\n    sobreposiçãos: [identity_permitir, resource_permitir, scp_permitir]"
+  },
+  "query": "An IAM role has an identity-based política that permitirs s3:DeleteObject. The account is under an SCP that explicitly denies s3:DeleteObject. There is no resource-based política involved. É the request permitido?",
+  "gold_answer": {
+    "full": "No. The identity-based política alone would permitir the action, but effective permissions under organizational controls exige the applicable policies to permit the action, and an negação explícita in the SCP sobreposiçãos the permitir. The request is denied.",
+    "minimal": "Denied. The SCP negação explícita sobreposiçãos the identity-based permitir.",
+    "required_relations": [
+      "escopo:effective permissions are intersected with organization controls",
+      "sobreposição:negação explícita sobreposiçãos permitir"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que can an identity-based política do?",
+      "expected_answer": "It can permitir a principal to perform an action on a resource."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "How are permissions evaluated when organization-level controls apply?",
+      "expected_answer": "The effective permission deve also be permitido by applicable organization-level controls; it is an intersection."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "Qual/O que is the effect of an negação explícita in an applicable SCP?",
+      "expected_answer": "It sobreposiçãos permitirs and causes the request to be denied."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Allowed, porque the role política explicitly permitirs s3:DeleteObject.",
+      "Allowed porque SCPs only add permissions and do not remove identity-based permissions."
+    ],
+    "wrong_escalation": [
+      "Delete the SCP before evaluating the request."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1",
+      "O1"
+    ],
+    "negative_control_query": "An IAM role permitirs s3:GetObject and the applicable SCP also permitirs it with no negação explícita. É the action bloqueado by the SCP?",
+    "negative_control_gold": "No. If both the identity política and applicable SCP permitir the action and no negação explícita applies, the SCP does not block it.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

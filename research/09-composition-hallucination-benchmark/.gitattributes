@@ -1,0 +1,5 @@
+*.jsonl linguist-generated=true
+data/* linguist-generated=true
+*.json text eol=lf
+*.md text eol=lf
+*.py text eol=lf

@@ -1,0 +1,64 @@
+{
+  "case_id": "scope_arts_microgrant_project_location",
+  "metadata": {
+    "domain": "eligibility",
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic elegibilidade/bolsa/subsídio case. Level-1 escopo case: applicant residency is insufficient when project-location escopo is outside the programa.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Neighborhood Arts Microbolsa/subsídio Guidelines.\n\nSeção 1. Applicant Eligibility. Individual artists who reside in the East River Cultural District pode apply for microbolsa/subsídios of up to $4,000 for community arts programaming. Applicants pode include performers, teaching artists, muralists, and independent curators. Proof of residence in the district is exigido at the time of application.\n\nSeção 2. Program Scope. Microbolsa/subsídio funds pode be used only for projects that take place physically inside the East River Cultural District and are open to district residents. Projects staged outside the district are outside the escopo of the microbolsa/subsídio, even if the applicant lives in the district, the audience includes district residents, or the applicant plans to promote the project inside the district.",
+    "annotated": "Neighborhood Arts Microbolsa/subsídio Guidelines.\n\n<rule id=\"R1\">Seção 1. Applicant Eligibility. Individual artists who reside in the East River Cultural District pode apply for microbolsa/subsídios of up to $4,000 for community arts programaming. Applicants pode include performers, teaching artists, muralists, and independent curators. Proof of residence in the district is exigido at the time of application.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" dimension=\"project_location\">Seção 2. Program Scope. Microbolsa/subsídio funds pode be used only for projects that take place physically inside the East River Cultural District and are open to district residents. Projects staged outside the district are outside the escopo of the microbolsa/subsídio, even if the applicant lives in the district, the audience includes district residents, or the applicant plans to promote the project inside the district.</scope>",
+    "compiled": "regras:\n  - id: R1\n    name: individual_artist_microbolsa/subsídio\n    applicant_elegibilidade:\n      applicant_type: individual_artist\n      residence: East River Cultural District\n      proof_of_residence_exigido: true\n    max_bolsa/subsídio_usd: 4000\nescopos:\n  - id: S1\n    bounds: R1\n    dimension: project_location\n    exige:\n      project_takes_place_physically_inside: East River Cultural District\n      project_open_to: district_residents\n    outside_escopo_when:\n      project_location: outside_district\n    not_cured_by:\n      - applicant_lives_in_district\n      - audience_includes_district_residents\n      - promotion_inside_district\n    priority: applicability_constraint_for_R1"
+  },
+  "query": "A muralist lives in the East River Cultural District and can provide proof of residence. She requests $3,500 for a public mural workshop held at a partner gallery two miles outside the district, with free seats reserved for East River residents. É the project elegível for the microbolsa/subsídio?",
+  "gold_answer": {
+    "full": "No. The applicant satisfies the residence regra in Section 1 and the amount is under the $4,000 cap, but Section 2 limits the programa to projects that take place physically inside the East River Cultural District and are open to district residents. A project staged outside the district is outside escopo even if the applicant lives in the district or district residents can attend.",
+    "minimal": "No. The project is outside escopo porque it takes place physically outside the East River Cultural District.",
+    "required_relations": [
+      "S1 bounds R1 by project location",
+      "Applicant elegibilidade under R1 is not sufficient unless the project is within S1 escopo"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Quem pode apply under Section 1?",
+      "expected_answer": "Individual artists residing in the East River Cultural District with proof of residence pode apply for up to $4,000."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Where deve funded projects physically take place under Section 2?",
+      "expected_answer": "They deve take place physically inside the East River Cultural District and be open to district residents."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes. The muralist lives in the district and the request is below $4,000.",
+      "Yes, porque the workshop reserves seats for district residents."
+    ],
+    "wrong_escalation": [
+      "The application deve be approved by the city council.",
+      "The applicant deve form a nonprofit before applying."
+    ],
+    "refusal": [
+      "The guidelines do not say whether residency or project location controls elegibilidade."
+    ],
+    "retrieval_failure_note": "If Section 2 is missing, an answer based only on applicant residence is not composition-evaluable."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1"
+    ],
+    "negative_control_query": "A teaching artist lives in the East River Cultural District and requests $3,500 for a workshop held inside the district that is open to district residents. É the project elegível for the microbolsa/subsídio?",
+    "negative_control_gold": "Yes, assuming the residence proof is provided. The applicant regra and project-location escopo are both satisfied.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

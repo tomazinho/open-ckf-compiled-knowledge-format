@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+title: Composition Hallucination Benchmark
+message: >-
+  If you use this benchmark, please cite both the repository (below) and the
+  protocol paper it implements.
+type: dataset
+authors:
+  - name: CKF Research
+    website: "https://tomazinho.com.br"
+  - family-names: Tomazinho
+    given-names: Paulo
+    email: paulo@tomazinho.com.br
+    affiliation: CKF Research
+version: 0.5.0
+date-released: "2026-05-28"
+license: CC-BY-4.0
+repository-code: "https://github.com/ckf-research/composition-hallucination-bench"
+keywords:
+  - retrieval-augmented generation
+  - hallucination
+  - benchmark
+  - knowledge representation
+  - composition hallucination
+  - structured retrieval
+  - graphrag
+  - ckf
+references:
+  - type: report
+    title: >-
+      Composition Hallucination in Retrieval-Augmented Generation:
+      A Failure Mode and Benchmark Protocol
+    authors:
+      - family-names: Tomazinho
+        given-names: Paulo
+        affiliation: CKF Research
+    year: 2026
+    institution:
+      name: CKF Research

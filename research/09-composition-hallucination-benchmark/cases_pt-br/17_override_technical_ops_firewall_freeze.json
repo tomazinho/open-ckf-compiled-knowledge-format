@@ -1,0 +1,70 @@
+{
+  "case_id": "override_technical_ops_firewall_freeze",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 2,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic technical operations playbook case. Level-2 sobreposição plus post-action obligation, distinct from existing mudança-management cases by focusing on firewall regra freeze.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Network Firewall Change Playbook.\n\nSeção 1. Release Freeze. During a declared network release freeze, non-emergência firewall regra mudanças to production edge firewalls are bloqueado. Requests submitted during a freeze are queued for the first standard mudança window after the freeze ends and deve follow ordinary peer revisão.\n\nSeção 3. Active Exploit Override. A firewall regra mudança that blocks an active externally confirmed exploit pode be implemented during a release freeze if the Security Incident Commander declares the mudança emergência mitigation in the incidente channel. The emergência declaration sobreposiçãos the release-freeze queueing regra only for the firewall regras needed to block the active exploit.\n\nSeção 5. Post-Implementation Review. Any firewall mudança implemented under the active-exploit sobreposição deve receive peer revisão and incidente-owner sign-off within twenty-four hours after implementation. The post-implementation revisão does not need to occur before deployment of the emergência mitigation.",
+    "annotated": "Network Firewall Change Playbook.\n\n<rule id=\"R1\">Seção 1. Release Freeze. During a declared network release freeze, non-emergência firewall regra mudanças to production edge firewalls are bloqueado. Requests submitted during a freeze are queued for the first standard mudança window after the freeze ends and deve follow ordinary peer revisão.</rule>\n\n<override id=\"O1\" overrides=\"R1\" condition=\"active externally confirmed exploit and Security Incident Commander emergency declaration\">Seção 3. Active Exploit Override. A firewall regra mudança that blocks an active externally confirmed exploit pode be implemented during a release freeze if the Security Incident Commander declares the mudança emergência mitigation in the incidente channel. The emergência declaration sobreposiçãos the release-freeze queueing regra only for the firewall regras needed to block the active exploit.</override>\n\n<precondition id=\"P1\" required_after=\"O1 implementation\" deadline=\"24 hours\">Seção 5. Post-Implementation Review. Any firewall mudança implemented under the active-exploit sobreposição deve receive peer revisão and incidente-owner sign-off within twenty-four hours after implementation. The post-implementation revisão does not need to occur before deployment of the emergência mitigation.</precondition>",
+    "compiled": "regras:\n  - id: R1\n    name: firewall_release_freeze\n    applies_when:\n      release_freeze_declared: true\n      firewall_target: production_edge_firewall\n      emergência: false\n    effect:\n      mudança_status: queued_for_next_standard_window\n      peer_revisão: ordinary_before_mudança\nsobreposiçãos:\n  - id: O1\n    sobreposiçãos: R1\n    name: active_exploit_sobreposição\n    triggers_when:\n      active_externally_confirmed_exploit: true\n      security_incidente_commander_declares_emergência_mitigation: true\n    permitido_during_freeze: true\n    escopo: only_regras_needed_to_block_active_exploit\n    priority: higher_than_R1\npost_conditions:\n  - id: P1\n    applies_to: O1\n    after: implementation\n    deadline_hours: 24\n    exigido: [peer_revisão, incidente_owner_signoff]\n    exigido_before_deployment: false"
+  },
+  "query": "A network release freeze is active. Threat intelligence confirms an external exploit against a production edge service, and the Security Incident Commander declares an emergência mitigation in the incidente channel. The proposed firewall regra only blocks the exploit source range. May the firewall regra be implemented during the freeze, and what revisão is exigido?",
+  "gold_answer": {
+    "full": "Yes. The release freeze would normally queue non-emergência production firewall mudanças, but the active-exploit sobreposição applies porque there is an externally confirmed exploit and the Security Incident Commander declared emergência mitigation. The regra is within the sobreposição escopo porque it only blocks the exploit source range. Peer revisão and incidente-owner sign-off are still exigido within twenty-four hours after implementation, but they do not need to occur before emergência deployment.",
+    "minimal": "Yes. The emergência exploit sobreposição permits the escopod firewall regra during the freeze; peer revisão and incidente-owner sign-off are exigido within twenty-four hours after implementation.",
+    "required_relations": [
+      "O1 sobreposiçãos R1 when active exploit and Security Incident Commander declaration are present",
+      "P1 attaches a post-implementation revisão obligation that does not block deployment"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que happens to non-emergência production edge firewall mudanças during a release freeze?",
+      "expected_answer": "They are bloqueado during the freeze and queued for the first standard mudança window after the freeze ends, with ordinary peer revisão."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "Qual/O que conditions permitir a firewall regra mudança during a release freeze under Section 3?",
+      "expected_answer": "An active externally confirmed exploit and a Security Incident Commander emergência-mitigation declaration in the incidente channel."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Quando deve peer revisão and incidente-owner sign-off occur for mudanças under the active-exploit sobreposição?",
+      "expected_answer": "Within twenty-four hours after implementation; they are not exigido before emergência deployment."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "No. A release freeze blocks all production firewall mudanças until the next standard mudança window.",
+      "Yes, and no peer revisão is needed porque emergência mudanças bypass all revisão."
+    ],
+    "wrong_escalation": [
+      "Only the CEO can approve any firewall mudança during a freeze.",
+      "The mudança deve wait for a full CAB meeting despite the active exploit declaration."
+    ],
+    "refusal": [
+      "The playbook does not say whether the freeze or the exploit procedimento has priority."
+    ],
+    "retrieval_failure_note": "If Section 3 is absent, blocking the mudança under Section 1 is a retrieval failure. If Section 5 is absent, omitting post-revisão is not composition-evaluable."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "O1",
+      "P1"
+    ],
+    "negative_control_query": "A release freeze is active, and a team wants to add a production edge firewall regra for routine fornecedor onboarding. There is no externally confirmed exploit and no Security Incident Commander emergência declaration. May the regra be implemented during the freeze?",
+    "negative_control_gold": "No. The active-exploit sobreposição is not triggered, so the request is queued for the first standard mudança window after the freeze.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

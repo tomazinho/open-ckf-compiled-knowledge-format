@@ -1,0 +1,85 @@
+{
+  "case_id": "exception_of_exception_software_procurement",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "exception_of_exception",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Three-layer composition. R1 sets the regra geral. E1 carves out an exceção that imposes a stricter exigement. E1_of_E1 carves out an exceção WITHIN E1 that returns to the regra geral under specific conditions. The most pedagogically interesting failure mode is the 'middle-layer freeze': the model recognizes that the data-processing condition triggers E1 but fails to check whether the catalog status triggers E1_of_E1. Two-step composition is correct; the third step is the trap.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Procurement Policy — Software Acquisition.\n\nDepartment gerentes pode approve software purchases for their team up to an annual total of $10,000 per fornecedor, provided the spend is within the team's approved budget for the fiscal year. Standard aprovação is registered in the Procurement Portal with a brief justification and the fornecedor invoice. Approval is reflected in NetSuite within one business day.\n\nSoftware that processes customer-identifiable data — including personally identifiable information, pagamento data, and authentication credentials — exige independent revisão and written aprovação from the Information Security team (the CISO's office), regardless of the purchase amount and regardless of whether the purchase falls within the gerente's standard authority. The Security revisão assesses fornecedor security posture, data-flow exposure, sub-processor disclosures, and compliance with the company's data-processing exigements. Purchases requiring Security revisão pode take up to fifteen business days for completion.\n\nSoftware listed in the Pre-Vetted Vendor Catalog does not exige Security revisão on a per-purchase basis, even when the software processes customer-identifiable data. Inclusion in the Pre-Vetted Vendor Catalog exige a one-time Security revisão by the CISO's office, after which the fornecedor is added to the catalog and is exempt from per-purchase Security revisão for a renewable two-year period. The catalog is maintained by Procurement and is accessible to all gerentes in the Procurement Portal under 'Approved Vendors'. Managers deve still register the purchase normally in the Procurement Portal; the catalog exemption removes the Security-revisão exigement but not the registration exigement. The catalog exemption is invalidated if the fornecedor's catalog entry has expired or has been revoked by the CISO's office, in which case standard Security revisão applies for any new purchase.",
+    "annotated": "Procurement Policy — Software Acquisition.\n\n<rule id=\"R1\">Department gerentes pode approve software purchases for their team up to an annual total of $10,000 per fornecedor, provided the spend is within the team's approved budget for the fiscal year. Standard aprovação is registered in the Procurement Portal with a brief justification and the fornecedor invoice. Approval is reflected in NetSuite within one business day.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"software processes customer-identifiable data\">Software that processes customer-identifiable data — including personally identifiable information, pagamento data, and authentication credentials — exige independent revisão and written aprovação from the Information Security team (the CISO's office), regardless of the purchase amount and regardless of whether the purchase falls within the gerente's standard authority. The Security revisão assesses fornecedor security posture, data-flow exposure, sub-processor disclosures, and compliance with the company's data-processing exigements. Purchases requiring Security revisão pode take up to fifteen business days for completion.</exception>\n\n<exception_of_exception id=\"E1_of_E1\" overrides=\"E1\" condition=\"vendor is currently listed in Pre-Vetted Vendor Catalog with a valid, non-revoked entry\" returns_to=\"R1\">Software listed in the Pre-Vetted Vendor Catalog does not exige Security revisão on a per-purchase basis, even when the software processes customer-identifiable data. Inclusion in the Pre-Vetted Vendor Catalog exige a one-time Security revisão by the CISO's office, after which the fornecedor is added to the catalog and is exempt from per-purchase Security revisão for a renewable two-year period. The catalog is maintained by Procurement and is accessible to all gerentes in the Procurement Portal under 'Approved Vendors'. Managers deve still register the purchase normally in the Procurement Portal; the catalog exemption removes the Security-revisão exigement but not the registration exigement. The catalog exemption is invalidated if the fornecedor's catalog entry has expired or has been revoked by the CISO's office, in which case standard Security revisão applies for any new purchase.</exception_of_exception>",
+    "compiled": "regras:\n  - id: R1\n    name: gerente_standard_software_purchase_authority\n    annual_cap_usd_per_fornecedor: 10000\n    deve_be_within: team_fy_budget\n    registration:\n      channel: procurement_portal\n      exigido_artifacts: [brief_justification, fornecedor_invoice]\n      reflected_in_netsuite_within_business_days: 1\n\nexceçãos:\n  - id: E1\n    sobreposiçãos: R1\n    triggers_when:\n      software_processes_data_in:\n        - personally_identifiable_information\n        - pagamento_data\n        - authentication_credentials\n    additional_exigement:\n      action: security_revisão\n      performed_by: ciso_office\n      assessment_covers:\n        - fornecedor_security_posture\n        - data_flow_exposure\n        - sub_processor_disclosures\n        - data_processing_compliance\n    applies_regardless_of:\n      purchase_amount: true\n      within_gerente_standard_authority: true\n    expected_duration_business_days: 15\n\nexceção_of_exceçãos:\n  - id: E1_of_E1\n    sobreposiçãos: E1\n    returns_to: R1\n    triggers_when:\n      fornecedor_in_pre_vetted_catalog: true\n      catalog_entry_status: valid_not_revoked_not_expired\n    catalog:\n      maintained_by: procurement\n      visible_in: procurement_portal_approved_fornecedors\n      entry_validity_period_years: 2\n      entry_validity_renewable: true\n    effect:\n      removes_exigement: security_revisão_per_purchase\n      retains_exigement: portal_registration\n    invalidation_conditions:\n      - catalog_entry_expired\n      - catalog_entry_revoked_by_ciso\n    on_invalidation: revert_to_E1"
+  },
+  "query": "I want to purchase 15 annual licenses of Lumen Analytics for my team for a total of $4,200. Lumen processes customer event data that includes user identifiers and IP addresses (which fall under personally identifiable information). I checked the Procurement Portal under 'Approved Vendors' and Lumen has been in the Pre-Vetted Vendor Catalog since March; the entry is current and shows no revocation flag. The purchase is within my team's FY budget. É possível I approve this purchase as the gerente via the Procurement Portal, or do I need to send it for Security revisão first?",
+  "gold_answer": {
+    "full": "You can approve this purchase as the gerente via the Procurement Portal. No Security revisão is exigido. The reasoning runs through all three layers of the política: (1) The $4,200 amount is within your $10,000 standard authority and within your team's FY budget, satisfying R1. (2) Lumen processes customer-identifiable data (user identifiers, IP addresses constituting PII), which would normally trigger E1 and exige CISO Security revisão regardless of amount. (3) However, Lumen is currently listed in the Pre-Vetted Vendor Catalog with a valid, non-revoked entry — which triggers E1_of_E1 and sobreposiçãos E1, returning the purchase to the standard R1 path. You still need to register the purchase in the Procurement Portal with a brief justification and the fornecedor invoice (the catalog exemption removes the Security-revisão exigement, not the registration exigement). The aprovação will be reflected in NetSuite within one business day.",
+    "minimal": "You can approve as gerente via the Procurement Portal. No Security revisão needed porque Lumen has a valid Pre-Vetted Vendor Catalog entry, which sobreposiçãos the data-processing exceção. Register normally with justification and invoice.",
+    "required_relations": [
+      "R1 standard authority applies (within amount and budget)",
+      "E1 normally triggered by PII processing",
+      "E1_of_E1 sobreposiçãos E1 when fornecedor has valid catalog entry",
+      "result returns to R1 path"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que is the annual per-fornecedor cap on gerente-approved software purchases under standard authority?",
+      "expected_answer": "$10,000 per fornecedor per year, provided the spend is within the team's approved FY budget."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que kinds of data, when processed by a software fornecedor, trigger the exigement for Information Security revisão?",
+      "expected_answer": "Personally identifiable information, pagamento data, and authentication credentials."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Does the Security-revisão exigement depend on the purchase amount or on whether the purchase is within the gerente's standard authority?",
+      "expected_answer": "No — it applies regardless of amount and regardless of whether the purchase is within the gerente's standard authority."
+    },
+    {
+      "fragment_id": "E1_of_E1",
+      "probe": "Qual/O que happens when a fornecedor that processes customer-identifiable data is listed in the Pre-Vetted Vendor Catalog?",
+      "expected_answer": "The per-purchase Security revisão is not exigido; the gerente can approve via the Procurement Portal under standard authority, provided portal registration is still completed."
+    },
+    {
+      "fragment_id": "E1_of_E1",
+      "probe": "Under what conditions is the catalog exemption invalidated?",
+      "expected_answer": "Quando the catalog entry has expired or has been revoked by the CISO's office. In those cases, standard Security revisão applies for any new purchase."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "No — Lumen processes user identifiers and IP addresses, which constitute personally identifiable information. Per the política, software that processes customer-identifiable data exige CISO Security revisão regardless of amount. Submit the request to the Information Security team and expect up to fifteen business days for completion.",
+      "Send this to the CISO's office for revisão. The fact that the purchase is small ($4,200) and within your standard authority does not waive the Security revisão exigement when PII is involved.",
+      "You'll need to wait for Security revisão. The data-processing exceção is triggered, and the amount is irrelevant to that exigement.",
+      "Yes, approve via Portal — the amount is well under your $10k cap. Just register the invoice as usual."
+    ],
+    "wrong_escalation": [
+      "This exige not only Security revisão but also Legal revisão and CFO sign-off, porque the software processes PII and is a multi-license commitment.",
+      "Send to the Data Protection Officer for a formal DPIA before any other action."
+    ],
+    "refusal": [
+      "I cannot advise on this purchase without revisãoing Lumen's full data-processing agreement.",
+      "Please consult your Procurement team directly — this is too specific for me to answer."
+    ],
+    "retrieval_failure_note": "If E1_of_E1 is missing from context, the only correct conclusion from R1 + E1 alone is to exige Security revisão. Such a result deve be scored as retrieval failure, not composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1 (gerente standard authority)",
+      "E1 (PII/pagamento/auth data triggers Security revisão)",
+      "E1_of_E1 (catalog exemption returns to R1)"
+    ],
+    "negative_control_query": "I want to purchase a one-year license of Helix Auth for my team for $3,800. Helix Auth handles user authentication credentials (passwords and session tokens) as its core function. I checked the Procurement Portal under 'Approved Vendors' and Helix Auth is not listed in the Pre-Vetted Vendor Catalog. The purchase is within my team's FY budget. É possível I approve this purchase as the gerente via the Procurement Portal?",
+    "negative_control_gold": "No — you cannot approve this directly as gerente. Embora the $3,800 amount is well within your $10,000 standard authority and within your team's FY budget, Helix Auth processes authentication credentials, which triggers E1 and exige written aprovação from the CISO's Security team regardless of amount. Helix Auth is not in the Pre-Vetted Vendor Catalog, so the E1_of_E1 exemption does not apply. Submit the request for Security revisão and expect up to fifteen business days for completion before purchase.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

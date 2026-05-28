@@ -1,0 +1,70 @@
+{
+  "case_id": "override_incident_severity_routing",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic SRE/incident-response runbook. Distinct from exception in that the override defines an entirely separate handling path, not a modification of conditions on the same path."
+  },
+  "representations": {
+    "raw": "Standard Ticket Handling Procedure.\n\nAll inbound support requests, bug reports, and customer-impact issues should be filed in the Engineering Jira project under the appropriate component. Tickets enter the queue at priority Triage and are reviewed by the Level-1 support engineer on shift within four business hours. Level-1 confirms reproducibility, gathers customer context, and either resolves the issue or escalates to Level-2 with a written summary. Level-2 engineers handle backend and integration issues and may escalate to Level-3 (component owners) for changes requiring code modifications. Standard turnaround for full resolution under this flow is two to five business days depending on complexity.\n\nMajor Incident Procedure.\n\nWhen an event meets the criteria for a Severity-1 major incident — defined as full or partial outage of a customer-facing production service, data-integrity issue affecting more than one customer, or any security breach — the standard ticket flow is suspended and the Major Incident Procedure takes effect. The on-call incident commander must be paged immediately through PagerDuty using the incident-commander escalation policy. The incident commander then assembles the response team, declares the incident in the #incident-active Slack channel, and assumes coordination authority. Filing a Jira ticket is still required for post-incident review purposes, but it must not delay paging. Any time spent in the standard triage queue during a Severity-1 event is treated as a process failure in post-mortem.",
+    "annotated": "Standard Ticket Handling Procedure.\n\n<rule id=\"R1\">All inbound support requests, bug reports, and customer-impact issues should be filed in the Engineering Jira project under the appropriate component. Tickets enter the queue at priority Triage and are reviewed by the Level-1 support engineer on shift within four business hours. Level-1 confirms reproducibility, gathers customer context, and either resolves the issue or escalates to Level-2 with a written summary. Level-2 engineers handle backend and integration issues and may escalate to Level-3 (component owners) for changes requiring code modifications. Standard turnaround for full resolution under this flow is two to five business days depending on complexity.</rule>\n\nMajor Incident Procedure.\n\n<override id=\"O1\" supersedes=\"R1\" condition=\"event meets Severity-1 criteria: full or partial outage of customer-facing production service, data-integrity issue affecting more than one customer, or any security breach\">When an event meets the criteria for a Severity-1 major incident, the standard ticket flow is suspended and the Major Incident Procedure takes effect. The on-call incident commander must be paged immediately through PagerDuty using the incident-commander escalation policy. The incident commander then assembles the response team, declares the incident in the #incident-active Slack channel, and assumes coordination authority. Filing a Jira ticket is still required for post-incident review purposes, but it must not delay paging. Any time spent in the standard triage queue during a Severity-1 event is treated as a process failure in post-mortem.</override>",
+    "compiled": "procedures:\n  - id: R1\n    name: standard_ticket_handling\n    applies_when:\n      event_severity_in: [low, medium, high]\n      event_severity_not_in: [sev_1]\n    steps:\n      - action: file_jira_ticket\n        project: engineering\n        initial_priority: triage\n      - action: level_1_review\n        sla_business_hours: 4\n      - action: escalate_if_needed\n        path: [level_2, level_3]\n    typical_resolution_business_days: [2, 5]\n\n  - id: O1\n    name: major_incident_procedure\n    supersedes: R1\n    triggers_when:\n      any_of:\n        - condition: full_or_partial_outage_customer_facing_production\n        - condition: data_integrity_issue_affecting_multiple_customers\n        - condition: security_breach\n    suspends: [R1]\n    required_immediate_action:\n      action: page_on_call_incident_commander\n      channel: pagerduty\n      escalation_policy: incident_commander\n    coordination:\n      declare_in_slack: \"#incident-active\"\n      authority: incident_commander\n    jira_ticket:\n      still_required: true\n      purpose: post_incident_review\n      must_not_delay: page_action\n    post_mortem_flag_if: standard_triage_queue_used_during_sev_1\n    priority: higher_than_R1"
+  },
+  "query": "I am the engineer on shift. Our production checkout service has been returning 503 errors to all customers for the past seven minutes — every checkout attempt is failing. I have already started writing up a Jira ticket in the Engineering project with the component set to Checkout. Should I finish the ticket and submit it through the standard Triage queue so Level-1 can review it within the four-hour SLA?",
+  "gold_answer": {
+    "full": "No — do not route this through the standard Triage queue. A full outage of a customer-facing production service meets the Severity-1 criteria, which activates the Major Incident Procedure and supersedes the standard ticket flow. The immediate action is to page the on-call incident commander through PagerDuty using the incident-commander escalation policy. The Jira ticket is still required, but for post-incident review purposes — it must not delay paging. Routing a Sev-1 through standard triage is explicitly treated as a process failure in post-mortem.",
+    "minimal": "No — page the on-call incident commander via PagerDuty immediately; this is a Sev-1. The Jira ticket can follow but must not delay paging.",
+    "required_relations": ["O1 supersedes R1 when event meets Sev-1 criteria"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Under the standard ticket handling procedure, what is the Level-1 review SLA after a ticket is filed in Jira at Triage priority?",
+      "expected_answer": "Four business hours."
+    },
+    {
+      "fragment_id": "R1",
+      "probe": "Under the standard procedure, what is the typical turnaround for full resolution?",
+      "expected_answer": "Two to five business days depending on complexity."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "What three conditions trigger the Major Incident Procedure?",
+      "expected_answer": "Full or partial outage of a customer-facing production service, data-integrity issue affecting more than one customer, or any security breach."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "Under the Major Incident Procedure, what is the first required action and through which channel?",
+      "expected_answer": "Page the on-call incident commander via PagerDuty using the incident-commander escalation policy."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "Is filing a Jira ticket still required during a Severity-1 incident?",
+      "expected_answer": "Yes, for post-incident review purposes — but it must not delay paging."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — finish the ticket with as much detail as possible and submit it through the standard Engineering project under the Checkout component. Level-1 will pick it up within four hours.",
+      "Yes, file the Jira ticket — that is the standard procedure for all customer-impact issues. You may also want to notify your manager separately given the scope, but the ticket flow is the official path."
+    ],
+    "wrong_escalation": [
+      "No — file a ticket directly with the Legal team and the CEO's office, since a checkout outage has financial implications.",
+      "Open a ticket and simultaneously file an incident with the CISO. All customer-facing outages require security review regardless of cause."
+    ],
+    "refusal": [
+      "I cannot advise on incident response procedures without knowing the full content of your runbook."
+    ],
+    "retrieval_failure_note": "If only R1 is in context and O1 is missing, classify as retrieval failure, not composition."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (Standard Ticket Handling)", "O1 (Major Incident Procedure)"],
+    "negative_control_query": "I am the engineer on shift. A customer just emailed support reporting that the export-to-CSV button on the reports page is producing files with an off-by-one row error. Only this single customer has reported it, the rest of the product is functioning normally, and there is no data-integrity concern for other tenants. Should I file a Jira ticket in the Engineering project under the Reports component and route it through the standard Triage queue?",
+    "negative_control_gold": "Yes — this is a single-customer, contained issue that does not meet Severity-1 criteria (no production outage, no multi-customer data-integrity issue, no security breach). The standard ticket handling procedure applies: file in Jira under Reports component at Triage priority, and Level-1 will review within the four-business-hour SLA.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

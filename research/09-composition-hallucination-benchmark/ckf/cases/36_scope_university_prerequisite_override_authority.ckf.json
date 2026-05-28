@@ -1,0 +1,116 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "scope_university_prerequisite_override_authority",
+    "title": "Scope University Prerequisite Override Authority",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "education",
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Prerequisites - UTSA One Stop",
+      "source_organization": "University of Texas at San Antonio",
+      "source_url": "https://onestop.utsa.edu/registration/register/prerequisite/",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "S1"
+      }
+    ],
+    "raw_representation_sha256": "c9d32aaad1ed0c33c4d1666e99f41bcbd46b94e6cd39c62d581d69d7524af7f7",
+    "annotated_representation_sha256": "5e19a9368a1e425f84264f77d9ae2e16f0f7557577265c411c089f9997866a98",
+    "compiled_representation_sha256": "0ab98740e69424c9b28cc89ebfe4df772887dda60f632135dd136bfeb0e67ce2"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "University prerequisite override note.\n\nSection A. Prerequisite restriction. A student who has not satisfied a course prerequisite cannot register unless an override is approved.\n\nSection B. Approval authority. Prerequisite override requests are reviewed by the course instructor and/or the department chair. Academic advisors and the registrar's office cannot approve prerequisite override requests."
+      },
+      {
+        "id": "annotated",
+        "text": "University prerequisite override note.\n\n<rule id=\"R1\">Section A. Prerequisite restriction. A student who has not satisfied a course prerequisite cannot register unless an override is approved.</rule>\n\n<scope id=\"S1\" applies_to=\"R1\" authority=\"instructor_or_department_chair_only\">Section B. Approval authority. Prerequisite override requests are reviewed by the course instructor and/or the department chair. Academic advisors and the registrar's office cannot approve prerequisite override requests.</scope>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    condition: prerequisite_not_satisfied\n    enrollment_allowed_only_if: prerequisite_override_approved\nscope_constraints:\n  - id: S1\n    valid_approvers: [course_instructor, department_chair]\n    invalid_approvers: [academic_advisor, registrar_office]"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "scope",
+        "description": "Adapted from a university prerequisite override page. Level-1 scope: advisors/registrar are outside approval authority for prerequisite overrides."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A student lacks a prerequisite. Their academic advisor says the override is approved, but neither the instructor nor the department chair has reviewed it. Under this note, is the prerequisite override approved?",
+        "expected_decision": "No. Advisor approval is outside the valid approval authority.",
+        "rationale": "No. The student needs an approved override, but approval authority is scoped to the course instructor and/or department chair. An academic advisor cannot approve the prerequisite override."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A student lacks a prerequisite. Their academic advisor says the override is approved, but neither the instructor nor the department chair has reviewed it. Under this note, is the prerequisite override approved?",
+        "answer": "No. The student needs an approved override, but approval authority is scoped to the course instructor and/or department chair. An academic advisor cannot approve the prerequisite override."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "An approved prerequisite override."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "The course instructor and/or department chair, not academic advisors or the registrar."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes, because the advisor works in academic advising and approved it.",
+        "No override is ever possible when prerequisites are missing."
+      ],
+      "wrong_escalation": [
+        "Require the university president to approve the course registration."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "S1"
+      ],
+      "negative_control_query": "A student lacks a prerequisite and the department chair approves the override. Is the approval-authority scope satisfied?",
+      "negative_control_gold": "Yes. The department chair is within the valid approval authority described in the note.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "36_scope_university_prerequisite_override_authority.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

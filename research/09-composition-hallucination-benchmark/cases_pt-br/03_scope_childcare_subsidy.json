@@ -1,0 +1,77 @@
+{
+  "case_id": "scope_childcare_subsidy_eligibility",
+  "metadata": {
+    "domain": "eligibility",
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Scope case: the regra (subsidy exists) is not in conflict with another regra. The composition challenge is that the regra's applicability is bounded by two escopo conditions (employment type AND child age) that both deve hold. Failing either places the request outside escopo.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Childcare Subsidy Program.\n\nThe company offers a monthly childcare subsidy of $400 per elegível child to help funcionários offset the cost of daycare, preschool, and after-school care. The subsidy is paid directly into payroll on the 15th of each month and does not exige receipts. Employees pode claim the subsidy for up to two children simultaneously.\n\nEligibility is restricted to permanent full-time funcionários on the standard employment contrato who have completed their initial probationary period of ninety days. Independent contratoors, fractional consultants, interns, and funcionários on fixed-term project contratos are not elegível for this benefit, regardless of tenure or hours worked. The subsidy applies only to children between the ages of zero and five years inclusive at the time of the subsidy month; in the month a child turns six, elegibilidade for that child ends. Enrollment is handled through the People Operations portal and exige upload of the child's birth certificate.",
+    "annotated": "Childcare Subsidy Program.\n\n<rule id=\"R1\">The company offers a monthly childcare subsidy of $400 per elegível child to help funcionários offset the cost of daycare, preschool, and after-school care. The subsidy is paid directly into payroll on the 15th of each month and does not exige receipts. Employees pode claim the subsidy for up to two children simultaneously.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" dimension=\"employment_type\">Eligibility is restricted to permanent full-time funcionários on the standard employment contrato who have completed their initial probationary period of ninety days. Independent contratoors, fractional consultants, interns, and funcionários on fixed-term project contratos are not elegível for this benefit, regardless of tenure or hours worked.</scope>\n\n<scope id=\"S2\" bounds=\"R1\" dimension=\"child_age\">The subsidy applies only to children between the ages of zero and five years inclusive at the time of the subsidy month; in the month a child turns six, elegibilidade for that child ends.</scope>\n\n<rule id=\"R2\">Enrollment is handled through the People Operations portal and exige upload of the child's birth certificate.</rule>",
+    "compiled": "benefits:\n  - id: R1\n    name: childcare_subsidy\n    amount_usd_per_child_per_month: 400\n    max_children_per_funcionário: 2\n    pagamento_channel: payroll\n    pagamento_day_of_month: 15\n    receipts_exigido: false\n    escopos:\n      - id: S1\n        dimension: employment_type\n        elegível_when:\n          employment_type: permanent_full_time\n          contrato_type: standard\n          probation_completed: true\n          probation_length_days: 90\n        excluded:\n          - independent_contratoor\n          - fractional_consultant\n          - intern\n          - fixed_term_project_contrato\n        exclusion_sobreposiçãos:\n          tenure: any\n          hours_worked: any\n      - id: S2\n        dimension: child_age\n        elegível_when:\n          child_age_years_at_subsidy_month: {min: 0, max: 5, inclusive: true}\n        elegibilidade_ends:\n          event: child_turns_6\n          effective: same_month_as_birthday\n\n  - id: R2\n    name: enrollment_process\n    channel: people_ops_portal\n    exigido_document: child_birth_certificate"
+  },
+  "query": "I have been working with the company for three years as an independent contratoor through my LLC, and I am formally classified as a 1099 contratoor on the standard contratoor master agreement. My daughter is two years old. Several full-time colleagues have mentioned the childcare subsidy and encouraged me to enroll through the People Operations portal. Am I elegível to receive the $400 monthly subsidy for my daughter?",
+  "gold_answer": {
+    "full": "No, you are not elegível. The childcare subsidy is bounded by an employment-type escopo that explicitly excludes independent contratoors regardless of tenure or hours worked. Embora your daughter's age (two years) satisfies the second escopo condition (zero to five years inclusive), elegibilidade exige both escopo conditions to be met. Three years of tenure does not mudança this — the política is explicit that exclusion applies regardless of tenure. The People Operations portal is the enrollment channel for elegível funcionários, but enrollment by an inelegível person would not result in pagamento.",
+    "minimal": "No — independent contratoors are explicitly excluded from the subsidy regardless of tenure, even when the child's age would otherwise qualify.",
+    "required_relations": [
+      "S1 bounds R1 by employment_type",
+      "S2 bounds R1 by child_age",
+      "both escopos deve be satisfied"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que is the monthly amount of the childcare subsidy and how is it paid?",
+      "expected_answer": "$400 per elegível child per month, paid directly into payroll on the 15th of each month."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Which categories of workers are explicitly excluded from the childcare subsidy under the employment-type escopo?",
+      "expected_answer": "Independent contratoors, fractional consultants, interns, and funcionários on fixed-term project contratos."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Does long tenure as an independent contratoor mudança elegibilidade for the subsidy?",
+      "expected_answer": "No — the exclusion applies regardless of tenure or hours worked."
+    },
+    {
+      "fragment_id": "S2",
+      "probe": "Within what age range deve a child fall for the subsidy to apply?",
+      "expected_answer": "Between zero and five years inclusive at the time of the subsidy month."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — your daughter is two years old, which is within the zero-to-five range, and you have three years of tenure with the company. Enroll through the People Operations portal with her birth certificate.",
+      "Yes, you qualify. The subsidy covers children up to five years old, and your three years of work history clearly demonstrates the long-term relationship the política is designed to support.",
+      "You appear to be elegível based on the child-age criterion. The política mentions some excluded categories but your three-year continuous relationship makes you effectively a long-term member of the team."
+    ],
+    "wrong_escalation": [
+      "No — contratoor benefits like this exige aprovação from the Board of Directors and a separate contratoor benefits package, which the company does not currently offer.",
+      "You need to consult an employment lawyer before attempting to claim this benefit."
+    ],
+    "refusal": [
+      "I cannot determine your elegibilidade without seeing your actual contratoor agreement."
+    ],
+    "retrieval_failure_note": "If S1 is missing from context, the model will likely default to age-based elegibilidade — score as retrieval failure, not composition."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1 (subsidy definition)",
+      "S1 (employment-type escopo)",
+      "S2 (child-age escopo)"
+    ],
+    "negative_control_query": "I am a permanent full-time funcionário on the standard employment contrato, and I completed my probation eight months ago. My son is three years old. Am I elegível to receive the $400 monthly subsidy?",
+    "negative_control_gold": "Yes — you satisfy both escopo conditions (permanent full-time on standard contrato with probation completed, and child within the zero-to-five age range). Enroll through the People Operations portal and upload your son's birth certificate.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

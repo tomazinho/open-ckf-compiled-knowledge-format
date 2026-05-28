@@ -1,0 +1,76 @@
+{
+  "case_id": "scope_irs_online_payment_plan_thresholds",
+  "metadata": {
+    "domain": "regulatory",
+    "relation_type": "scope",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from IRS pagamento plan elegibilidade pages. Tax evaluation artifact only. Level-2 escopo: short-term and long-term online plan thresholds differ.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Payment plans; installment agreements",
+    "source_organization": "Internal Revenue Service",
+    "source_url": "https://www.irs.gov/payments/payment-plans-installment-agreements",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "IRS online pagamento plan note.\n\nSeção A. Short-term plan. An individual contribuinte pode qualify online for a short-term pagamento plan if the total balance is less than $100,000 in combined tributário, penalties, and interest and the contribuinte can pay in full within 180 days.\n\nSeção B. Long-term plan. An individual contribuinte pode qualify online for a long-term monthly installment agreement if the total balance is less than $50,000 in combined tributário, penalties, and interest and returns are filed.\n\nSeção C. Continuing charges. Interest and applicable penalties continue to accrue until the balance is paid in full, even when a pagamento plan is approved.",
+    "annotated": "IRS online pagamento plan note.\n\n<rule id=\"R1\" scope=\"individual short-term online plan\">Seção A. Short-term plan. An individual contribuinte pode qualify online for a short-term pagamento plan if the total balance is less than $100,000 in combined tributário, penalties, and interest and the contribuinte can pay in full within 180 days.</rule>\n\n<rule id=\"R2\" scope=\"individual long-term online plan\">Seção B. Long-term plan. An individual contribuinte pode qualify online for a long-term monthly installment agreement if the total balance is less than $50,000 in combined tributário, penalties, and interest and returns are filed.</rule>\n\n<rule id=\"R3\" applies_to=\"R1 R2\">Seção C. Continuing charges. Interest and applicable penalties continue to accrue until the balance is paid in full, even when a pagamento plan is approved.</rule>",
+    "compiled": "regras:\n  - id: R1\n    plan_type: short_term\n    contribuinte_type: individual\n    max_balance_exclusive: 100000\n    max_pagamento_window_days: 180\n  - id: R2\n    plan_type: long_term_monthly\n    contribuinte_type: individual\n    max_balance_exclusive: 50000\n    exige_returns_filed: true\n  - id: R3\n    applies_to: [R1, R2]\n    continuing_charges: interest_and_applicable_penalties_until_paid_in_full"
+  },
+  "query": "An individual owes $72,000 including tributário, penalties, and interest, has filed exigido returns, and wants an online monthly installment agreement over 24 months. Does the short-term threshold make them elegível for that long-term online plan?",
+  "gold_answer": {
+    "full": "No. The $100,000 threshold belongs to the short-term plan that deve be paid in full within 180 days. A 24-month monthly agreement is the long-term plan, which has a less-than-$50,000 threshold, so the $72,000 balance does not qualify for that online long-term plan under this note.",
+    "minimal": "No. $72,000 pode fit the short-term balance threshold, but not the long-term online plan threshold.",
+    "required_relations": [
+      "escopo:short-term and long-term thresholds apply to different plan types",
+      "regra:interest/penalties continue even with a plan"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que balance and pagamento window apply to the short-term online plan?",
+      "expected_answer": "Less than $100,000 and pagamento in full within 180 days."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "Qual/O que balance threshold applies to the long-term online monthly plan?",
+      "expected_answer": "Less than $50,000, with exigido returns filed."
+    },
+    {
+      "fragment_id": "R3",
+      "probe": "Do interest and penalties stop accruing once a plan is approved?",
+      "expected_answer": "No. They continue until the balance is paid in full."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, porque $72,000 is below the $100,000 online pagamento plan threshold.",
+      "No, porque no online plan is available unless the balance is below $50,000 even for 180-day full pagamento."
+    ],
+    "wrong_escalation": [
+      "File an offer in compromise porque no pagamento plan can ever apply."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "negative_control_query": "An individual owes $42,000, has filed exigido returns, and wants a monthly online installment agreement. Does the long-term balance threshold block the request?",
+    "negative_control_gold": "No. $42,000 is below the less-than-$50,000 threshold, assuming the other stated exigements are met.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

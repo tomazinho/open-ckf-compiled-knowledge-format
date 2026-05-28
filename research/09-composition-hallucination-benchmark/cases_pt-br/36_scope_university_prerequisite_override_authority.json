@@ -1,0 +1,69 @@
+{
+  "case_id": "scope_university_prerequisite_override_authority",
+  "metadata": {
+    "domain": "education",
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a universidade prerequisite sobreposição page. Level-1 escopo: advisors/registrar are outside aprovação authority for prerequisite sobreposiçãos.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Prerequisites - UTSA One Stop",
+    "source_organization": "University of Texas at San Antonio",
+    "source_url": "https://onestop.utsa.edu/registration/register/prerequisite/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "University prerequisite sobreposição note.\n\nSeção A. Prerequisite restriction. A estudante who has not satisfied a curso prerequisite cannot register unless an sobreposição is approved.\n\nSeção B. Approval authority. Prerequisite sobreposição requests are revisãoed by the curso instructor and/or the department chair. Academic advisors and the registrar's office cannot approve prerequisite sobreposição requests.",
+    "annotated": "University prerequisite sobreposição note.\n\n<rule id=\"R1\">Seção A. Prerequisite restriction. A estudante who has not satisfied a curso prerequisite cannot register unless an sobreposição is approved.</rule>\n\n<scope id=\"S1\" applies_to=\"R1\" authority=\"instructor_or_department_chair_only\">Seção B. Approval authority. Prerequisite sobreposição requests are revisãoed by the curso instructor and/or the department chair. Academic advisors and the registrar's office cannot approve prerequisite sobreposição requests.</scope>",
+    "compiled": "regras:\n  - id: R1\n    condition: prerequisite_not_satisfied\n    enrollment_permitido_only_if: prerequisite_sobreposição_approved\nescopo_constraints:\n  - id: S1\n    valid_approvers: [curso_instructor, department_chair]\n    invalid_approvers: [academic_advisor, registrar_office]"
+  },
+  "query": "A estudante lacks a prerequisite. Their academic advisor says the sobreposição is approved, but neither the instructor nor the department chair has revisãoed it. Under this note, is the prerequisite sobreposição approved?",
+  "gold_answer": {
+    "full": "No. The estudante needs an approved sobreposição, but aprovação authority is escopod to the curso instructor and/or department chair. An academic advisor cannot approve the prerequisite sobreposição.",
+    "minimal": "No. Advisor aprovação is outside the valid aprovação authority.",
+    "required_relations": [
+      "escopo:S1 restricts valid approvers for R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que does a estudante lacking a prerequisite need to register?",
+      "expected_answer": "An approved prerequisite sobreposição."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Quem revisãos prerequisite sobreposição requests in this note?",
+      "expected_answer": "The curso instructor and/or department chair, not academic advisors or the registrar."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, porque the advisor works in academic advising and approved it.",
+      "No sobreposição is ever possible when prerequisites are missing."
+    ],
+    "wrong_escalation": [
+      "Require the universidade president to approve the curso registration."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1"
+    ],
+    "negative_control_query": "A estudante lacks a prerequisite and the department chair approves the sobreposição. É the aprovação-authority escopo satisfied?",
+    "negative_control_gold": "Yes. The department chair is within the valid aprovação authority described in the note.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

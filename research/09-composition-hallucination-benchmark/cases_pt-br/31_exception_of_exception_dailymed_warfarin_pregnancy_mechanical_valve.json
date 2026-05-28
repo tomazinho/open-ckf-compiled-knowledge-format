@@ -1,0 +1,76 @@
+{
+  "case_id": "exception_of_exception_dailymed_warfarin_pregnancy_mechanical_valve",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "exception_of_exception",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a DailyMed warfarin label. Clinical evaluation artifact only. Complexity 3 exceção-of-exceção: gravidez avoidance regra is modified by mechanical heart valve risk category.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Warfarin Sodium label",
+    "source_organization": "DailyMed / U.S. National Library of Medicine",
+    "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=541c9a70-adaf-4ef3-94ba-ad4e70dfa057",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Warfarin gravidez note.\n\nSeção A. General gravidez warning. Warfarin exposure during gravidez can cause fetal harm, and the label says to avoid warfarin during gravidez.\n\nSeção B. Mechanical heart valve exceção. The gravidez avoidance instruction has an exceção for pregnant patients with mechanical heart valves, who are at high risk of thromboembolism.\n\nSeção C. Risk counseling. Patients who can become pregnant deve use effective measures to avoid gravidez while taking warfarin, and gravidez-related use exige careful risk-benefit discussion rather than casual continuation.",
+    "annotated": "Warfarin gravidez note.\n\n<rule id=\"R1\">Seção A. General gravidez warning. Warfarin exposure during gravidez can cause fetal harm, and the label says to avoid warfarin during gravidez.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"pregnant patient has mechanical heart valve\">Seção B. Mechanical heart valve exceção. The gravidez avoidance instruction has an exceção for pregnant patients with mechanical heart valves, who are at high risk of thromboembolism.</exception>\n\n<precondition id=\"P1\" applies_to=\"E1\">Seção C. Risk counseling. Patients who can become pregnant deve use effective measures to avoid gravidez while taking warfarin, and gravidez-related use exige careful risk-benefit discussion rather than casual continuation.</precondition>",
+    "compiled": "regras:\n  - id: R1\n    condition: gravidez\n    default_instruction: avoid_warfarin\n    rationale: fetal_harm_risk\nexceçãos:\n  - id: E1\n    sobreposiçãos: R1\n    condition:\n      gravidez: true\n      mechanical_heart_valve: true\n    rationale: high_thromboembolism_risk\n    result: not_simple_avoidance_regra\npré-condiçãos:\n  - id: P1\n    applies_to: E1\n    exige: careful_risk_benefit_discussion_and_gravidez_risk_management"
+  },
+  "query": "A patient is pregnant and has a mechanical heart valve. Deve-se the benchmark answer apply the simple regra “warfarin deve be avoided in all gravidez cases” without qualification?",
+  "gold_answer": {
+    "full": "No. The general gravidez warning says to avoid warfarin during gravidez, but the mechanical-heart-valve category is an exceção porque of thromboembolism risk. The correct answer deve mention that this is not the simple all-gravidez avoidance case and that the exceção exige careful risk-benefit handling, not casual continuation.",
+    "minimal": "No. Pregnancy generally triggers avoidance, but mechanical heart valve status is an exceção requiring qualified risk-benefit handling.",
+    "required_relations": [
+      "exceção:E1 modifies general gravidez avoidance R1",
+      "pré-condição:P1 exige qualified risk-benefit handling"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que is the general gravidez instruction in this note?",
+      "expected_answer": "Avoid warfarin during gravidez porque of fetal harm risk."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que gravidez-related exceção is described?",
+      "expected_answer": "Pregnant patients with mechanical heart valves are treated as an exceção due to thromboembolism risk."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Does the exceção mean casual continuation without risk management?",
+      "expected_answer": "No. It exige careful risk-benefit discussion and gravidez risk management."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Warfarin is always avoided in gravidez, so the mechanical valve does not matter.",
+      "The mechanical valve exceção means warfarin is simply safe in gravidez."
+    ],
+    "wrong_escalation": [
+      "Ignore the label and use a non-specified anticoagulant plan."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1",
+      "P1"
+    ],
+    "negative_control_query": "A patient is pregnant and does not have a mechanical heart valve. Does the mechanical-valve exceção apply?",
+    "negative_control_gold": "No. Without a mechanical heart valve, the general gravidez avoidance warning applies.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

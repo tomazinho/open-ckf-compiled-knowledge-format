@@ -1,0 +1,76 @@
+{
+  "case_id": "override_kubernetes_priority_preemption_pdb_best_effort",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from Kubernetes docs on priority/preemption and disruptions. Complexity 3: PDB guides interrupção voluntária but scheduler preemption pode remover por eviction lower-priority Pods when a higher-priority Pod cannot schedule.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Pod Priority and Preemption; Disruptions",
+    "source_organization": "Kubernetes",
+    "source_url": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Kubernetes scheduling note.\n\nSeção A. Priority scheduling. Pods pode have priorities. Quando a pending Pod cannot be scheduled, the scheduler pode try to make room by preempting lower-priority Pods.\n\nSeção B. Disruption budgets. A PodDisruptionBudget expresses how many Pods of an application deve remain available during disruptions. Operators deve use PDBs to protect availability during planned interrupção voluntárias.\n\nSeção C. Preemption interaction. During scheduler preemption, Kubernetes attempts to choose victims in a way that respects PDBs when possible, but respecting a PDB is not guaranteed. If no feasible set of lower-priority victims satisfies both scheduling and PDB preferences, preemption can still select lower-priority Pods whose remover por evictionion violates the PDB.",
+    "annotated": "Kubernetes scheduling note.\n\n<rule id=\"R1\">Seção A. Priority scheduling. Pods pode have priorities. Quando a pending Pod cannot be scheduled, the scheduler pode try to make room by preempting lower-priority Pods.</rule>\n\n<rule id=\"R2\">Seção B. Disruption budgets. A PodDisruptionBudget expresses how many Pods of an application deve remain available during disruptions. Operators deve use PDBs to protect availability during planned interrupção voluntárias.</rule>\n\n<override id=\"O1\" priority=\"higher_than_R2_for_scheduler_preemption\" applies_to=\"R1\">Seção C. Preemption interaction. During scheduler preemption, Kubernetes attempts to choose victims in a way that respects PDBs when possible, but respecting a PDB is not guaranteed. If no feasible set of lower-priority victims satisfies both scheduling and PDB preferences, preemption can still select lower-priority Pods whose remover por evictionion violates the PDB.</override>",
+    "compiled": "regras:\n  - id: R1\n    name: scheduler_preemption\n    trigger: high_priority_pod_pending_unschedulable\n    action: pode_preempt_lower_priority_pods\n  - id: R2\n    name: pod_disruption_budget\n    purpose: preserve_application_availability\n    normally_applies_to: planned_voluntary_disruptions\nsobreposiçãos:\n  - id: O1\n    relation: preemption_attempts_to_respect_pdb_but_not_guaranteed\n    affects: [R1, R2]\n    trigger:\n      no_feasible_victim_set_satisfies_scheduling_and_pdb_preferences: true\n    result: lower_priority_pod_pode_be_preempted_even_if_pdb_is_violated"
+  },
+  "query": "A high-priority Pod is pending porque the cluster has no room. The only lower-priority victim candidate is protected by a PDB that would be violated if that Pod were remover por evictioned. The scheduler has no other feasible victim set. Does the PDB absolutely prevent scheduler preemption?",
+  "gold_answer": {
+    "full": "No. The PDB deve be respected when possible, but in scheduler preemption it is a best-effort preference, not an absolute bar. If no feasible victim set both schedules the high-priority Pod and preserves the PDB, the lower-priority Pod pode still be preempted.",
+    "minimal": "No. In scheduler preemption, Kubernetes tries to respect PDBs but pode violate one if no feasible alternative exists.",
+    "required_relations": [
+      "sobreposição:preemption relation has priority over absolute PDB interpretation",
+      "escopo:PDB protection is strongest for interrupção voluntárias and not guaranteed for scheduler preemption"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que can the scheduler do when a higher-priority Pod cannot be scheduled?",
+      "expected_answer": "It pode preempt lower-priority Pods to make scheduling possible."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "Qual/O que is the role of a PodDisruptionBudget?",
+      "expected_answer": "It expresses desired availability during disruptions."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "É PDB respect guaranteed during scheduler preemption?",
+      "expected_answer": "No. Kubernetes attempts to respect PDBs when possible, but it is not guaranteed."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "The PDB absolutely blocks preemption, so the high-priority Pod deve remain pending.",
+      "The high-priority Pod can preempt any Pod without considering the PDB at all."
+    ],
+    "wrong_escalation": [
+      "Delete the PDB before scheduling the high-priority Pod."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "R2",
+      "O1"
+    ],
+    "negative_control_query": "A high-priority Pod is pending and there are two lower-priority victim sets; one would respect the PDB and the other would violate it. Which set deve be preferred?",
+    "negative_control_gold": "The victim set that respects the PDB deve be preferred when it is feasible.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}
