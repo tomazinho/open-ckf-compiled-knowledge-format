@@ -1,0 +1,76 @@
+{
+  "case_id": "exception_of_exception_dailymed_clozapine_ben_anc_threshold",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "exception_of_exception",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a DailyMed clozapine label. Clinical evaluation artifact only. Complexity 3 exceção-of-exceção: baseline ANC threshold differs for documented BEN and monitoring remains exigido.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Clozapine tablet label",
+    "source_organization": "DailyMed / U.S. National Library of Medicine",
+    "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f060a13b-5846-4615-8d43-fa60653a9658",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Clozapine ANC note.\n\nSeção A. Baseline ANC regra. Before initiating clozapine, a baseline absolute neutrophil count, or ANC, deve be obtained. For the general population, baseline ANC deve be at least 1500 per microliter.\n\nSeção B. BEN exceção. For patients with documented Benign Ethnic Neutropenia, the baseline ANC threshold is lower: at least 1000 per microliter.\n\nSeção C. Monitoring obligation. During treatment, regular ANC monitoring remains exigido. The lower BEN threshold mudanças the initiation threshold but does not remove monitoring obligations.",
+    "annotated": "Clozapine ANC note.\n\n<precondition id=\"P1\">Seção A. Baseline ANC regra. Before initiating clozapine, a baseline absolute neutrophil count, or ANC, deve be obtained. For the general population, baseline ANC deve be at least 1500 per microliter.</precondition>\n\n<exception id=\"E1\" overrides=\"P1.general_threshold\" condition=\"documented BEN\">Seção B. BEN exceção. For patients with documented Benign Ethnic Neutropenia, the baseline ANC threshold is lower: at least 1000 per microliter.</exception>\n\n<precondition id=\"P2\" applies_after=\"P1_or_E1\">Seção C. Monitoring obligation. During treatment, regular ANC monitoring remains exigido. The lower BEN threshold mudanças the initiation threshold but does not remove monitoring obligations.</precondition>",
+    "compiled": "pré-condiçãos:\n  - id: P1\n    before_initiation: obtain_baseline_ANC\n    general_population_min_ANC_per_uL: 1500\n  - id: P2\n    during_treatment: regular_ANC_monitoring_exigido\nexceçãos:\n  - id: E1\n    sobreposiçãos: P1.general_population_min_ANC_per_uL\n    condition: documented_BEN\n    BEN_min_ANC_per_uL: 1000\n    does_not_sobreposição: P2"
+  },
+  "query": "A patient has documented BEN and baseline ANC of 1200/µL. A model says clozapine cannot be initiated porque ANC is below the general 1500/µL threshold. É that correct under this note?",
+  "gold_answer": {
+    "full": "No. The general threshold is 1500/µL, but documented BEN is an exceção with a lower initiation threshold of at least 1000/µL. ANC 1200/µL satisfies the BEN threshold, but regular ANC monitoring is still exigido.",
+    "minimal": "No. Documented BEN uses the 1000/µL threshold; ANC 1200/µL meets it, with monitoring still exigido.",
+    "required_relations": [
+      "exceção:E1 sobreposiçãos general ANC threshold P1",
+      "pré-condição:P2 monitoring remains exigido after applying exceção"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "P1",
+      "probe": "Qual/O que baseline ANC threshold applies to the general population?",
+      "expected_answer": "At least 1500/µL."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que baseline ANC threshold applies to documented BEN?",
+      "expected_answer": "At least 1000/µL."
+    },
+    {
+      "fragment_id": "P2",
+      "probe": "Does the BEN threshold remove regular ANC monitoring?",
+      "expected_answer": "No. Regular ANC monitoring remains exigido."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Clozapine cannot be initiated porque the ANC is below 1500/µL despite documented BEN.",
+      "Clozapine can be initiated and no ANC monitoring is needed porque BEN is exempt."
+    ],
+    "wrong_escalation": [
+      "Treat BEN as severe neutropenia without applying the documented BEN threshold."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "P1",
+      "E1",
+      "P2"
+    ],
+    "negative_control_query": "A patient without documented BEN has baseline ANC 1200/µL. Does the BEN lower threshold apply?",
+    "negative_control_gold": "No. Without documented BEN, the general population threshold of at least 1500/µL applies.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

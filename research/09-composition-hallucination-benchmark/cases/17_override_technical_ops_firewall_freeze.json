@@ -1,0 +1,67 @@
+{
+  "case_id": "override_technical_ops_firewall_freeze",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 2,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic technical operations playbook case. Level-2 override plus post-action obligation, distinct from existing change-management cases by focusing on firewall rule freeze."
+  },
+  "representations": {
+    "raw": "Network Firewall Change Playbook.\n\nSection 1. Release Freeze. During a declared network release freeze, non-emergency firewall rule changes to production edge firewalls are blocked. Requests submitted during a freeze are queued for the first standard change window after the freeze ends and must follow ordinary peer review.\n\nSection 3. Active Exploit Override. A firewall rule change that blocks an active externally confirmed exploit may be implemented during a release freeze if the Security Incident Commander declares the change emergency mitigation in the incident channel. The emergency declaration overrides the release-freeze queueing rule only for the firewall rules needed to block the active exploit.\n\nSection 5. Post-Implementation Review. Any firewall change implemented under the active-exploit override must receive peer review and incident-owner sign-off within twenty-four hours after implementation. The post-implementation review does not need to occur before deployment of the emergency mitigation.",
+    "annotated": "Network Firewall Change Playbook.\n\n<rule id=\"R1\">Section 1. Release Freeze. During a declared network release freeze, non-emergency firewall rule changes to production edge firewalls are blocked. Requests submitted during a freeze are queued for the first standard change window after the freeze ends and must follow ordinary peer review.</rule>\n\n<override id=\"O1\" overrides=\"R1\" condition=\"active externally confirmed exploit and Security Incident Commander emergency declaration\">Section 3. Active Exploit Override. A firewall rule change that blocks an active externally confirmed exploit may be implemented during a release freeze if the Security Incident Commander declares the change emergency mitigation in the incident channel. The emergency declaration overrides the release-freeze queueing rule only for the firewall rules needed to block the active exploit.</override>\n\n<precondition id=\"P1\" required_after=\"O1 implementation\" deadline=\"24 hours\">Section 5. Post-Implementation Review. Any firewall change implemented under the active-exploit override must receive peer review and incident-owner sign-off within twenty-four hours after implementation. The post-implementation review does not need to occur before deployment of the emergency mitigation.</precondition>",
+    "compiled": "rules:\n  - id: R1\n    name: firewall_release_freeze\n    applies_when:\n      release_freeze_declared: true\n      firewall_target: production_edge_firewall\n      emergency: false\n    effect:\n      change_status: queued_for_next_standard_window\n      peer_review: ordinary_before_change\noverrides:\n  - id: O1\n    overrides: R1\n    name: active_exploit_override\n    triggers_when:\n      active_externally_confirmed_exploit: true\n      security_incident_commander_declares_emergency_mitigation: true\n    allowed_during_freeze: true\n    scope: only_rules_needed_to_block_active_exploit\n    priority: higher_than_R1\npost_conditions:\n  - id: P1\n    applies_to: O1\n    after: implementation\n    deadline_hours: 24\n    required: [peer_review, incident_owner_signoff]\n    required_before_deployment: false"
+  },
+  "query": "A network release freeze is active. Threat intelligence confirms an external exploit against a production edge service, and the Security Incident Commander declares an emergency mitigation in the incident channel. The proposed firewall rule only blocks the exploit source range. May the firewall rule be implemented during the freeze, and what review is required?",
+  "gold_answer": {
+    "full": "Yes. The release freeze would normally queue non-emergency production firewall changes, but the active-exploit override applies because there is an externally confirmed exploit and the Security Incident Commander declared emergency mitigation. The rule is within the override scope because it only blocks the exploit source range. Peer review and incident-owner sign-off are still required within twenty-four hours after implementation, but they do not need to occur before emergency deployment.",
+    "minimal": "Yes. The emergency exploit override permits the scoped firewall rule during the freeze; peer review and incident-owner sign-off are required within twenty-four hours after implementation.",
+    "required_relations": [
+      "O1 overrides R1 when active exploit and Security Incident Commander declaration are present",
+      "P1 attaches a post-implementation review obligation that does not block deployment"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What happens to non-emergency production edge firewall changes during a release freeze?",
+      "expected_answer": "They are blocked during the freeze and queued for the first standard change window after the freeze ends, with ordinary peer review."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "What conditions allow a firewall rule change during a release freeze under Section 3?",
+      "expected_answer": "An active externally confirmed exploit and a Security Incident Commander emergency-mitigation declaration in the incident channel."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "When must peer review and incident-owner sign-off occur for changes under the active-exploit override?",
+      "expected_answer": "Within twenty-four hours after implementation; they are not required before emergency deployment."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "No. A release freeze blocks all production firewall changes until the next standard change window.",
+      "Yes, and no peer review is needed because emergency changes bypass all review."
+    ],
+    "wrong_escalation": [
+      "Only the CEO can approve any firewall change during a freeze.",
+      "The change must wait for a full CAB meeting despite the active exploit declaration."
+    ],
+    "refusal": [
+      "The playbook does not say whether the freeze or the exploit procedure has priority."
+    ],
+    "retrieval_failure_note": "If Section 3 is absent, blocking the change under Section 1 is a retrieval failure. If Section 5 is absent, omitting post-review is not composition-evaluable."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "O1",
+      "P1"
+    ],
+    "negative_control_query": "A release freeze is active, and a team wants to add a production edge firewall rule for routine vendor onboarding. There is no externally confirmed exploit and no Security Incident Commander emergency declaration. May the rule be implemented during the freeze?",
+    "negative_control_gold": "No. The active-exploit override is not triggered, so the request is queued for the first standard change window after the freeze.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

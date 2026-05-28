@@ -1,0 +1,8 @@
+# Core (always needed)
+jsonschema>=4.0
+
+# Provider SDKs — install only the ones you use. They are imported lazily,
+# so a missing SDK only errors if you actually select that provider.
+anthropic>=0.40.0
+openai>=1.50.0
+google-genai>=0.3.0

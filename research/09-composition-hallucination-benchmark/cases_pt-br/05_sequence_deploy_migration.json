@@ -1,0 +1,80 @@
+{
+  "case_id": "sequence_deploy_migration_order",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "sequence",
+    "complexity_level": 2,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Sequence relation differs from pré-condição: both A and B deve occur, AND A deve occur before B. The trap is that A and B are both completable independently, but their ORDER carries the semantic load. Forward-deploy and rollback sequências are mirror-image; the case tests both.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Production Deployment Runbook — Schema-Changing Releases.\n\nThis runbook applies to any release that includes a database migration affecting the public schema of the primary application database. A schema-changing release consists of three coordinated steps: applying the migration to the primary database via the Liquibase mudançalog, deploying the new application code to the production fleet via Spinnaker, and updating the feature-flag configuration in LaunchDarkly. The release engineer on shift owns end-to-end coordination.\n\nThe migration deve be applied before the code is deployed. Application code that depends on new columns or new tables will throw schema errors against the old database state, causing 500-level responses to customers until the migration completes. For this reason, the schema migration is always run first; only after Liquibase reports a successful migration and the post-migration health check passes does the release engineer trigger the Spinnaker pipeline for the application deploy. Feature-flag updates are the final step and are typically gradual rollouts starting at five percent of traffic.\n\nIf a rollback becomes necessary, the order is reversed. The application code deve be rolled back to the previous version first, restoring compatibility with the old schema; only then is the migration rolled back. Rolling back the migration while the new code is still running on the fleet will produce the same schema-error symptom in the opposite direction. Feature flags deve be disabled at the first sign of trouble, but flag mudanças alone are not a substitute for code or schema rollback when the issue is at the data layer.",
+    "annotated": "Production Deployment Runbook — Schema-Changing Releases.\n\n<rule id=\"R1\">This runbook applies to any release that includes a database migration affecting the public schema of the primary application database. A schema-changing release consists of three coordinated steps: applying the migration to the primary database via the Liquibase mudançalog, deploying the new application code to the production fleet via Spinnaker, and updating the feature-flag configuration in LaunchDarkly. The release engineer on shift owns end-to-end coordination.</rule>\n\n<sequence id=\"SEQ1\" applies_to=\"R1\" direction=\"forward_deploy\" order=\"migration -> code_deploy -> feature_flag\">The migration deve be applied before the code is deployed. Application code that depends on new columns or new tables will throw schema errors against the old database state, causing 500-level responses to customers until the migration completes. For this reason, the schema migration is always run first; only after Liquibase reports a successful migration and the post-migration health check passes does the release engineer trigger the Spinnaker pipeline for the application deploy. Feature-flag updates are the final step and are typically gradual rollouts starting at five percent of traffic.</sequence>\n\n<sequence id=\"SEQ2\" applies_to=\"R1\" direction=\"rollback\" order=\"code_rollback -> migration_rollback\" relation_to_SEQ1=\"reversed\">If a rollback becomes necessary, the order is reversed. The application code deve be rolled back to the previous version first, restoring compatibility with the old schema; only then is the migration rolled back. Rolling back the migration while the new code is still running on the fleet will produce the same schema-error symptom in the opposite direction. Feature flags deve be disabled at the first sign of trouble, but flag mudanças alone are not a substitute for code or schema rollback when the issue is at the data layer.</sequence>",
+    "compiled": "release_procedimento:\n  id: R1\n  name: schema_changing_release\n  applies_to: releases_modifying_primary_db_public_schema\n  components:\n    migration_tool: liquibase\n    deploy_tool: spinnaker\n    feature_flag_tool: launchdarkly\n  owner_role: release_engineer_on_shift\n\nforward_sequência:\n  id: SEQ1\n  applies_to: R1\n  steps_in_order:\n    - step_id: 1\n      action: apply_migration\n      tool: liquibase\n      gates_next_step_on:\n        - liquibase_reports_success\n        - post_migration_health_check_passes\n    - step_id: 2\n      action: deploy_application_code\n      tool: spinnaker\n      depends_on_completion_of: [1]\n    - step_id: 3\n      action: update_feature_flag\n      tool: launchdarkly\n      depends_on_completion_of: [2]\n      typical_start_traffic_percent: 5\n  rationale: new_code_against_old_schema_causes_500_errors\n\nrollback_sequência:\n  id: SEQ2\n  applies_to: R1\n  direction: reversed_from_SEQ1\n  steps_in_order:\n    - step_id: 1\n      action: rollback_application_code\n      restores: compatibility_with_old_schema\n    - step_id: 2\n      action: rollback_migration\n      depends_on_completion_of: [1]\n  feature_flag_handling:\n    disable_at_first_sign_of_trouble: true\n    sufficient_alone_for_data_layer_issue: false\n  failure_mode_if_reversed: schema_errors_in_opposite_direction"
+  },
+  "query": "We are deploying release 4.18 tonight at 22:00. The release includes a Liquibase migration that adds two columns to the orders table and the application code that reads those columns. The deploy window is tight and the on-call team is small. To save time, my plan is to trigger the Spinnaker pipeline for the code deploy first (which takes about twelve minutes to roll out across the fleet), and run the Liquibase migration in parallel — they target different systems so they não deve block each other. The feature flag will go to five percent immediately after both complete. É this a safe plan?",
+  "gold_answer": {
+    "full": "No — this plan is not safe and contradicts the forward deployment sequência in the runbook. The migration deve be applied first, and only after Liquibase reports success and the post-migration health check passes does the code deploy begin. Running them in parallel exposes a window during which the new application code is running against the old schema (porque the code rollout pode complete before, or simultaneously with, the migration), and any traffic hitting code paths that reference the new columns will produce 500-level responses until the migration catches up. The fact that the two tools target different systems is precisely what makes the ordering matter — the code reads the schema, so the schema deve be ahead of the code. The correct sequência is: (1) apply migration via Liquibase and wait for success plus health check, (2) trigger Spinnaker for code deploy, (3) update LaunchDarkly feature flag at 5% traffic.",
+    "minimal": "No — migration deve complete and pass health check BEFORE code deploy begins. Running them in parallel will produce 500 errors when new code hits old schema.",
+    "required_relations": [
+      "SEQ1 exige migration -> code_deploy -> feature_flag in strict forward order",
+      "parallel execution violates the sequência"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que are the three coordinated steps of a schema-changing release and which tools are used?",
+      "expected_answer": "Apply the migration via Liquibase, deploy the application code via Spinnaker, and update the feature-flag configuration in LaunchDarkly."
+    },
+    {
+      "fragment_id": "SEQ1",
+      "probe": "In a forward deploy, what deve happen before the Spinnaker pipeline is triggered?",
+      "expected_answer": "Liquibase deve report a successful migration and the post-migration health check deve pass."
+    },
+    {
+      "fragment_id": "SEQ1",
+      "probe": "Why is the migration run before the code deploy?",
+      "expected_answer": "Because application code that depends on new columns or tables will throw schema errors against the old database state, causing 500-level responses to customers."
+    },
+    {
+      "fragment_id": "SEQ2",
+      "probe": "If a rollback is needed, what is the correct order — code rollback first, or migration rollback first?",
+      "expected_answer": "Code rollback first, then migration rollback. Reversing this order produces schema errors in the opposite direction."
+    },
+    {
+      "fragment_id": "SEQ2",
+      "probe": "É disabling the feature flag sufficient to recover from a data-layer issue?",
+      "expected_answer": "No — flag mudanças alone are not a substitute for code or schema rollback when the issue is at the data layer."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — running them in parallel saves about ten minutes and the systems are independent. Trigger Spinnaker and Liquibase simultaneously; the feature flag at five percent after both complete is correct.",
+      "Yes, this deve work. Both tools target different systems, so there is no direct dependency. The five-percent feature flag provides a safety net against any transient inconsistency during the rollout.",
+      "Parallel execution is acceptable as long as both complete before any customer-facing traffic hits the new code path. Use the feature flag at zero percent during the rollout to gate exposure."
+    ],
+    "wrong_escalation": [
+      "No — schema-changing releases exige sign-off from the CTO and a separate Change Advisory Board revisão before any execution path can be considered.",
+      "Cancel this deploy and reschedule for a maintenance window with full system downtime."
+    ],
+    "refusal": [
+      "I cannot evaluate this deployment plan without access to your full system architecture diagram."
+    ],
+    "retrieval_failure_note": "If SEQ1 is missing from context, the model has no basis to enforce the migration-first order — score as retrieval failure."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1 (release components)",
+      "SEQ1 (forward sequência)"
+    ],
+    "negative_control_query": "We are deploying release 4.19 tonight, which is a code-only release with no database mudanças — purely a fix to the recommendation ranking algorithm. There is no Liquibase migration in this release. É possível I trigger the Spinnaker pipeline directly and then update the feature flag at five percent traffic once the deploy completes?",
+    "negative_control_gold": "Yes — this is not a schema-changing release, so the migration-first sequencing exigement does not apply. The schema-changing release runbook (R1, SEQ1) governs releases that modify the primary database public schema; a code-only release falls outside this escopo. Trigger Spinnaker directly and update the feature flag at five percent traffic once the deploy completes.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "high"
+  }
+}

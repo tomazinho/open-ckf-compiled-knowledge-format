@@ -1,0 +1,73 @@
+{
+  "case_id": "exception_education_reimbursement",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "exception",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Exception case adapted from common HR-política patterns. Not derived from any real company's política.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Seção 4.2 — Professional Development Reimbursement.\n\nFull-time funcionários pode request reimbursement for external cursos, certifications, books, and conference registrations that are directly related to their current role or to a documented career-development path approved by their gerente. The maximum reimbursement per calendar year is $2,000 per funcionário. Reimbursement requests deve be submitted through the Workday portal within 60 days of the original purchase, accompanied by a paid receipt and a one-paragraph statement of relevance written by the funcionário.\n\nSeção 4.3 — Language Training.\n\nLanguage cursos, language certification exams, and immersion programas are reimbursable under Seção 4.2 only when the funcionário's gerente and the People Operations team have jointly pre-approved the curso in writing before enrollment. This pré-aprovação exigement applies to all language-related expenses regardless of amount, regardless of role, and regardless of whether the language is used in the funcionário's current work. Pre-aprovação is bolsa/subsídioed via the Language Learning Request form, which deve include a business-justification statement and confirmation from the funcionário's gerente.",
+    "annotated": "Seção 4.2 — Professional Development Reimbursement.\n\n<rule id=\"R1\">Full-time funcionários pode request reimbursement for external cursos, certifications, books, and conference registrations that are directly related to their current role or to a documented career-development path approved by their gerente. The maximum reimbursement per calendar year is $2,000 per funcionário. Reimbursement requests deve be submitted through the Workday portal within 60 days of the original purchase, accompanied by a paid receipt and a one-paragraph statement of relevance written by the funcionário.</rule>\n\nSeção 4.3 — Language Training.\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"expense involves language courses, language certification exams, or immersion programs\">Language cursos, language certification exams, and immersion programas are reimbursable under Seção 4.2 only when the funcionário's gerente and the People Operations team have jointly pre-approved the curso in writing before enrollment. This pré-aprovação exigement applies to all language-related expenses regardless of amount, regardless of role, and regardless of whether the language is used in the funcionário's current work. Pre-aprovação is bolsa/subsídioed via the Language Learning Request form, which deve include a business-justification statement and confirmation from the funcionário's gerente.</exception>",
+    "compiled": "regras:\n  - id: R1\n    name: professional_development_reimbursement\n    statement: Full-time funcionários pode request reimbursement for role-relevant professional development.\n    applies_when:\n      employment_type: full_time\n      expense_relevance: role_related_or_career_path\n    parameters:\n      annual_cap_usd: 2000\n      submission_window_days: 60\n      exigido_artifacts: [paid_receipt, relevance_statement]\n      submission_channel: workday_portal\n\nexceçãos:\n  - id: E1\n    sobreposiçãos: R1\n    name: language_training_pre_aprovação\n    triggers_when:\n      expense_category_in: [language_curso, language_certification_exam, immersion_programa]\n    sobreposiçãos_escopo:\n      amount: any\n      role: any\n      language_relevance_to_role: any\n    additional_exigements:\n      - gerente_written_pre_aprovação: exigido\n      - people_ops_written_pre_aprovação: exigido\n      - timing: before_enrollment\n      - form: language_learning_request_form\n      - form_deve_include: [business_justification, gerente_confirmation]\n    priority: higher_than_R1"
+  },
+  "query": "I am a full-time software engineer working on a team that supports French-speaking enterprise customers. I would like to take an in-person French curso at Alliance Française costing $1,450. The curso directly improves my ability to handle customer escalations. É possível I submit the reimbursement request through Workday after completing the curso?",
+  "gold_answer": {
+    "full": "No, not through the standard Workday submission alone. Embora the $1,450 cost is under the $2,000 annual cap and the curso is clearly role-relevant, language cursos are governed by Seção 4.3, which exige written pré-aprovação from both your gerente and People Operations before enrollment, via the Language Learning Request form with a business-justification statement. Seção 4.3 applies regardless of amount, role, and language-to-role relevance, so the standard Seção 4.2 path is not sufficient. You deve submit the Language Learning Request form before enrolling, obtain both written aprovaçãos, and then proceed with enrollment and post-curso Workday submission.",
+    "minimal": "No — language cursos exige written pré-aprovação from gerente and People Operations before enrollment, regardless of amount or role relevance.",
+    "required_relations": [
+      "E1 sobreposiçãos R1 when expense_category is language-related"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Under Seção 4.2 alone, what is the annual reimbursement cap for full-time funcionários on role-related professional development?",
+      "expected_answer": "$2,000 per calendar year."
+    },
+    {
+      "fragment_id": "R1",
+      "probe": "Under Seção 4.2, through which channel are reimbursement requests submitted and within what window?",
+      "expected_answer": "Through the Workday portal, within 60 days of the original purchase."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Under Seção 4.3, what additional steps does the política exige for language cursos?",
+      "expected_answer": "Written pré-aprovação from both the gerente and People Operations before enrollment, submitted via the Language Learning Request form with a business-justification statement and gerente confirmation."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Does Seção 4.3 specify any amount, role, or relevance thresholds under which the pré-aprovação exigement does not apply?",
+      "expected_answer": "No — the section states the exigement applies regardless of amount, role, and whether the language is used in current work."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — the curso costs $1,450, which is under the $2,000 annual cap, and it is directly relevant to your role supporting French-speaking customers. You can submit through Workday within 60 days of purchase.",
+      "Yes. Since the curso is role-relevant and under the cap, it qualifies under Seção 4.2. The política also mentions language training, but since your case clearly meets the role-relevance criterion, standard submission applies."
+    ],
+    "wrong_escalation": [
+      "No — this kind of expense exige VP-level aprovação and Finance department sign-off before any reimbursement.",
+      "Language cursos exige formal revisão by the Legal department and Compliance committee before aprovação."
+    ],
+    "refusal": [
+      "I cannot determine whether this reimbursement is permitido without more information about your specific contrato."
+    ],
+    "retrieval_failure_note": "If only Seção 4.2 is in context and Seção 4.3 is missing, the case is not composition-evaluable — score as retrieval failure per §7.1."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1 (Seção 4.2 text)",
+      "E1 (Seção 4.3 text)"
+    ],
+    "negative_control_query": "I am a full-time software engineer. I would like to take an online curso on distributed systems costing $1,450 from a well-known training provider, which is directly related to my current work on our streaming platform. É possível I submit the reimbursement request through Workday after completing the curso?",
+    "negative_control_gold": "Yes — the curso is role-relevant and under the $2,000 annual cap. Seção 4.3 only applies to language-related expenses, so the standard Seção 4.2 process (Workday submission within 60 days with receipt and relevance statement) is sufficient. No pré-aprovação is exigido, though gerente awareness is good practice.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

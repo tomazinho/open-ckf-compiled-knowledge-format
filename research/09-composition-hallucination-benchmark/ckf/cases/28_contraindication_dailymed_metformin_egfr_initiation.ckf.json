@@ -1,0 +1,126 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "contraindication_dailymed_metformin_egfr_initiation",
+    "title": "Contraindication Dailymed Metformin Egfr Initiation",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "clinical",
+    "relation_type": "contraindication",
+    "complexity_level": 2,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Metformin Hydrochloride tablet label",
+      "source_organization": "DailyMed / U.S. National Library of Medicine",
+      "source_url": "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=a2385bcd-0943-4411-8658-c22b50360385",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "P1"
+      },
+      {
+        "id": "F2",
+        "description": "C1"
+      },
+      {
+        "id": "F3",
+        "description": "R1"
+      }
+    ],
+    "raw_representation_sha256": "84216a6e3d825947d8fe8b04bbe619e087bec2040eca0bf531dfb12468924b22",
+    "annotated_representation_sha256": "d7f6a69496270a9950ef8e6376ee1af91ec8e43e2efb93c88fc91456fa8cc46e",
+    "compiled_representation_sha256": "3a70ff0f8beba6f74826834aeec57c34eca211f5cb662e92f23fab8cb5d571c1"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Metformin renal-function note.\n\nSection A. Baseline renal check. Before initiating metformin, obtain an estimated glomerular filtration rate, or eGFR. During therapy, renal function should be monitored at least annually and more frequently in patients at risk for renal impairment.\n\nSection B. eGFR below 30. Metformin is contraindicated in patients whose eGFR is below 30 mL/min/1.73 m2.\n\nSection C. eGFR 30 to 45. Starting metformin is not recommended when eGFR is between 30 and 45 mL/min/1.73 m2, although this category is distinct from the below-30 contraindication."
+      },
+      {
+        "id": "annotated",
+        "text": "Metformin renal-function note.\n\n<precondition id=\"P1\">Section A. Baseline renal check. Before initiating metformin, obtain an estimated glomerular filtration rate, or eGFR. During therapy, renal function should be monitored at least annually and more frequently in patients at risk for renal impairment.</precondition>\n\n<contraindication id=\"C1\" condition=\"eGFR < 30\">Section B. eGFR below 30. Metformin is contraindicated in patients whose eGFR is below 30 mL/min/1.73 m2.</contraindication>\n\n<rule id=\"R1\" scope=\"30 <= eGFR <= 45\">Section C. eGFR 30 to 45. Starting metformin is not recommended when eGFR is between 30 and 45 mL/min/1.73 m2, although this category is distinct from the below-30 contraindication.</rule>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "preconditions:\n  - id: P1\n    before_initiation: obtain_eGFR\n    monitoring: at_least_annually_or_more_if_at_risk\ncontraindications:\n  - id: C1\n    condition:\n      eGFR: '<30 mL/min/1.73m2'\n    effect: metformin_contraindicated\nrules:\n  - id: R1\n    condition:\n      eGFR: '30-45 mL/min/1.73m2'\n    effect: initiation_not_recommended\n    distinct_from_contraindication: true"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "contraindication",
+        "description": "Adapted from a DailyMed label. Clinical evaluation artifact only. Level-2 contraindication: eGFR thresholds distinguish contraindication from not-recommended initiation."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A patient is being considered for new metformin therapy. Their eGFR is 38 mL/min/1.73 m2. Is this the below-30 contraindication, and should metformin be initiated as usual?",
+        "expected_decision": "No below-30 contraindication, but initiation is not recommended because eGFR is 30–45.",
+        "rationale": "It is not the below-30 contraindication, but initiation should not proceed as usual. The eGFR 30–45 category is distinct from the contraindication threshold, yet the label says starting metformin is not recommended in that range."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A patient is being considered for new metformin therapy. Their eGFR is 38 mL/min/1.73 m2. Is this the below-30 contraindication, and should metformin be initiated as usual?",
+        "answer": "It is not the below-30 contraindication, but initiation should not proceed as usual. The eGFR 30–45 category is distinct from the contraindication threshold, yet the label says starting metformin is not recommended in that range."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "An eGFR."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "Below 30 mL/min/1.73 m2."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "Initiation is not recommended."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Start metformin as usual because the eGFR is above 30.",
+        "Metformin is absolutely contraindicated at eGFR 38 because it is below 45."
+      ],
+      "wrong_escalation": [
+        "Stop all diabetes medications because eGFR is below 45."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "P1",
+        "C1",
+        "R1"
+      ],
+      "negative_control_query": "A patient has eGFR 58 before starting metformin, with no other listed issue. Is the eGFR 30–45 initiation warning triggered?",
+      "negative_control_gold": "No. eGFR 58 does not trigger the 30–45 initiation-not-recommended rule or the below-30 contraindication.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "28_contraindication_dailymed_metformin_egfr_initiation.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

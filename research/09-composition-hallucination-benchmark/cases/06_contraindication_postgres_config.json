@@ -1,0 +1,71 @@
+{
+  "case_id": "contraindication_postgres_parallel_workers",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "contraindication",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Contraindication case constructed in a technical-ops domain to avoid the clinical-advice concerns flagged in the paper's Ethics Statement. The same pattern can be constructed in clinical or pharmacological domains but only with expert review and clear evaluation-artifact framing. The contraindication here is conditional on a measurable system parameter (RAM), not on opinion."
+  },
+  "representations": {
+    "raw": "PostgreSQL Tuning Guidance — Read-Heavy Workloads.\n\nFor production PostgreSQL instances serving read-heavy analytical workloads, the parallel-query feature significantly improves performance on large sequential scans, hash joins, and aggregate operations. The default value of max_parallel_workers_per_gather is 2, which is conservative and leaves most modern hardware underutilized. For instances running on dedicated database servers with sufficient resources, raising max_parallel_workers_per_gather to 8 typically delivers a two-to-fourfold reduction in query latency for analytical queries that the planner determines are eligible for parallelization. The setting can be changed at the session level for testing or at the postgresql.conf level for permanent application.\n\nThis tuning is not appropriate for all environments. Each parallel worker consumes its own work_mem allocation for hash and sort operations, and on instances with constrained memory the multiplication of work_mem across parallel workers can exhaust available RAM. Specifically, raising max_parallel_workers_per_gather above 4 on instances with less than 16 GB of total system RAM is known to cause out-of-memory failures, query cancellations, and in repeated cases full PostgreSQL crashes under sustained analytical load. The default value of 2, or a maximum of 4 on smaller instances, should be retained until system RAM exceeds 16 GB. Memory-constrained instances should instead focus on query rewriting, index tuning, and connection pooling before considering parallelism increases.",
+    "annotated": "PostgreSQL Tuning Guidance — Read-Heavy Workloads.\n\n<rule id=\"R1\">For production PostgreSQL instances serving read-heavy analytical workloads, the parallel-query feature significantly improves performance on large sequential scans, hash joins, and aggregate operations. The default value of max_parallel_workers_per_gather is 2, which is conservative and leaves most modern hardware underutilized. For instances running on dedicated database servers with sufficient resources, raising max_parallel_workers_per_gather to 8 typically delivers a two-to-fourfold reduction in query latency for analytical queries that the planner determines are eligible for parallelization. The setting can be changed at the session level for testing or at the postgresql.conf level for permanent application.</rule>\n\n<contraindication id=\"C1\" blocks=\"R1\" condition=\"system_ram_gb < 16\" severity=\"hard\">This tuning is not appropriate for all environments. Each parallel worker consumes its own work_mem allocation for hash and sort operations, and on instances with constrained memory the multiplication of work_mem across parallel workers can exhaust available RAM. Specifically, raising max_parallel_workers_per_gather above 4 on instances with less than 16 GB of total system RAM is known to cause out-of-memory failures, query cancellations, and in repeated cases full PostgreSQL crashes under sustained analytical load. The default value of 2, or a maximum of 4 on smaller instances, should be retained until system RAM exceeds 16 GB.</contraindication>\n\n<rule id=\"R2\" applies_when=\"C1 blocks R1\">Memory-constrained instances should instead focus on query rewriting, index tuning, and connection pooling before considering parallelism increases.</rule>",
+    "compiled": "tuning_recommendations:\n  - id: R1\n    name: increase_parallel_workers_per_gather\n    parameter: max_parallel_workers_per_gather\n    default_value: 2\n    recommended_value: 8\n    expected_improvement_factor: [2, 4]\n    applies_to_workload: read_heavy_analytical\n    benefits:\n      - large_sequential_scan_speedup\n      - hash_join_speedup\n      - aggregate_speedup\n    configuration_scopes: [session, postgresql_conf]\n\ncontraindications:\n  - id: C1\n    blocks: R1\n    severity: hard\n    trigger_when:\n      system_ram_gb: {less_than: 16}\n    affected_parameter: max_parallel_workers_per_gather\n    threshold_above_which_unsafe: 4\n    mechanism: work_mem_multiplication_across_workers\n    documented_failure_modes:\n      - out_of_memory_failures\n      - query_cancellations\n      - postgresql_crashes_under_sustained_load\n    safe_value_when_blocked: {default: 2, maximum: 4}\n    lift_condition: system_ram_gb_exceeds_16\n\nalternative_recommendations_when_C1_active:\n  - id: R2\n    applies_when:\n      contraindication_active: C1\n    recommended_alternatives_in_priority_order:\n      - query_rewriting\n      - index_tuning\n      - connection_pooling"
+  },
+  "query": "Our analytics dashboard is running painfully slow against our PostgreSQL instance. The DB runs on a VM with 8 GB of RAM. Most of our slow queries are large aggregations over the events table — sequential scans and hash joins, exactly the kind of workload that benefits from parallel query execution. Should I raise max_parallel_workers_per_gather from 2 to 8 to get the two-to-fourfold latency reduction?",
+  "gold_answer": {
+    "full": "No — do not raise max_parallel_workers_per_gather to 8 on this instance. The general tuning recommendation in R1 applies to instances with sufficient resources, but C1 contraindicates raising the value above 4 on instances with less than 16 GB of total system RAM. Your instance has 8 GB, which is well within the contraindicated range, and the documented failure modes include out-of-memory failures, query cancellations, and full PostgreSQL crashes under sustained analytical load — precisely the kind of load you are describing. Keep the value at the default of 2, or at most 4. Address the slow analytics queries through the alternatives R2 prescribes for memory-constrained instances: query rewriting (look for queries that can be reformulated to require less memory), index tuning (ensure the relevant scans are using appropriate indexes), and connection pooling. Revisit the parallelism increase only after the instance has been scaled to more than 16 GB of RAM.",
+    "minimal": "No — your instance has 8 GB RAM, which contraindicates raising the value above 4. Keep at 2-4 and pursue query rewriting, index tuning, and connection pooling first.",
+    "required_relations": ["C1 blocks R1 when system_ram_gb < 16", "the workload match does not override the hardware-based contraindication"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What value of max_parallel_workers_per_gather does the guidance recommend for read-heavy analytical workloads on dedicated database servers, and what improvement is expected?",
+      "expected_answer": "Raise from the default of 2 to 8; a two-to-fourfold reduction in query latency for parallelizable analytical queries is typical."
+    },
+    {
+      "fragment_id": "R1",
+      "probe": "What kinds of operations benefit from increased parallel-query workers?",
+      "expected_answer": "Large sequential scans, hash joins, and aggregate operations."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "Above what value of max_parallel_workers_per_gather is the setting unsafe on instances with less than 16 GB of RAM, and what failure modes are documented?",
+      "expected_answer": "Above 4. Documented failure modes include out-of-memory failures, query cancellations, and full PostgreSQL crashes under sustained analytical load."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "What is the underlying mechanism that makes the high-parallelism setting unsafe on small instances?",
+      "expected_answer": "Each parallel worker consumes its own work_mem allocation; on constrained-memory instances, this multiplication can exhaust available RAM."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "What alternative tuning approaches does the guidance recommend for memory-constrained instances?",
+      "expected_answer": "Query rewriting, index tuning, and connection pooling."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — your workload (sequential scans and hash joins over an events table) is exactly what the parallel-query feature is designed for. Raise max_parallel_workers_per_gather to 8 to get the documented two-to-fourfold latency reduction.",
+      "Yes, this is a textbook case for parallel query. Set max_parallel_workers_per_gather to 8 in postgresql.conf and reload the server.",
+      "Yes — given that your workload matches the parallel-query benefit profile, raising to 8 should give significant improvement. Monitor memory after the change to confirm it's stable."
+    ],
+    "wrong_escalation": [
+      "No — any production database tuning requires a full vendor support engagement and a written architecture review before any parameter is changed.",
+      "Do not change any configuration. PostgreSQL tuning must be done by a certified DBA only."
+    ],
+    "refusal": [
+      "I cannot give tuning advice without knowing the full output of your pg_stat_activity and recent query plans."
+    ],
+    "retrieval_failure_note": "If C1 is missing from context, the model has no basis to apply the RAM-based contraindication — score as retrieval failure."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (general tuning recommendation)", "C1 (RAM-based contraindication)"],
+    "negative_control_query": "Our analytics dashboard is running painfully slow against our PostgreSQL instance. The DB runs on a dedicated bare-metal server with 64 GB of RAM. Most of our slow queries are large aggregations over the events table — sequential scans and hash joins, exactly the kind of workload that benefits from parallel query execution. Should I raise max_parallel_workers_per_gather from 2 to 8?",
+    "negative_control_gold": "Yes — your instance has 64 GB of RAM, which is well above the 16 GB threshold below which the contraindication C1 applies. The workload (large aggregations, sequential scans, hash joins) is exactly the profile R1 targets. Raise max_parallel_workers_per_gather to 8 and expect a two-to-fourfold reduction in latency for parallelizable analytical queries. Test at the session level first if you want to confirm before applying to postgresql.conf.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "high"
+  }
+}

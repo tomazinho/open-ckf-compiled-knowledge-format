@@ -1,0 +1,126 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "exception_of_exception_dailymed_clozapine_ben_anc_threshold",
+    "title": "Exception Of Exception Dailymed Clozapine Ben Anc Threshold",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "clinical",
+    "relation_type": "exception_of_exception",
+    "complexity_level": 3,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Clozapine tablet label",
+      "source_organization": "DailyMed / U.S. National Library of Medicine",
+      "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f060a13b-5846-4615-8d43-fa60653a9658",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "P1"
+      },
+      {
+        "id": "F2",
+        "description": "E1"
+      },
+      {
+        "id": "F3",
+        "description": "P2"
+      }
+    ],
+    "raw_representation_sha256": "464617b91d7d325c1ead0475b090e7b030a1111ec944e319633818835e3ec9cd",
+    "annotated_representation_sha256": "56b576f0b6941b5a6d907326d1412fe2625c2d0f5a1c51d42382ac271b02044c",
+    "compiled_representation_sha256": "b2b30a19a2d81e0fe76d1214380d62d0a204aff3b7bd1d1a26d3bbcd3e84cb72"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Clozapine ANC note.\n\nSection A. Baseline ANC rule. Before initiating clozapine, a baseline absolute neutrophil count, or ANC, must be obtained. For the general population, baseline ANC must be at least 1500 per microliter.\n\nSection B. BEN exception. For patients with documented Benign Ethnic Neutropenia, the baseline ANC threshold is lower: at least 1000 per microliter.\n\nSection C. Monitoring obligation. During treatment, regular ANC monitoring remains required. The lower BEN threshold changes the initiation threshold but does not remove monitoring obligations."
+      },
+      {
+        "id": "annotated",
+        "text": "Clozapine ANC note.\n\n<precondition id=\"P1\">Section A. Baseline ANC rule. Before initiating clozapine, a baseline absolute neutrophil count, or ANC, must be obtained. For the general population, baseline ANC must be at least 1500 per microliter.</precondition>\n\n<exception id=\"E1\" overrides=\"P1.general_threshold\" condition=\"documented BEN\">Section B. BEN exception. For patients with documented Benign Ethnic Neutropenia, the baseline ANC threshold is lower: at least 1000 per microliter.</exception>\n\n<precondition id=\"P2\" applies_after=\"P1_or_E1\">Section C. Monitoring obligation. During treatment, regular ANC monitoring remains required. The lower BEN threshold changes the initiation threshold but does not remove monitoring obligations.</precondition>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "preconditions:\n  - id: P1\n    before_initiation: obtain_baseline_ANC\n    general_population_min_ANC_per_uL: 1500\n  - id: P2\n    during_treatment: regular_ANC_monitoring_required\nexceptions:\n  - id: E1\n    overrides: P1.general_population_min_ANC_per_uL\n    condition: documented_BEN\n    BEN_min_ANC_per_uL: 1000\n    does_not_override: P2"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "exception_of_exception",
+        "description": "Adapted from a DailyMed clozapine label. Clinical evaluation artifact only. Complexity 3 exception-of-exception: baseline ANC threshold differs for documented BEN and monitoring remains required."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A patient has documented BEN and baseline ANC of 1200/µL. A model says clozapine cannot be initiated because ANC is below the general 1500/µL threshold. Is that correct under this note?",
+        "expected_decision": "No. Documented BEN uses the 1000/µL threshold; ANC 1200/µL meets it, with monitoring still required.",
+        "rationale": "No. The general threshold is 1500/µL, but documented BEN is an exception with a lower initiation threshold of at least 1000/µL. ANC 1200/µL satisfies the BEN threshold, but regular ANC monitoring is still required."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A patient has documented BEN and baseline ANC of 1200/µL. A model says clozapine cannot be initiated because ANC is below the general 1500/µL threshold. Is that correct under this note?",
+        "answer": "No. The general threshold is 1500/µL, but documented BEN is an exception with a lower initiation threshold of at least 1000/µL. ANC 1200/µL satisfies the BEN threshold, but regular ANC monitoring is still required."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "At least 1500/µL."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "At least 1000/µL."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "No. Regular ANC monitoring remains required."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Clozapine cannot be initiated because the ANC is below 1500/µL despite documented BEN.",
+        "Clozapine can be initiated and no ANC monitoring is needed because BEN is exempt."
+      ],
+      "wrong_escalation": [
+        "Treat BEN as severe neutropenia without applying the documented BEN threshold."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "P1",
+        "E1",
+        "P2"
+      ],
+      "negative_control_query": "A patient without documented BEN has baseline ANC 1200/µL. Does the BEN lower threshold apply?",
+      "negative_control_gold": "No. Without documented BEN, the general population threshold of at least 1500/µL applies.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "32_exception_of_exception_dailymed_clozapine_ben_anc_threshold.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

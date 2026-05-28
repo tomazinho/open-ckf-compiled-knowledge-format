@@ -1,0 +1,69 @@
+{
+  "case_id": "temporal_university_housing_contract_release_deadline",
+  "metadata": {
+    "domain": "education",
+    "relation_type": "temporal_dependency",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a universidade moradia estudantil contrato release process. Level-1 dependência temporal: written form deadline controls revisão.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Housing Contract Release Process",
+    "source_organization": "University of Connecticut Residential Life",
+    "source_url": "https://campushousing.uconn.edu/manage-housing/changing-cancelling-housing/housing-contract-release-process/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Housing contrato release note.\n\nSeção A. Written request. A moradia estudantil contrato release request deve be submitted in writing using the Contract Release Form.\n\nSeção B. Ten-business-day deadline. The Contract Release Form deve be submitted within ten business days of the moradia estudantil cancellation application or, when cancellation occurred due to lack of response, within ten days of the charge being added to the fee bill. Requests submitted outside these timing expectations are automatically denied.",
+    "annotated": "Housing contrato release note.\n\n<rule id=\"R1\">Seção A. Written request. A moradia estudantil contrato release request deve be submitted in writing using the Contract Release Form.</rule>\n\n<temporal_dependency id=\"T1\" applies_to=\"R1\">Seção B. Ten-business-day deadline. The Contract Release Form deve be submitted within ten business days of the moradia estudantil cancellation application or, when cancellation occurred due to lack of response, within ten days of the charge being added to the fee bill. Requests submitted outside these timing expectations are automatically denied.</temporal_dependency>",
+    "compiled": "regras:\n  - id: R1\n    request_type: moradia estudantil_contrato_release\n    exigido_form: Contract_Release_Form\n    submission_mode: written\ntemporal_dependencies:\n  - id: T1\n    deadline_options:\n      - within_10_business_days_of_moradia estudantil_cancellation_application\n      - within_10_days_of_charge_added_if_cancelled_for_lack_of_response\n    late_result: automatic_denial"
+  },
+  "query": "A estudante submitted a moradia estudantil cancellation application and then filed the written Contract Release Form 15 business days later. Deve-se the request be revisãoed as timely porque it was eventually submitted in writing?",
+  "gold_answer": {
+    "full": "No. A written form is exigido, but timing also matters. Because the form was submitted after the ten-business-day deadline, the request is automatically denied under this note.",
+    "minimal": "No. The written form was late, so the request is automatically denied.",
+    "required_relations": [
+      "temporal_dependency:T1 imposes deadline on written request R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que form of request is exigido?",
+      "expected_answer": "A written Contract Release Form."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Qual/O que happens if the form is outside the timing expectations?",
+      "expected_answer": "The request is automatically denied."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, porque the request was submitted in writing.",
+      "No request is possible after a moradia estudantil cancellation application at all."
+    ],
+    "wrong_escalation": [
+      "Send the appeal to an unrelated academic committee."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "T1"
+    ],
+    "negative_control_query": "A estudante submits the Contract Release Form 6 business days after the moradia estudantil cancellation application. É the timing regra violated?",
+    "negative_control_gold": "No. Six business days is within the ten-business-day deadline.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

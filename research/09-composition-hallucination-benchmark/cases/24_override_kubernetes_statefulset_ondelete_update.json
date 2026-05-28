@@ -1,0 +1,66 @@
+{
+  "case_id": "override_kubernetes_statefulset_ondelete_update",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from Kubernetes StatefulSet docs. Level-1 override: OnDelete update strategy overrides automatic RollingUpdate behavior."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "StatefulSets",
+    "source_organization": "Kubernetes",
+    "source_url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "StatefulSet update note.\n\nSection A. RollingUpdate. The default StatefulSet update strategy performs automated rolling updates when the Pod template changes.\n\nSection B. OnDelete. When a StatefulSet uses the OnDelete update strategy, the controller does not automatically update existing Pods after a template change. Users must manually delete Pods for the controller to recreate them from the updated template.",
+    "annotated": "StatefulSet update note.\n\n<rule id=\"R1\">Section A. RollingUpdate. The default StatefulSet update strategy performs automated rolling updates when the Pod template changes.</rule>\n\n<override id=\"O1\" overrides=\"R1\" condition=\"updateStrategy.type == OnDelete\">Section B. OnDelete. When a StatefulSet uses the OnDelete update strategy, the controller does not automatically update existing Pods after a template change. Users must manually delete Pods for the controller to recreate them from the updated template.</override>",
+    "compiled": "rules:\n  - id: R1\n    controller: StatefulSet\n    default_update_strategy: RollingUpdate\n    effect: automatically_updates_pods_after_template_change\noverrides:\n  - id: O1\n    condition:\n      updateStrategy.type: OnDelete\n    overrides: R1\n    effect: no_automatic_update_of_existing_pods\n    required_user_action: manually_delete_pods_to_recreate_from_new_template"
+  },
+  "query": "A StatefulSet template was changed, but the StatefulSet has updateStrategy.type set to OnDelete. Will the controller automatically roll existing Pods to the new template?",
+  "gold_answer": {
+    "full": "No. Although RollingUpdate is the default automated behavior, the OnDelete strategy overrides it. Existing Pods will not be automatically updated; they must be manually deleted for the controller to recreate them using the new template.",
+    "minimal": "No. OnDelete prevents automatic update of existing StatefulSet Pods after a template change.",
+    "required_relations": [
+      "override:OnDelete overrides default RollingUpdate behavior"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What does the default RollingUpdate strategy do?",
+      "expected_answer": "It automatically performs rolling updates when the StatefulSet Pod template changes."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "What happens under OnDelete after a template change?",
+      "expected_answer": "Existing Pods are not automatically updated; manual deletion is required for recreation from the new template."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, StatefulSets automatically roll updates after any template change.",
+      "The Pods will update only after the next scheduled restart, without manual deletion."
+    ],
+    "wrong_escalation": [
+      "Delete the whole StatefulSet object immediately."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "O1"
+    ],
+    "negative_control_query": "A StatefulSet uses the default RollingUpdate strategy and its Pod template changes. Will the controller perform an automated rolling update?",
+    "negative_control_gold": "Yes. With the default RollingUpdate strategy, the controller performs automated rolling updates.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

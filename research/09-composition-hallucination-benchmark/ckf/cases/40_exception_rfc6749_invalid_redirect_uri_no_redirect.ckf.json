@@ -1,0 +1,126 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "exception_rfc6749_invalid_redirect_uri_no_redirect",
+    "title": "Exception Rfc6749 Invalid Redirect Uri No Redirect",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "technical_ops",
+    "relation_type": "exception",
+    "complexity_level": 3,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "RFC 6749: The OAuth 2.0 Authorization Framework",
+      "source_organization": "IETF OAuth Working Group",
+      "source_url": "https://datatracker.ietf.org/doc/html/rfc6749",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "E1"
+      },
+      {
+        "id": "F3",
+        "description": "Q1"
+      }
+    ],
+    "raw_representation_sha256": "45e8f4cbd2fc596da6d3e9c2c86d3381fb61d579359240bd65756facf780ec61",
+    "annotated_representation_sha256": "6132c9b2c3424a11c9bd66a41b4a6accbb277844cabdcf82092988193b3fd7fd",
+    "compiled_representation_sha256": "0859c3ca9154aadc0f57476fed4e3c3ca4df13aede2a7cb841072dff5a87629f"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "OAuth authorization error note.\n\nSection A. Authorization error redirect. During an authorization-code request, when the resource owner denies the request or the request fails for a reason that still leaves the authorization server with enough valid client and redirect information, the server can return an error response by redirecting the user-agent back to the client's redirection endpoint.\n\nSection B. Invalid redirect target. If the request is invalid because the redirect URI is missing, invalid, or mismatched, or because the client identifier is invalid, the authorization server must not automatically redirect the user-agent to the invalid redirection URI. It should instead inform the resource owner of the error.\n\nSection C. Code exchange. An authorization code, if issued, is later exchanged at the token endpoint. That later exchange does not retroactively make an invalid authorization redirect target safe."
+      },
+      {
+        "id": "annotated",
+        "text": "OAuth authorization error note.\n\n<rule id=\"R1\">Section A. Authorization error redirect. During an authorization-code request, when the resource owner denies the request or the request fails for a reason that still leaves the authorization server with enough valid client and redirect information, the server can return an error response by redirecting the user-agent back to the client's redirection endpoint.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"invalid redirect_uri or invalid client_id\">Section B. Invalid redirect target. If the request is invalid because the redirect URI is missing, invalid, or mismatched, or because the client identifier is invalid, the authorization server must not automatically redirect the user-agent to the invalid redirection URI. It should instead inform the resource owner of the error.</exception>\n\n<sequence id=\"Q1\" after=\"R1 or E1\">Section C. Code exchange. An authorization code, if issued, is later exchanged at the token endpoint. That later exchange does not retroactively make an invalid authorization redirect target safe.</sequence>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    context: authorization_endpoint_error\n    default_error_response: redirect_to_client_redirection_endpoint\n    requires: enough_valid_client_and_redirect_information\nexceptions:\n  - id: E1\n    overrides: R1\n    condition_any: [redirect_uri_missing_invalid_or_mismatched, client_id_invalid]\n    result: do_not_auto_redirect_to_invalid_uri\n    alternative: inform_resource_owner\nsequence:\n  - id: Q1\n    later_step: token_endpoint_code_exchange\n    does_not_repair: invalid_authorization_redirect_uri"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "exception",
+        "description": "Adapted from OAuth 2.0 authorization endpoint error handling. Complexity 3: redirect-on-error rule is blocked when redirect_uri or client_id is invalid."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "An OAuth authorization request has an invalid redirect_uri, but the server can detect the error. Should the authorization server redirect the user-agent back to that supplied URI with an error code because authorization errors are usually returned by redirect?",
+        "expected_decision": "No. Invalid redirect_uri triggers the exception: do not redirect to that URI; inform the resource owner.",
+        "rationale": "No. The general error-redirect behavior is blocked when the redirect URI is invalid or mismatched. The server should not automatically redirect to the invalid URI; it should inform the resource owner instead. A later token exchange does not repair the invalid redirect target."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "An OAuth authorization request has an invalid redirect_uri, but the server can detect the error. Should the authorization server redirect the user-agent back to that supplied URI with an error code because authorization errors are usually returned by redirect?",
+        "answer": "No. The general error-redirect behavior is blocked when the redirect URI is invalid or mismatched. The server should not automatically redirect to the invalid URI; it should inform the resource owner instead. A later token exchange does not repair the invalid redirect target."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "When the server has enough valid client and redirection information."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "The server must not automatically redirect to the invalid URI and should inform the resource owner."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "No. The later exchange does not repair the invalid authorization redirect target."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes, all OAuth authorization errors are returned by redirect to the supplied redirect_uri.",
+        "No error handling is possible; the server must silently drop the request."
+      ],
+      "wrong_escalation": [
+        "Issue an authorization code anyway and let the token endpoint reject it later."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "E1",
+        "Q1"
+      ],
+      "negative_control_query": "An OAuth authorization request has a valid registered redirect_uri, but the resource owner denies consent. Can the server return the denial error by redirecting to the valid redirection endpoint?",
+      "negative_control_gold": "Yes. With valid redirect information, the general authorization error redirect behavior can apply.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "40_exception_rfc6749_invalid_redirect_uri_no_redirect.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

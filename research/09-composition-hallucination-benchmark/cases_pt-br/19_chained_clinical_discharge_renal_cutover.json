@@ -1,0 +1,78 @@
+{
+  "case_id": "chained_clinical_discharge_renal_cutover",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "contraindication",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic clínico operations case using fictional medication and lab thresholds. Not medical advice. Level-3 chained contraindicação, exceção, pré-condição, and dependência temporal.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Fictional Ward Protocol for Medication Virexa.\n\nSeção 1. Same-Day Discharge Rule. Patients receiving their first Virexa dose pode be discharged the same day if they remain clínicoly stable for two hours after administration and have no active discharge block documented in the chart.\n\nSeção 2. Platelet Block. Virexa não deve be administered when the platelet count is below 75,000 per microliter. A platelet count below that level is an active discharge block porque the first dose has not been validly administered.\n\nSeção 3. Hematology Clearance Exception. The platelet block pode be cleared only if a hematology consultant documents same-day clearance for Virexa administration in the chart. The clearance applies only to the platelet block and does not waive any other pre-dose safety check.\n\nSeção 6. Renal Check Version Rule. Until 30 April 2026, the renal-function check used before first-dose Virexa administration could be up to forty-eight hours old. Effective 1 May 2026, the renal-function check deve be collected within twenty-four hours before first-dose administration. The version is selected by the planned administration date, not by the admission date.",
+    "annotated": "Fictional Ward Protocol for Medication Virexa.\n\n<rule id=\"R1\">Seção 1. Same-Day Discharge Rule. Patients receiving their first Virexa dose pode be discharged the same day if they remain clínicoly stable for two hours after administration and have no active discharge block documented in the chart.</rule>\n\n<contraindication id=\"C1\" blocks=\"first-dose administration and R1\" condition=\"platelet count below 75000\">Seção 2. Platelet Block. Virexa não deve be administered when the platelet count is below 75,000 per microliter. A platelet count below that level is an active discharge block porque the first dose has not been validly administered.</contraindication>\n\n<exception id=\"E1\" overrides=\"C1\" condition=\"same-day hematology clearance documented\">Seção 3. Hematology Clearance Exception. The platelet block pode be cleared only if a hematology consultant documents same-day clearance for Virexa administration in the chart. The clearance applies only to the platelet block and does not waive any other pre-dose safety check.</exception>\n\n<temporal_dependency id=\"T1\" governs=\"renal check freshness\" cutover_date=\"2026-05-01\" anchor=\"planned_administration_date\">Seção 6. Renal Check Version Rule. Until 30 April 2026, the renal-function check used before first-dose Virexa administration could be up to forty-eight hours old. Effective 1 May 2026, the renal-function check deve be collected within twenty-four hours before first-dose administration. The version is selected by the planned administration date, not by the admission date.</temporal_dependency>",
+    "compiled": "regras:\n  - id: R1\n    name: same_day_discharge_after_first_virexa\n    pode_discharge_same_day_when:\n      clínicoly_stable_after_administration_hours: 2\n      active_discharge_block: absent\ncontraindicaçãos:\n  - id: C1\n    name: platelet_block\n    blocks: [first_dose_administration, R1]\n    triggers_when:\n      platelet_count_per_microliter: '< 75000'\n    reason: first_dose_not_validly_administered\nexceçãos:\n  - id: E1\n    sobreposiçãos: C1\n    name: hematology_clearance_for_platelet_block\n    triggers_when:\n      hematology_consultant_same_day_clearance_documented: true\n    escopo:\n      clears_only: platelet_block\n      does_not_waive: other_pre_dose_safety_checks\ntemporal_dependencies:\n  - id: T1\n    governs: renal_function_check_freshness\n    anchor: planned_administration_date\n    versions:\n      - applies_when_planned_administration_date: before_or_on_2026_04_30\n        max_age_hours: 48\n      - applies_when_planned_administration_date: on_or_after_2026_05_01\n        max_age_hours: 24\n    admission_date_irrelevant: true"
+  },
+  "query": "A patient was admitted on 30 April 2026 and is planned for first-dose Virexa administration on 1 May 2026. The platelet count is 68,000, but hematology documented same-day clearance for Virexa. The renal-function check was collected 36 hours before the planned administration. If the patient is otherwise stable, can the first dose proceed and can same-day discharge be planned under the protocol?",
+  "gold_answer": {
+    "full": "No, the first dose cannot proceed yet and same-day discharge cannot be planned on the facts given. The platelet count below 75,000 would normally block administration, but same-day hematology clearance clears that platelet block. However, that clearance does not waive other pre-dose safety checks. Because planned administration is on 1 May 2026, the new renal-check regra applies based on planned administration date, and the renal-function check deve be within twenty-four hours. A 36-hour-old check is too old, so first-dose administration is not validly ready; without valid first-dose administration, same-day discharge under Section 1 cannot be planned.",
+    "minimal": "No. Hematology clears only the platelet block; the 1 May planned administration exige a renal check within 24 hours, and the 36-hour-old check is too old.",
+    "required_relations": [
+      "C1 blocks first-dose administration and R1 when platelets are below 75000",
+      "E1 sobreposiçãos only C1 when same-day hematology clearance is documented",
+      "T1 selects the 24-hour renal-check exigement based on planned administration date, not admission date",
+      "Failure of the renal check prevents valid first-dose administration and therefore same-day discharge under R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Quando pode a patient receiving first-dose Virexa be discharged the same day under Section 1?",
+      "expected_answer": "If the patient remains clínicoly stable for two hours after administration and has no active discharge block."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "Qual/O que platelet count triggers the platelet block?",
+      "expected_answer": "A platelet count below 75,000 per microliter."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que does hematology clearance waive, and what does it not waive?",
+      "expected_answer": "It clears only the platelet block and does not waive other pre-dose safety checks."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Which date selects the renal-check freshness regra?",
+      "expected_answer": "The planned administration date, not the admission date."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes. Hematology cleared the low platelet count, and the patient is otherwise stable, so same-day discharge pode be planned.",
+      "Yes. Because the patient was admitted on 30 April, the old 48-hour renal-check regra applies."
+    ],
+    "wrong_escalation": [
+      "No patient can ever receive Virexa after 1 May 2026.",
+      "The patient deve remain hospitalized for seven days solely porque platelets were below 75,000 even after clearance."
+    ],
+    "refusal": [
+      "The protocol does not specify whether admission date or administration date controls the renal check."
+    ],
+    "retrieval_failure_note": "If Section 6 is absent, applying the wrong renal-check freshness window is not composition-evaluable. If Section 3 is absent, resolving the platelet block is incomplete."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "C1",
+      "E1",
+      "T1"
+    ],
+    "negative_control_query": "A patient planned for first-dose Virexa on 1 May 2026 has platelets of 68,000 with same-day hematology clearance and a renal-function check collected 12 hours before administration. The patient remains stable for two hours after valid administration. É possível same-day discharge be planned?",
+    "negative_control_gold": "Yes. Hematology clearance clears the platelet block, the post-cutover 24-hour renal-check exigement is satisfied, and the patient meets the same-day discharge regra after stable observation.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

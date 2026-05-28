@@ -1,0 +1,69 @@
+{
+  "case_id": "exception_irs_offer_in_compromise_low_income_waiver",
+  "metadata": {
+    "domain": "regulatory",
+    "relation_type": "exception",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from IRS offer-in-compromise fee/pagamento guidance. Tax evaluation artifact only. Level-2 exceção: low-income certification waives application fee and initial pagamento.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Offer in compromise FAQs",
+    "source_organization": "Internal Revenue Service",
+    "source_url": "https://www.irs.gov/businesses/small-businesses-self-employed/offer-in-compromise-faqs",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "IRS offer-in-compromise submission note.\n\nSeção A. Standard submission pagamentos. An offer in compromise normally exige an application fee and a exigido offer pagamento. For a lump-sum offer, the initial offer pagamento is twenty percent of the offer amount. For a periodic-pagamento offer, the contribuinte submits the first periodic pagamento and continues monthly pagamentos while the offer is considered.\n\nSeção B. Low-income certification exceção. A contribuinte who qualifies for the low-income certification does not have to include the application fee or the initial offer pagamento with the submission.",
+    "annotated": "IRS offer-in-compromise submission note.\n\n<rule id=\"R1\">Seção A. Standard submission pagamentos. An offer in compromise normally exige an application fee and a exigido offer pagamento. For a lump-sum offer, the initial offer pagamento is twenty percent of the offer amount. For a periodic-pagamento offer, the contribuinte submits the first periodic pagamento and continues monthly pagamentos while the offer is considered.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"low-income certification qualifies\">Seção B. Low-income certification exceção. A contribuinte who qualifies for the low-income certification does not have to include the application fee or the initial offer pagamento with the submission.</exception>",
+    "compiled": "regras:\n  - id: R1\n    normal_offer_submission_exige:\n      - application_fee\n      - exigido_offer_pagamento\n    lump_sum_initial_pagamento: 20_percent_of_offer_amount\n    periodic_initial_pagamento: first_periodic_pagamento\n    periodic_during_revisão: continue_monthly_pagamentos\nexceçãos:\n  - id: E1\n    sobreposiçãos: R1\n    condition: qualifies_for_low_income_certification\n    waived_items: [application_fee, initial_offer_pagamento]"
+  },
+  "query": "A contribuinte qualifies for the low-income certification and submits a lump-sum offer in compromise. Must the contribuinte include the application fee and the 20% initial pagamento with the submission?",
+  "gold_answer": {
+    "full": "No. Those are normally exigido for a lump-sum offer, but the low-income certification exceção waives both the application fee and the initial offer pagamento.",
+    "minimal": "No. Low-income certification waives the application fee and initial offer pagamento.",
+    "required_relations": [
+      "exceção:E1 waives standard pagamento exigements R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que does a standard lump-sum offer normally exige at submission?",
+      "expected_answer": "An application fee and an initial pagamento equal to 20% of the offer amount."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que does the low-income certification mudança?",
+      "expected_answer": "It waives the application fee and initial offer pagamento."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, the contribuinte deve include 20% porque the offer is lump-sum.",
+      "No, low-income certification waives all future pagamentos if the offer is accepted."
+    ],
+    "wrong_escalation": [
+      "The contribuinte deve abandon the offer and request a pagamento plan."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1"
+    ],
+    "negative_control_query": "A contribuinte does not qualify for low-income certification and submits a lump-sum offer. Must they include the standard fee and 20% initial pagamento?",
+    "negative_control_gold": "Yes. Without the low-income exceção, the standard lump-sum submission exigements apply.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

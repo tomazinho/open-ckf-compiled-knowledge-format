@@ -1,0 +1,61 @@
+{
+  "case_id": "contraindication_clinical_lumaren_renal",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "contraindication",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic clinical-guideline style case using a fictional medication. It is for benchmark evaluation only and must not be used as medical advice."
+  },
+  "representations": {
+    "raw": "Outpatient Protocol for Fictional Medication Lumaren.\n\nSection 2. Standard Use. Adults in the low-risk pathway for uncomplicated flare syndrome may receive Lumaren 50 mg once daily for five days when symptoms are mild, vital signs are stable, and no red-flag symptoms are documented. The standard-use pathway does not require same-day specialist review.\n\nSection 5. Renal Safety Block. Lumaren must not be started when the patient's estimated glomerular filtration rate is below 30 mL/min/1.73m2. In that circumstance, the low-risk pathway is not available even if symptoms are mild and vital signs are stable. The chart should be routed for same-day clinician review to select an alternative plan.",
+    "annotated": "Outpatient Protocol for Fictional Medication Lumaren.\n\n<rule id=\"R1\">Section 2. Standard Use. Adults in the low-risk pathway for uncomplicated flare syndrome may receive Lumaren 50 mg once daily for five days when symptoms are mild, vital signs are stable, and no red-flag symptoms are documented. The standard-use pathway does not require same-day specialist review.</rule>\n\n<contraindication id=\"C1\" blocks=\"R1\" condition=\"estimated_glomerular_filtration_rate_below_30\">Section 5. Renal Safety Block. Lumaren must not be started when the patient's estimated glomerular filtration rate is below 30 mL/min/1.73m2. In that circumstance, the low-risk pathway is not available even if symptoms are mild and vital signs are stable. The chart should be routed for same-day clinician review to select an alternative plan.</contraindication>",
+    "compiled": "rules:\n  - id: R1\n    name: lumaren_standard_use\n    intervention: Lumaren 50 mg once daily for five days\n    applies_when:\n      patient_type: adult\n      pathway: low_risk\n      syndrome: uncomplicated_flare_syndrome\n      symptoms: mild\n      vital_signs: stable\n      red_flags: absent\n    specialist_review_required_same_day: false\ncontraindications:\n  - id: C1\n    blocks: R1\n    name: renal_safety_block\n    triggers_when:\n      egfr_ml_min_1_73m2: '< 30'\n    effect:\n      lumaren_start: prohibited\n      low_risk_pathway_available: false\n      required_action: same_day_clinician_review_for_alternative_plan\n    priority: higher_than_R1"
+  },
+  "query": "A 52-year-old adult has mild uncomplicated flare-syndrome symptoms, stable vital signs, and no red-flag symptoms. The chart also lists an estimated glomerular filtration rate of 24 mL/min/1.73m2. Under this protocol, can the clinic start Lumaren through the low-risk pathway without same-day clinician review?",
+  "gold_answer": {
+    "full": "No. The patient appears to satisfy the standard low-risk criteria in Section 2, but Section 5 blocks Lumaren when eGFR is below 30 mL/min/1.73m2. The eGFR of 24 triggers the renal safety block, so Lumaren must not be started through the low-risk pathway and the chart should be routed for same-day clinician review to choose an alternative plan.",
+    "minimal": "No. eGFR 24 is below 30, so the renal safety block prohibits starting Lumaren and requires same-day clinician review.",
+    "required_relations": [
+      "C1 blocks R1 when eGFR is below 30",
+      "The query triggers C1 despite satisfying the local low-risk criteria in R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Under Section 2 alone, when may adults receive Lumaren through the low-risk pathway?",
+      "expected_answer": "When they have mild uncomplicated flare syndrome, stable vital signs, and no red-flag symptoms."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "What does Section 5 require when eGFR is below 30 mL/min/1.73m2?",
+      "expected_answer": "Lumaren must not be started, the low-risk pathway is unavailable, and the chart should be routed for same-day clinician review."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes. The symptoms are mild, vital signs are stable, and no red flags are documented, so the low-risk pathway applies.",
+      "Yes, but note the renal value in the chart for follow-up after starting Lumaren."
+    ],
+    "wrong_escalation": [
+      "The patient must be admitted to the hospital immediately.",
+      "The protocol requires approval from a nephrology board before any alternative plan can be selected."
+    ],
+    "refusal": [
+      "The protocol does not give enough information to answer whether Lumaren can be started."
+    ],
+    "retrieval_failure_note": "If Section 5 is not in the context, applying Section 2 alone is a retrieval failure."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "C1"
+    ],
+    "negative_control_query": "An adult has mild uncomplicated flare-syndrome symptoms, stable vital signs, no red flags, and eGFR of 72 mL/min/1.73m2. Under this protocol, can Lumaren be started through the low-risk pathway without same-day clinician review?",
+    "negative_control_gold": "Yes. The standard-use criteria are met and the renal safety block is not triggered because eGFR is not below 30.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "override_rfc9111_cache_control_no_store",
+    "title": "Override Rfc9111 Cache Control No Store",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 1,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "RFC 9111: HTTP Caching",
+      "source_organization": "RFC Editor / IETF HTTP Working Group",
+      "source_url": "https://www.rfc-editor.org/info/rfc9111",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "O1"
+      }
+    ],
+    "raw_representation_sha256": "bcb4883c09ed535a40fd4c4bceb46dc52142915262af4c226cf5e0e3505b7e41",
+    "annotated_representation_sha256": "a4c3fe58ea52281a2222e1a45dff049642a4da5c69d4aa367b2d39281f9c761e",
+    "compiled_representation_sha256": "7ce10905d56990aaabf46a5717300e585a7fda23a73234519bd30a505d8a6f70"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "HTTP cache-control note.\n\nSection A. Cacheable response metadata. A response may contain metadata such as freshness information that would otherwise allow a cache to reuse the response for a period of time.\n\nSection B. no-store directive. The no-store directive tells caches not to store the request or response. This instruction applies to both private and shared caches and overrides ordinary storage/reuse reasoning for that message."
+      },
+      {
+        "id": "annotated",
+        "text": "HTTP cache-control note.\n\n<rule id=\"R1\">Section A. Cacheable response metadata. A response may contain metadata such as freshness information that would otherwise allow a cache to reuse the response for a period of time.</rule>\n\n<override id=\"O1\" overrides=\"R1\" condition=\"Cache-Control includes no-store\">Section B. no-store directive. The no-store directive tells caches not to store the request or response. This instruction applies to both private and shared caches and overrides ordinary storage/reuse reasoning for that message.</override>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    condition: freshness_metadata_present\n    default_effect: response_may_be_storable_or_reusable_if_other_requirements_met\noverrides:\n  - id: O1\n    condition: Cache-Control_contains_no-store\n    applies_to_caches: [private, shared]\n    effect: do_not_store_request_or_response\n    overrides: R1"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "override",
+        "description": "Adapted from RFC 9111 HTTP caching semantics. Level-1 override: no-store blocks cache storage even when other cacheability-looking information is present."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "An HTTP response includes freshness metadata that otherwise appears cacheable, but Cache-Control also includes no-store. May a shared cache store it for reuse because the freshness metadata is present?",
+        "expected_decision": "No. no-store prevents storage despite freshness metadata.",
+        "rationale": "No. The no-store directive overrides ordinary storage reasoning and instructs private and shared caches not to store the message, even if other metadata looks cacheable."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "An HTTP response includes freshness metadata that otherwise appears cacheable, but Cache-Control also includes no-store. May a shared cache store it for reuse because the freshness metadata is present?",
+        "answer": "No. The no-store directive overrides ordinary storage reasoning and instructs private and shared caches not to store the message, even if other metadata looks cacheable."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "That a response may be reusable/storable if other caching requirements are met."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "Not to store the request or response, applying to private and shared caches."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes, because freshness metadata makes the response cacheable.",
+        "Only private caches must avoid storage; shared caches can store it."
+      ],
+      "wrong_escalation": [
+        "Block the HTTP response from being delivered to the client."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "O1"
+      ],
+      "negative_control_query": "A response has freshness metadata and does not include no-store. Does the no-store override apply?",
+      "negative_control_gold": "No. Without no-store, the specific override described here is not triggered.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "39_override_rfc9111_cache_control_no_store.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

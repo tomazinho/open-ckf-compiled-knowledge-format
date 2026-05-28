@@ -1,0 +1,73 @@
+{
+  "case_id": "sequence_dailymed_ketorolac_oral_initial_duration",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "sequence",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a DailyMed ketorolac label. Clinical evaluation artifact only. Level-2 sequence: oral formulation is continuation, total duration limit applies across routes."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Ketorolac Tromethamine label",
+    "source_organization": "DailyMed / U.S. National Library of Medicine",
+    "source_url": "https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=40d145e6-13f7-41ac-e054-00144ff8d46c",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "Ketorolac use note.\n\nSection A. Route sequence. Oral ketorolac is not used as the initial dose. It is used only as continuation treatment after IV or IM ketorolac when continuation is appropriate.\n\nSection B. Total duration. The combined duration of IV, IM, and oral ketorolac therapy in adults must not exceed five days.\n\nSection C. Concomitant contraindications. Concomitant use with probenecid or pentoxifylline is contraindicated.",
+    "annotated": "Ketorolac use note.\n\n<sequence id=\"Q1\">Section A. Route sequence. Oral ketorolac is not used as the initial dose. It is used only as continuation treatment after IV or IM ketorolac when continuation is appropriate.</sequence>\n\n<contraindication id=\"C1\" applies_to=\"Q1\" condition=\"combined duration > 5 days\">Section B. Total duration. The combined duration of IV, IM, and oral ketorolac therapy in adults must not exceed five days.</contraindication>\n\n<contraindication id=\"C2\" condition=\"concomitant probenecid or pentoxifylline\">Section C. Concomitant contraindications. Concomitant use with probenecid or pentoxifylline is contraindicated.</contraindication>",
+    "compiled": "sequence_rules:\n  - id: Q1\n    oral_ketorolac:\n      initial_dose_allowed: false\n      continuation_after: [IV_ketorolac, IM_ketorolac]\ncontraindications:\n  - id: C1\n    condition:\n      combined_duration_all_routes_days: '>5'\n    effect: therapy_not_allowed\n  - id: C2\n    condition:\n      concomitant_medication_in: [probenecid, pentoxifylline]\n    effect: contraindicated"
+  },
+  "query": "An adult patient received IM ketorolac for four days and is now proposed to continue oral ketorolac for three more days. There is no probenecid or pentoxifylline use. Is the oral continuation allowed under the note?",
+  "gold_answer": {
+    "full": "No. Oral ketorolac can be continuation after IM therapy, but the combined duration across IM and oral routes would be seven days, exceeding the five-day total duration limit.",
+    "minimal": "No. The continuation sequence is otherwise correct, but the combined duration would exceed five days.",
+    "required_relations": [
+      "sequence:oral therapy must follow IV/IM rather than start therapy",
+      "contraindication:combined duration over five days blocks continuation"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "Q1",
+      "probe": "Can oral ketorolac be used as the initial dose in this note?",
+      "expected_answer": "No. It is only continuation after IV or IM therapy."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "What is the maximum combined adult duration across IV, IM, and oral ketorolac?",
+      "expected_answer": "Five days."
+    },
+    {
+      "fragment_id": "C2",
+      "probe": "Which concomitant medicines are contraindicated in this note?",
+      "expected_answer": "Probenecid and pentoxifylline."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, because oral ketorolac is a different route and gets a new five-day clock.",
+      "Yes, because the patient already received IM ketorolac so the sequence requirement is satisfied."
+    ],
+    "wrong_escalation": [
+      "Never use oral ketorolac after IM therapy under any circumstances."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "Q1",
+      "C1",
+      "C2"
+    ],
+    "negative_control_query": "An adult patient received IM ketorolac for two days and is proposed to use oral ketorolac for two more days, with no contraindicated concomitant medicines. Does the duration rule block continuation?",
+    "negative_control_gold": "No. The combined duration would be four days, within the five-day limit, assuming all other conditions are met.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

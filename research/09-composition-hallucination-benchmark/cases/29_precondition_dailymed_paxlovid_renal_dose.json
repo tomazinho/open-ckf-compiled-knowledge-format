@@ -1,0 +1,74 @@
+{
+  "case_id": "precondition_dailymed_paxlovid_renal_dose",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a DailyMed PAXLOVID label. Clinical evaluation artifact only. Level-2 precondition/scope: renal function changes dose instead of simple standard dosing."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "PAXLOVID label",
+    "source_organization": "DailyMed / U.S. National Library of Medicine",
+    "source_url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=human&query=Nirmatrelvir",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "Paxlovid renal dosing note.\n\nSection A. Standard adult dosing. Paxlovid has a standard dosing regimen for patients whose renal function is normal or only mildly impaired.\n\nSection B. Renal impairment assessment. Renal impairment increases nirmatrelvir exposure. Before selecting the regimen, determine the patient's eGFR category.\n\nSection C. Moderate impairment. For eGFR from 30 to less than 60 mL/min, the dose should be reduced rather than using the standard regimen.\n\nSection D. Severe impairment. For eGFR below 30 mL/min, including hemodialysis, a reduced dose and reduced dose frequency are used under the label's severe-impairment regimen.",
+    "annotated": "Paxlovid renal dosing note.\n\n<rule id=\"R1\">Section A. Standard adult dosing. Paxlovid has a standard dosing regimen for patients whose renal function is normal or only mildly impaired.</rule>\n\n<precondition id=\"P1\" applies_to=\"R1\">Section B. Renal impairment assessment. Renal impairment increases nirmatrelvir exposure. Before selecting the regimen, determine the patient's eGFR category.</precondition>\n\n<scope id=\"S1\" overrides=\"R1\" condition=\"30 <= eGFR < 60\">Section C. Moderate impairment. For eGFR from 30 to less than 60 mL/min, the dose should be reduced rather than using the standard regimen.</scope>\n\n<scope id=\"S2\" overrides=\"R1\" condition=\"eGFR < 30\">Section D. Severe impairment. For eGFR below 30 mL/min, including hemodialysis, a reduced dose and reduced dose frequency are used under the label's severe-impairment regimen.</scope>",
+    "compiled": "rules:\n  - id: R1\n    regimen: standard\n    applies_when:\n      renal_impairment: none_or_mild\npreconditions:\n  - id: P1\n    before_regimen_selection: determine_eGFR_category\nscope_rules:\n  - id: S1\n    condition: '30 <= eGFR < 60'\n    regimen: reduced_dose\n    overrides: R1\n  - id: S2\n    condition: 'eGFR < 30'\n    regimen: reduced_dose_and_reduced_frequency\n    overrides: R1"
+  },
+  "query": "A patient has eGFR 42 mL/min and is otherwise being considered for Paxlovid. Should the standard regimen be used just because eGFR is above 30?",
+  "gold_answer": {
+    "full": "No. eGFR 42 falls in the moderate renal impairment range, where the dose should be reduced. Being above 30 avoids the severe-impairment regimen, but it does not permit standard dosing.",
+    "minimal": "No. eGFR 42 requires the moderate renal impairment reduced dose, not the standard regimen.",
+    "required_relations": [
+      "precondition:eGFR category must be determined before regimen selection",
+      "scope:S1 overrides standard dosing for moderate renal impairment"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "When does the standard regimen apply in this note?",
+      "expected_answer": "When renal function is normal or only mildly impaired."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "What must be determined before selecting the regimen?",
+      "expected_answer": "The patient's eGFR category."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "What is required for eGFR 30 to less than 60?",
+      "expected_answer": "A reduced dose."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Use standard dosing because eGFR is above 30.",
+      "Use the severe impairment regimen because the eGFR is below 60."
+    ],
+    "wrong_escalation": [
+      "Deny all antiviral therapy because renal impairment exists."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1",
+      "S1",
+      "S2"
+    ],
+    "negative_control_query": "A patient has eGFR 72 mL/min. Is the moderate or severe renal adjustment triggered?",
+    "negative_control_gold": "No. eGFR 72 is not in the moderate or severe renal impairment categories described here.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "case_id": "override_aws_iam_explicit_deny_scp_boundary",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from AWS IAM policy evaluation logic. Complexity 3: identity allow, organizational boundary/intersection, and explicit deny priority."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Policy evaluation logic",
+    "source_organization": "Amazon Web Services",
+    "source_url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "IAM evaluation note.\n\nSection A. Identity-based allow. An identity-based policy can allow a principal to perform an action on a resource.\n\nSection B. Organizational policy intersection. When an account is governed by organization-level controls, the effective permission must also be allowed by the applicable service control or resource control policies. The result is an intersection rather than a simple union.\n\nSection C. Explicit deny. An explicit deny in an applicable policy takes priority over allows. If an identity-based policy allows an action but an applicable SCP explicitly denies that action, the request is denied.",
+    "annotated": "IAM evaluation note.\n\n<rule id=\"R1\">Section A. Identity-based allow. An identity-based policy can allow a principal to perform an action on a resource.</rule>\n\n<scope id=\"S1\" applies_to=\"R1\" condition=\"account governed by organization-level controls\">Section B. Organizational policy intersection. When an account is governed by organization-level controls, the effective permission must also be allowed by the applicable service control or resource control policies. The result is an intersection rather than a simple union.</scope>\n\n<override id=\"O1\" overrides=\"R1\" priority=\"highest\" condition=\"applicable explicit deny\">Section C. Explicit deny. An explicit deny in an applicable policy takes priority over allows. If an identity-based policy allows an action but an applicable SCP explicitly denies that action, the request is denied.</override>",
+    "compiled": "rules:\n  - id: R1\n    policy_type: identity_based\n    effect: Allow\n    action: may_allow_request\n  - id: S1\n    policy_type: organization_controls\n    relation: effective_permissions_are_intersection\n    requires_allowed_by: [identity_policy, applicable_scp_or_rcp]\noverrides:\n  - id: O1\n    priority: highest\n    condition: explicit_deny_in_any_applicable_policy\n    result: Deny\n    overrides: [identity_allow, resource_allow, scp_allow]"
+  },
+  "query": "An IAM role has an identity-based policy that allows s3:DeleteObject. The account is under an SCP that explicitly denies s3:DeleteObject. There is no resource-based policy involved. Is the request allowed?",
+  "gold_answer": {
+    "full": "No. The identity-based policy alone would allow the action, but effective permissions under organizational controls require the applicable policies to permit the action, and an explicit deny in the SCP overrides the allow. The request is denied.",
+    "minimal": "Denied. The SCP explicit deny overrides the identity-based allow.",
+    "required_relations": [
+      "scope:effective permissions are intersected with organization controls",
+      "override:explicit deny overrides allow"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What can an identity-based policy do?",
+      "expected_answer": "It can allow a principal to perform an action on a resource."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "How are permissions evaluated when organization-level controls apply?",
+      "expected_answer": "The effective permission must also be allowed by applicable organization-level controls; it is an intersection."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "What is the effect of an explicit deny in an applicable SCP?",
+      "expected_answer": "It overrides allows and causes the request to be denied."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Allowed, because the role policy explicitly allows s3:DeleteObject.",
+      "Allowed because SCPs only add permissions and do not remove identity-based permissions."
+    ],
+    "wrong_escalation": [
+      "Delete the SCP before evaluating the request."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1",
+      "O1"
+    ],
+    "negative_control_query": "An IAM role allows s3:GetObject and the applicable SCP also allows it with no explicit deny. Is the action blocked by the SCP?",
+    "negative_control_gold": "No. If both the identity policy and applicable SCP allow the action and no explicit deny applies, the SCP does not block it.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

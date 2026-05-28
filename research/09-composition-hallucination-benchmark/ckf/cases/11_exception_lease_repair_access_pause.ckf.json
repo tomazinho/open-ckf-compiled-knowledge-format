@@ -1,0 +1,111 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "exception_lease_repair_access_pause",
+    "title": "Exception Lease Repair Access Pause",
+    "language": "en",
+    "license": "CC-BY-4.0",
+    "source_status": "synthetic",
+    "domain": "legal",
+    "relation_type": "exception",
+    "complexity_level": 1,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {},
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "E1"
+      }
+    ],
+    "raw_representation_sha256": "540365f5199071bee11a927b3fb979ec02436dbeac33884a2a5feb0cb421efc2",
+    "annotated_representation_sha256": "2f27a36328af5432c04a5c55c3edcc77c09ceea528df08771426df08c39df498",
+    "compiled_representation_sha256": "f4d60968970227df033928b3f5fcb21d8f84528df7eb952e0bc6562e2b018e94"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Residential Maintenance Addendum - Synthetic Lease Training Example.\n\nSection 8. Repair Completion Window. When a tenant submits a written repair notice for a non-emergency habitability item, the property manager must complete the repair within thirty calendar days after receiving the notice. If the repair is not completed within that thirty-day window, the tenant may request a rent credit or begin the lease-termination review process under the addendum.\n\nSection 9. Access for Repairs. The thirty-day repair window does not run during any period in which the tenant refuses or fails to provide reasonable access for the repair. When access is refused or missed, the repair clock pauses on the scheduled access date and resumes only when the tenant provides a new reasonable access window. This pause applies even if the original repair notice was valid and even if the repair would otherwise be covered by Section 8."
+      },
+      {
+        "id": "annotated",
+        "text": "Residential Maintenance Addendum - Synthetic Lease Training Example.\n\n<rule id=\"R1\">Section 8. Repair Completion Window. When a tenant submits a written repair notice for a non-emergency habitability item, the property manager must complete the repair within thirty calendar days after receiving the notice. If the repair is not completed within that thirty-day window, the tenant may request a rent credit or begin the lease-termination review process under the addendum.</rule>\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"tenant refuses or misses reasonable repair access\">Section 9. Access for Repairs. The thirty-day repair window does not run during any period in which the tenant refuses or fails to provide reasonable access for the repair. When access is refused or missed, the repair clock pauses on the scheduled access date and resumes only when the tenant provides a new reasonable access window. This pause applies even if the original repair notice was valid and even if the repair would otherwise be covered by Section 8.</exception>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    name: repair_completion_window\n    applies_when:\n      notice_type: written_repair_notice\n      repair_category: non_emergency_habitability_item\n    deadline_days: 30\n    remedy_if_deadline_missed: [rent_credit_request, lease_termination_review]\nexceptions:\n  - id: E1\n    overrides: R1\n    name: access_refusal_pause\n    triggers_when:\n      tenant_access_status_in: [refused_reasonable_access, missed_reasonable_access]\n    effect:\n      repair_clock: paused\n      pause_start: scheduled_access_date\n      resume_condition: tenant_provides_new_reasonable_access_window\n    applies_even_if:\n      original_notice_valid: true\n      repair_covered_by_R1: true\n    priority: higher_than_R1"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "exception",
+        "description": "Synthetic legal-policy style case. It is an evaluation artifact only and is not legal advice. Level-1 exception: a tenant remedy clock is paused by refusal of access."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A tenant gave written notice about a covered non-emergency heating repair 34 calendar days ago. The manager scheduled two reasonable repair visits during that period, but the tenant missed both and has not yet offered a new access window. Can the tenant begin the lease-termination review process under the addendum now?",
+        "expected_decision": "No. The thirty-day repair clock is paused because the tenant missed reasonable access and has not provided a new access window.",
+        "rationale": "No. Section 8 would normally allow the tenant to request a rent credit or begin lease-termination review if a covered non-emergency repair is not completed within thirty calendar days. But Section 9 pauses that thirty-day window during any period in which the tenant refuses or misses reasonable access, and it resumes only when the tenant provides a new reasonable access window. Because the tenant missed the repair visits and has not provided a new access window, the repair clock is paused and the termination-review remedy is not yet available."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A tenant gave written notice about a covered non-emergency heating repair 34 calendar days ago. The manager scheduled two reasonable repair visits during that period, but the tenant missed both and has not yet offered a new access window. Can the tenant begin the lease-termination review process under the addendum now?",
+        "answer": "No. Section 8 would normally allow the tenant to request a rent credit or begin lease-termination review if a covered non-emergency repair is not completed within thirty calendar days. But Section 9 pauses that thirty-day window during any period in which the tenant refuses or misses reasonable access, and it resumes only when the tenant provides a new reasonable access window. Because the tenant missed the repair visits and has not provided a new access window, the repair clock is paused and the termination-review remedy is not yet available."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "The tenant may request a rent credit or begin the lease-termination review process."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "The repair clock pauses on the scheduled access date and resumes only when the tenant provides a new reasonable access window."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes. More than thirty calendar days have passed since the repair notice, so the tenant can begin termination review.",
+        "Yes, because the original notice was valid and the repair was covered by the addendum."
+      ],
+      "wrong_escalation": [
+        "The tenant must sue immediately in housing court.",
+        "The repair must be escalated to a municipal inspector before the addendum applies."
+      ],
+      "refusal": [
+        "The source material is not enough to determine whether the clock paused."
+      ],
+      "retrieval_failure_note": "If Section 9 is absent from context, answering under Section 8 alone is a retrieval failure rather than a composition failure."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "E1"
+      ],
+      "negative_control_query": "A tenant gave written notice about a covered non-emergency heating repair 34 calendar days ago. The manager never scheduled repair access and the tenant did not refuse or miss any access window. Can the tenant begin the lease-termination review process under the addendum?",
+      "negative_control_gold": "Yes. With no access refusal or missed access window, the Section 9 pause is not triggered, so the Section 8 thirty-day remedy is available if the repair remains incomplete.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "low"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "11_exception_lease_repair_access_pause.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "case_id": "exception_education_reimbursement",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "exception",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Exception case adapted from common HR-policy patterns. Not derived from any real company's policy."
+  },
+  "representations": {
+    "raw": "Section 4.2 — Professional Development Reimbursement.\n\nFull-time employees may request reimbursement for external courses, certifications, books, and conference registrations that are directly related to their current role or to a documented career-development path approved by their manager. The maximum reimbursement per calendar year is $2,000 per employee. Reimbursement requests must be submitted through the Workday portal within 60 days of the original purchase, accompanied by a paid receipt and a one-paragraph statement of relevance written by the employee.\n\nSection 4.3 — Language Training.\n\nLanguage courses, language certification exams, and immersion programs are reimbursable under Section 4.2 only when the employee's manager and the People Operations team have jointly pre-approved the course in writing before enrollment. This pre-approval requirement applies to all language-related expenses regardless of amount, regardless of role, and regardless of whether the language is used in the employee's current work. Pre-approval is granted via the Language Learning Request form, which must include a business-justification statement and confirmation from the employee's manager.",
+    "annotated": "Section 4.2 — Professional Development Reimbursement.\n\n<rule id=\"R1\">Full-time employees may request reimbursement for external courses, certifications, books, and conference registrations that are directly related to their current role or to a documented career-development path approved by their manager. The maximum reimbursement per calendar year is $2,000 per employee. Reimbursement requests must be submitted through the Workday portal within 60 days of the original purchase, accompanied by a paid receipt and a one-paragraph statement of relevance written by the employee.</rule>\n\nSection 4.3 — Language Training.\n\n<exception id=\"E1\" overrides=\"R1\" condition=\"expense involves language courses, language certification exams, or immersion programs\">Language courses, language certification exams, and immersion programs are reimbursable under Section 4.2 only when the employee's manager and the People Operations team have jointly pre-approved the course in writing before enrollment. This pre-approval requirement applies to all language-related expenses regardless of amount, regardless of role, and regardless of whether the language is used in the employee's current work. Pre-approval is granted via the Language Learning Request form, which must include a business-justification statement and confirmation from the employee's manager.</exception>",
+    "compiled": "rules:\n  - id: R1\n    name: professional_development_reimbursement\n    statement: Full-time employees may request reimbursement for role-relevant professional development.\n    applies_when:\n      employment_type: full_time\n      expense_relevance: role_related_or_career_path\n    parameters:\n      annual_cap_usd: 2000\n      submission_window_days: 60\n      required_artifacts: [paid_receipt, relevance_statement]\n      submission_channel: workday_portal\n\nexceptions:\n  - id: E1\n    overrides: R1\n    name: language_training_pre_approval\n    triggers_when:\n      expense_category_in: [language_course, language_certification_exam, immersion_program]\n    overrides_scope:\n      amount: any\n      role: any\n      language_relevance_to_role: any\n    additional_requirements:\n      - manager_written_pre_approval: required\n      - people_ops_written_pre_approval: required\n      - timing: before_enrollment\n      - form: language_learning_request_form\n      - form_must_include: [business_justification, manager_confirmation]\n    priority: higher_than_R1"
+  },
+  "query": "I am a full-time software engineer working on a team that supports French-speaking enterprise customers. I would like to take an in-person French course at Alliance Française costing $1,450. The course directly improves my ability to handle customer escalations. Can I submit the reimbursement request through Workday after completing the course?",
+  "gold_answer": {
+    "full": "No, not through the standard Workday submission alone. Although the $1,450 cost is under the $2,000 annual cap and the course is clearly role-relevant, language courses are governed by Section 4.3, which requires written pre-approval from both your manager and People Operations before enrollment, via the Language Learning Request form with a business-justification statement. Section 4.3 applies regardless of amount, role, and language-to-role relevance, so the standard Section 4.2 path is not sufficient. You should submit the Language Learning Request form before enrolling, obtain both written approvals, and then proceed with enrollment and post-course Workday submission.",
+    "minimal": "No — language courses require written pre-approval from manager and People Operations before enrollment, regardless of amount or role relevance.",
+    "required_relations": ["E1 overrides R1 when expense_category is language-related"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Under Section 4.2 alone, what is the annual reimbursement cap for full-time employees on role-related professional development?",
+      "expected_answer": "$2,000 per calendar year."
+    },
+    {
+      "fragment_id": "R1",
+      "probe": "Under Section 4.2, through which channel are reimbursement requests submitted and within what window?",
+      "expected_answer": "Through the Workday portal, within 60 days of the original purchase."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Under Section 4.3, what additional steps does the policy require for language courses?",
+      "expected_answer": "Written pre-approval from both the manager and People Operations before enrollment, submitted via the Language Learning Request form with a business-justification statement and manager confirmation."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Does Section 4.3 specify any amount, role, or relevance thresholds under which the pre-approval requirement does not apply?",
+      "expected_answer": "No — the section states the requirement applies regardless of amount, role, and whether the language is used in current work."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — the course costs $1,450, which is under the $2,000 annual cap, and it is directly relevant to your role supporting French-speaking customers. You can submit through Workday within 60 days of purchase.",
+      "Yes. Since the course is role-relevant and under the cap, it qualifies under Section 4.2. The policy also mentions language training, but since your case clearly meets the role-relevance criterion, standard submission applies."
+    ],
+    "wrong_escalation": [
+      "No — this kind of expense requires VP-level approval and Finance department sign-off before any reimbursement.",
+      "Language courses require formal review by the Legal department and Compliance committee before approval."
+    ],
+    "refusal": [
+      "I cannot determine whether this reimbursement is allowed without more information about your specific contract."
+    ],
+    "retrieval_failure_note": "If only Section 4.2 is in context and Section 4.3 is missing, the case is not composition-evaluable — score as retrieval failure per §7.1."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (Section 4.2 text)", "E1 (Section 4.3 text)"],
+    "negative_control_query": "I am a full-time software engineer. I would like to take an online course on distributed systems costing $1,450 from a well-known training provider, which is directly related to my current work on our streaming platform. Can I submit the reimbursement request through Workday after completing the course?",
+    "negative_control_gold": "Yes — the course is role-relevant and under the $2,000 annual cap. Section 4.3 only applies to language-related expenses, so the standard Section 4.2 process (Workday submission within 60 days with receipt and relevance statement) is sufficient. No pre-approval is required, though manager awareness is good practice.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

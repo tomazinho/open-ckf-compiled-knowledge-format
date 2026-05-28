@@ -1,0 +1,69 @@
+{
+  "case_id": "override_rfc9111_cache_control_no_store",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from RFC 9111 HTTP caching semantics. Level-1 sobreposição: no-store blocks cache storage even when other cacheability-looking information is present.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "RFC 9111: HTTP Caching",
+    "source_organization": "RFC Editor / IETF HTTP Working Group",
+    "source_url": "https://www.rfc-editor.org/info/rfc9111",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "HTTP cache-control note.\n\nSeção A. Cacheable response metadata. A response pode contain metadata such as freshness information that would otherwise permitir a cache to reuse the response for a period of time.\n\nSeção B. no-store directive. The no-store directive tells caches not to store the request or response. This instruction applies to both private and shared caches and sobreposiçãos ordinary storage/reuse reasoning for that message.",
+    "annotated": "HTTP cache-control note.\n\n<rule id=\"R1\">Seção A. Cacheable response metadata. A response pode contain metadata such as freshness information that would otherwise permitir a cache to reuse the response for a period of time.</rule>\n\n<override id=\"O1\" overrides=\"R1\" condition=\"Cache-Control includes no-store\">Seção B. no-store directive. The no-store directive tells caches not to store the request or response. This instruction applies to both private and shared caches and sobreposiçãos ordinary storage/reuse reasoning for that message.</override>",
+    "compiled": "regras:\n  - id: R1\n    condition: freshness_metadata_present\n    default_effect: response_pode_be_storable_or_reusable_if_other_exigements_met\nsobreposiçãos:\n  - id: O1\n    condition: Cache-Control_contains_no-store\n    applies_to_caches: [private, shared]\n    effect: do_not_store_request_or_response\n    sobreposiçãos: R1"
+  },
+  "query": "An HTTP response includes freshness metadata that otherwise appears cacheable, but Cache-Control also includes no-store. May a shared cache store it for reuse porque the freshness metadata is present?",
+  "gold_answer": {
+    "full": "No. The no-store directive sobreposiçãos ordinary storage reasoning and instructs private and shared caches not to store the message, even if other metadata looks cacheable.",
+    "minimal": "No. no-store prevents storage despite freshness metadata.",
+    "required_relations": [
+      "sobreposição:no-store sobreposiçãos cacheable-looking metadata"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que can freshness metadata normally indicate?",
+      "expected_answer": "That a response pode be reusable/storable if other caching exigements are met."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "Qual/O que does no-store instruct caches to do?",
+      "expected_answer": "Not to store the request or response, applying to private and shared caches."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, porque freshness metadata makes the response cacheable.",
+      "Only private caches deve avoid storage; shared caches can store it."
+    ],
+    "wrong_escalation": [
+      "Block the HTTP response from being delivered to the client."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "O1"
+    ],
+    "negative_control_query": "A response has freshness metadata and does not include no-store. Does the no-store sobreposição apply?",
+    "negative_control_gold": "No. Without no-store, the specific sobreposição described here is not triggered.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

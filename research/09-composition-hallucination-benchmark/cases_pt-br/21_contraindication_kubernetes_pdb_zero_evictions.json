@@ -1,0 +1,69 @@
+{
+  "case_id": "contraindication_kubernetes_pdb_zero_evictions",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "contraindication",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from Kubernetes documentation on PodDisruptionBudget semantics. Level-1 contraindicação: a zero-voluntary-remover por evictionion PDB blocks ordinary nó drenar.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Specifying a Disruption Budget for your Application",
+    "source_organization": "Kubernetes",
+    "source_url": "https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Nota de manutenção do Kubernetes.\n\nSeção A. Node drenagem. A operador do cluster pode drenar a nó before maintenance by removendo por remover por evictionion Pods from that nó. Draining is treated as a interrupção voluntária for workloads whose Pods are remover por evictioned through the remover por evictionion API.\n\nSeção B. PodDisruptionBudget constraint. Quando a workload has a PodDisruptionBudget that exige zero voluntary remover por evictionions, Kubernetes não deve remover por eviction one of those Pods for an drenagem ordinária. If the nó contains such an unremover por evictionable Pod, the drenar não pode complete until the budget mudanças, the workload mudanças, or another non-voluntary condition removes the Pod.",
+    "annotated": "Nota de manutenção do Kubernetes.\n\n<rule id=\"R1\">Seção A. Node drenagem. A operador do cluster pode drenar a nó before maintenance by removendo por remover por evictionion Pods from that nó. Draining is treated as a interrupção voluntária for workloads whose Pods are remover por evictioned through the remover por evictionion API.</rule>\n\n<contraindication id=\"C1\" blocks=\"R1\" condition=\"PDB permits zero voluntary evictions\">Seção B. PodDisruptionBudget constraint. Quando a workload has a PodDisruptionBudget that exige zero voluntary remover por evictionions, Kubernetes não deve remover por eviction one of those Pods for an drenagem ordinária. If the nó contains such an unremover por evictionable Pod, the drenar não pode complete until the budget mudanças, the workload mudanças, or another non-voluntary condition removes the Pod.</contraindication>",
+    "compiled": "regras:\n  - id: R1\n    action: drenar_nó\n    mechanism: remover por eviction_pods\n    disruption_type: voluntary\ncontraindicaçãos:\n  - id: C1\n    blocks: R1\n    triggers_when:\n      workload_pdb_voluntary_remover por evictionions_permitido: 0\n      pod_on_target_nó: true\n    effect: ordinary_drenar_deve_not_complete_by_removendo por remover por evictionion_that_pod\n    resolution_options: [mudança_pdb, mudança_workload, wait_for_non_voluntary_condition]"
+  },
+  "query": "A nó contains one Pod from a replicated workload whose PodDisruptionBudget currently permitirs zero voluntary remover por evictionions. An operator wants to run an ordinary nó drenar before maintenance. Deve-se the drenar proceed by removendo por remover por evictionion that Pod now?",
+  "gold_answer": {
+    "full": "No. The drenagem ordinária uses voluntary remover por evictionion, but the PodDisruptionBudget currently permitirs zero voluntary remover por evictionions. The PDB constraint blocks remover por evictionion of that Pod for the drenar, so the drenar não deve proceed by removendo por remover por evictionion it unless the budget or workload condition mudanças.",
+    "minimal": "No. The zero-voluntary-remover por evictionion PDB blocks remover por evictionion of that Pod during ordinary nó drenar.",
+    "required_relations": [
+      "contraindicação:C1 blocks drenar regra R1 when PDB permits zero voluntary remover por evictionions"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que does nó drenar do in this maintenance note?",
+      "expected_answer": "It remover por evictions Pods from the nó as a interrupção voluntária before maintenance."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "Qual/O que happens when a PDB permits zero voluntary remover por evictionions for a Pod on the nó?",
+      "expected_answer": "That Pod não deve be remover por evictioned for an drenagem ordinária, so the drenar não pode complete."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, drenar the nó porque drenagem is the standard maintenance procedimento.",
+      "Evict the Pod now; PDBs only document availability targets and do not affect drenar."
+    ],
+    "wrong_escalation": [
+      "Delete the Deployment manually without considering the PDB."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "C1"
+    ],
+    "negative_control_query": "A nó contains only Pods from a workload whose PodDisruptionBudget currently permitirs one voluntary remover por evictionion. Deve-se the operator proceed with an drenagem ordinária that remover por evictions one such Pod?",
+    "negative_control_gold": "Yes, assuming no other constraints are present, the PDB permits one voluntary remover por evictionion and the contraindicação is not triggered.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

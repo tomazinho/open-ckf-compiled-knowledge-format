@@ -1,0 +1,67 @@
+{
+  "case_id": "precondition_clinical_aurelin_infusion_kit",
+  "metadata": {
+    "domain": "clinical",
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Synthetic clinical operations case using fictional treatment names. Level-2: precondition plus sequence. Not medical advice."
+  },
+  "representations": {
+    "raw": "Ambulatory Infusion Unit Protocol for Fictional Treatment Aurelin.\n\nSection 1. Standard Start. A patient scheduled for Aurelin infusion may start the infusion when identity has been verified, baseline vital signs have been recorded, and the clinician order is active for the current visit. If these three items are complete, nursing staff may begin the infusion under the standard-start pathway.\n\nSection 2. Rescue Kit Requirement. The standard-start pathway is unavailable unless an Aurelin rescue kit is physically present in the infusion bay before the infusion begins. A kit assigned to another bay or stored in the central pharmacy does not satisfy this requirement. If the kit is absent, staff must delay the infusion until a kit is present in the bay.\n\nSection 4. First-Dose Observation. For a patient's first Aurelin infusion only, staff must observe the patient for thirty minutes after the infusion is completed before discharge. The first-dose observation requirement does not prevent starting the infusion if the start preconditions are satisfied; it controls the discharge sequence after completion.",
+    "annotated": "Ambulatory Infusion Unit Protocol for Fictional Treatment Aurelin.\n\n<rule id=\"R1\">Section 1. Standard Start. A patient scheduled for Aurelin infusion may start the infusion when identity has been verified, baseline vital signs have been recorded, and the clinician order is active for the current visit. If these three items are complete, nursing staff may begin the infusion under the standard-start pathway.</rule>\n\n<precondition id=\"P1\" required_for=\"R1\" condition=\"rescue kit physically present in infusion bay before start\">Section 2. Rescue Kit Requirement. The standard-start pathway is unavailable unless an Aurelin rescue kit is physically present in the infusion bay before the infusion begins. A kit assigned to another bay or stored in the central pharmacy does not satisfy this requirement. If the kit is absent, staff must delay the infusion until a kit is present in the bay.</precondition>\n\n<sequence id=\"SEQ1\" follows=\"infusion_completed\" condition=\"first Aurelin infusion\">Section 4. First-Dose Observation. For a patient's first Aurelin infusion only, staff must observe the patient for thirty minutes after the infusion is completed before discharge. The first-dose observation requirement does not prevent starting the infusion if the start preconditions are satisfied; it controls the discharge sequence after completion.</sequence>",
+    "compiled": "rules:\n  - id: R1\n    name: aurelin_standard_start\n    may_start_when:\n      identity_verified: true\n      baseline_vitals_recorded: true\n      clinician_order_active_for_visit: true\npreconditions:\n  - id: P1\n    required_for: R1\n    name: rescue_kit_in_bay\n    must_be_true_before: infusion_start\n    satisfies_requirement_when:\n      rescue_kit_location: same_infusion_bay\n    does_not_satisfy_when:\n      rescue_kit_location_in: [another_bay, central_pharmacy]\n    if_absent: delay_infusion_until_present\nsequences:\n  - id: SEQ1\n    applies_when:\n      dose_number: first\n    after: infusion_completed\n    before: discharge\n    required_step: observe_patient_30_minutes\n    does_not_block_start_if_start_preconditions_satisfied: true"
+  },
+  "query": "A patient arrives for her first Aurelin infusion. Identity is verified, baseline vital signs are recorded, and the clinician order is active for today. The only Aurelin rescue kit is still in the central pharmacy, not in the infusion bay. May nursing staff start the infusion now, and what discharge step will be required after completion?",
+  "gold_answer": {
+    "full": "Nursing staff may not start the infusion now. Section 1 standard-start items are complete, but Section 2 adds a precondition: an Aurelin rescue kit must be physically present in the infusion bay before the infusion begins, and a kit in the central pharmacy does not satisfy that requirement. Once the kit is present and the infusion is completed, Section 4 requires thirty minutes of observation before discharge because this is the patient's first Aurelin infusion.",
+    "minimal": "Do not start yet because the rescue kit is not in the bay; after a first infusion is completed, observe for thirty minutes before discharge.",
+    "required_relations": [
+      "P1 is an additional precondition required for R1 despite the standard-start checklist being complete",
+      "SEQ1 applies after first-dose completion and controls discharge rather than infusion start"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What three items are needed under Section 1 for standard start?",
+      "expected_answer": "Identity verified, baseline vital signs recorded, and an active clinician order for the current visit."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Does a rescue kit in the central pharmacy satisfy the rescue-kit requirement?",
+      "expected_answer": "No. The kit must be physically present in the infusion bay before the infusion begins."
+    },
+    {
+      "fragment_id": "SEQ1",
+      "probe": "When does the thirty-minute first-dose observation occur?",
+      "expected_answer": "After the infusion is completed and before discharge."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes. The infusion may start because identity, vitals, and the active order are complete.",
+      "The thirty-minute observation must happen before starting the infusion, but the rescue kit location does not matter."
+    ],
+    "wrong_escalation": [
+      "The case must be approved by the hospital ethics committee before the infusion can ever be given.",
+      "The patient must be transferred to inpatient care solely because it is a first dose."
+    ],
+    "refusal": [
+      "The protocol does not say whether a kit in the pharmacy counts."
+    ],
+    "retrieval_failure_note": "If Section 2 is missing, starting under Section 1 alone is not composition-evaluable. If Section 4 is missing, the discharge-sequence part is incomplete."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1",
+      "SEQ1"
+    ],
+    "negative_control_query": "A patient arrives for a second Aurelin infusion with identity verified, baseline vital signs recorded, an active order, and an Aurelin rescue kit physically present in the infusion bay. May nursing staff start under the standard-start pathway, and is first-dose observation required?",
+    "negative_control_gold": "Yes, staff may start because the standard-start items and rescue-kit precondition are satisfied. No first-dose observation is required because it is the second infusion.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

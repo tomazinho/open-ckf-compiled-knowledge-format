@@ -1,0 +1,66 @@
+{
+  "case_id": "contraindication_kubernetes_pdb_zero_evictions",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "contraindication",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from Kubernetes documentation on PodDisruptionBudget semantics. Level-1 contraindication: a zero-voluntary-eviction PDB blocks ordinary node drain."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Specifying a Disruption Budget for your Application",
+    "source_organization": "Kubernetes",
+    "source_url": "https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "Kubernetes maintenance note.\n\nSection A. Node draining. A cluster operator may drain a node before maintenance by evicting Pods from that node. Draining is treated as a voluntary disruption for workloads whose Pods are evicted through the eviction API.\n\nSection B. PodDisruptionBudget constraint. When a workload has a PodDisruptionBudget that requires zero voluntary evictions, Kubernetes should not evict one of those Pods for an ordinary drain. If the node contains such an unevictable Pod, the drain may not complete until the budget changes, the workload changes, or another non-voluntary condition removes the Pod.",
+    "annotated": "Kubernetes maintenance note.\n\n<rule id=\"R1\">Section A. Node draining. A cluster operator may drain a node before maintenance by evicting Pods from that node. Draining is treated as a voluntary disruption for workloads whose Pods are evicted through the eviction API.</rule>\n\n<contraindication id=\"C1\" blocks=\"R1\" condition=\"PDB permits zero voluntary evictions\">Section B. PodDisruptionBudget constraint. When a workload has a PodDisruptionBudget that requires zero voluntary evictions, Kubernetes should not evict one of those Pods for an ordinary drain. If the node contains such an unevictable Pod, the drain may not complete until the budget changes, the workload changes, or another non-voluntary condition removes the Pod.</contraindication>",
+    "compiled": "rules:\n  - id: R1\n    action: drain_node\n    mechanism: evict_pods\n    disruption_type: voluntary\ncontraindications:\n  - id: C1\n    blocks: R1\n    triggers_when:\n      workload_pdb_voluntary_evictions_allowed: 0\n      pod_on_target_node: true\n    effect: ordinary_drain_should_not_complete_by_evicting_that_pod\n    resolution_options: [change_pdb, change_workload, wait_for_non_voluntary_condition]"
+  },
+  "query": "A node contains one Pod from a replicated workload whose PodDisruptionBudget currently allows zero voluntary evictions. An operator wants to run an ordinary node drain before maintenance. Should the drain proceed by evicting that Pod now?",
+  "gold_answer": {
+    "full": "No. The ordinary drain uses voluntary eviction, but the PodDisruptionBudget currently allows zero voluntary evictions. The PDB constraint blocks eviction of that Pod for the drain, so the drain should not proceed by evicting it unless the budget or workload condition changes.",
+    "minimal": "No. The zero-voluntary-eviction PDB blocks eviction of that Pod during ordinary node drain.",
+    "required_relations": [
+      "contraindication:C1 blocks drain rule R1 when PDB permits zero voluntary evictions"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What does node drain do in this maintenance note?",
+      "expected_answer": "It evicts Pods from the node as a voluntary disruption before maintenance."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "What happens when a PDB permits zero voluntary evictions for a Pod on the node?",
+      "expected_answer": "That Pod should not be evicted for an ordinary drain, so the drain may not complete."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, drain the node because draining is the standard maintenance procedure.",
+      "Evict the Pod now; PDBs only document availability targets and do not affect drain."
+    ],
+    "wrong_escalation": [
+      "Delete the Deployment manually without considering the PDB."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "C1"
+    ],
+    "negative_control_query": "A node contains only Pods from a workload whose PodDisruptionBudget currently allows one voluntary eviction. Should the operator proceed with an ordinary drain that evicts one such Pod?",
+    "negative_control_gold": "Yes, assuming no other constraints are present, the PDB permits one voluntary eviction and the contraindication is not triggered.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

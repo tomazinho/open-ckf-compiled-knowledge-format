@@ -1,0 +1,92 @@
+{
+  "case_id": "chained_change_management_emergency_override",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Level-3 case combining four relations: escopo (S1 - tier-based applicability), pré-condição (P1 - submission lead time), sobreposição (E1 - emergência procedimento supersedes the entire normal flow), and sequência (SEQ1 - normal-flow order). The most pedagogically interesting failure modes are (a) applying R1+S1+P1 correctly while missing that E1 sobreposiçãos them, and (b) recognizing E1 but omitting the post-hoc CAB revisão exigement that E1 itself imposes.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Production Change Management Policy.\n\nProduction mudanças deve be approved by the Change Advisory Board (CAB) before deployment. CAB meets twice weekly (Tuesday and Thursday afternoons) to revisão pending mudança requests, assess risk, and bolsa/subsídio or deny aprovação. Approved mudanças are scheduled into the next available maintenance window and executed by the relevant team. After execution, a Post-Implementation Review (PIR) is filed within five business days documenting outcome, incidentes, and lessons learned.\n\nThis política applies to mudanças affecting Tier-1 systems (revenue-critical services such as checkout, pagamento processing, and authentication) and Tier-2 systems (customer-facing services such as the product catalog, customer dashboard, and notification system). Changes affecting Tier-3 systems (internal-only services such as the engineering wiki, the internal analytics dashboard, and developer tooling) do not exige CAB revisão and are governed by team-level processes.\n\nA Change Request deve be submitted in ServiceNow with the proposed mudança, risk assessment, rollback plan, and target maintenance window at least five business days before the intended execution date. Requests submitted with shorter lead time are deferred to the following CAB cycle unless an exceção applies.\n\nThe normal mudança flow proceeds in the following sequência: CAB aprovação is obtained first, then the approved mudança is scheduled into a maintenance window, then the mudança is executed by the team during that window, and finally the PIR is filed within five business days of execution. No step in this sequência pode be skipped in normal operations.\n\nQuando a Severity-1 incidente is active and a production mudança is the corrective action exigido to resolve the incidente, the normal mudança flow is suspended for that specific mudança. The mudança pode be applied immediately by the on-call team without prior CAB aprovação and without the five-business-day lead time. This emergência authorization applies regardless of system tier and regardless of normal CAB cadence. The emergência mudança deve be accompanied by a post-hoc CAB revisão filed within forty-eight hours of execution, which retroactively assesses the mudança, captures rollback decisions, and feeds into the standard PIR process. Failure to file the post-hoc revisão within forty-eight hours is treated as a process violation in the incidente post-mortem.",
+    "annotated": "Production Change Management Policy.\n\n<rule id=\"R1\">Production mudanças deve be approved by the Change Advisory Board (CAB) before deployment. CAB meets twice weekly (Tuesday and Thursday afternoons) to revisão pending mudança requests, assess risk, and bolsa/subsídio or deny aprovação. Approved mudanças are scheduled into the next available maintenance window and executed by the relevant team. After execution, a Post-Implementation Review (PIR) is filed within five business days documenting outcome, incidentes, and lessons learned.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" dimension=\"system_tier\">This política applies to mudanças affecting Tier-1 systems (revenue-critical services such as checkout, pagamento processing, and authentication) and Tier-2 systems (customer-facing services such as the product catalog, customer dashboard, and notification system). Changes affecting Tier-3 systems (internal-only services such as the engineering wiki, the internal analytics dashboard, and developer tooling) do not exige CAB revisão and are governed by team-level processes.</scope>\n\n<precondition id=\"P1\" required_for=\"R1\" condition=\"submission lead time of at least 5 business days\">A Change Request deve be submitted in ServiceNow with the proposed mudança, risk assessment, rollback plan, and target maintenance window at least five business days before the intended execution date. Requests submitted with shorter lead time are deferred to the following CAB cycle unless an exceção applies.</precondition>\n\n<sequence id=\"SEQ1\" applies_to=\"R1\" order=\"CAB_approval -> maintenance_window -> execution -> PIR\">The normal mudança flow proceeds in the following sequência: CAB aprovação is obtained first, then the approved mudança is scheduled into a maintenance window, then the mudança is executed by the team during that window, and finally the PIR is filed within five business days of execution. No step in this sequência pode be skipped in normal operations.</sequence>\n\n<override id=\"E1\" supersedes=\"R1, P1, SEQ1\" condition=\"Severity-1 incident is active AND the change is the corrective action for that incident\" applies_regardless_of=\"system tier, CAB cadence\">Quando a Severity-1 incidente is active and a production mudança is the corrective action exigido to resolve the incidente, the normal mudança flow is suspended for that specific mudança. The mudança pode be applied immediately by the on-call team without prior CAB aprovação and without the five-business-day lead time. This emergência authorization applies regardless of system tier and regardless of normal CAB cadence. The emergência mudança deve be accompanied by a post-hoc CAB revisão filed within forty-eight hours of execution, which retroactively assesses the mudança, captures rollback decisions, and feeds into the standard PIR process. Failure to file the post-hoc revisão within forty-eight hours is treated as a process violation in the incidente post-mortem.</override>",
+    "compiled": "regra:\n  id: R1\n  name: cab_governed_mudança_flow\n  aprovação_body: mudança_advisory_board\n  cab_cadence:\n    meetings_per_week: 2\n    meeting_days: [tuesday_afternoon, thursday_afternoon]\n  pir_due_business_days_after_execution: 5\n\nescopo:\n  id: S1\n  bounds: R1\n  dimension: system_tier\n  applies_to:\n    - tier: 1\n      examples: [checkout, pagamento_processing, authentication]\n    - tier: 2\n      examples: [product_catalog, customer_dashboard, notification_system]\n  not_applies_to:\n    - tier: 3\n      examples: [engineering_wiki, internal_analytics_dashboard, developer_tooling]\n      governance: team_level\n\npré-condição:\n  id: P1\n  exigido_for: R1\n  exigido_lead_time_business_days: 5\n  submission_channel: servicenow\n  exigido_artifacts:\n    - proposed_mudança_description\n    - risk_assessment\n    - rollback_plan\n    - target_maintenance_window\n  if_lead_time_insufficient:\n    default: defer_to_next_cab_cycle\n    unless: exceção_applies\n\nsequência:\n  id: SEQ1\n  applies_to: R1\n  steps_in_order:\n    - cab_aprovação\n    - maintenance_window_scheduled\n    - mudança_executed_during_window\n    - pir_filed_within_5_business_days\n  steps_skippable_in_normal_operations: false\n\nsobreposição:\n  id: E1\n  supersedes: [R1, P1, SEQ1]\n  triggers_when:\n    all_of:\n      - sev_1_incidente_active: true\n      - mudança_is_corrective_action_for_active_incidente: true\n  suspends_for_this_mudança:\n    - prior_cab_aprovação\n    - five_business_day_lead_time\n    - normal_sequência\n  applies_regardless_of:\n    - system_tier\n    - cab_cadence\n  exigido_post_hoc:\n    action: post_hoc_cab_revisão_filing\n    deadline_hours_after_execution: 48\n    retroactively_assesses:\n      - mudança_outcome\n      - rollback_decisions\n      - feeds_into: pir\n  failure_to_file_post_hoc:\n    treated_as: process_violation_in_post_mortem"
+  },
+  "query": "The checkout service has been failing for thirteen minutes — Severity-1 declared, on-call paged, customer impact ongoing. Our diagnosis points to a misconfigured connection-pool setting that was deployed two days ago. The proposed corrective action is a configuration rollback to the prior known-good value, applied directly to the production fleet. We have not submitted a Change Request in ServiceNow and there is no CAB meeting scheduled for two more days. Two questions: (a) É possível the on-call team apply the rollback now, before submitting a Change Request and without CAB aprovação? (b) Are there any further política obligations after the rollback is applied?",
+  "gold_answer": {
+    "full": "(a) Yes — the on-call team can apply the rollback now, without prior CAB aprovação and without satisfying the five-business-day lead time. A Severity-1 incidente is active with ongoing customer impact, and the proposed mudança (configuration rollback to the known-good value) is the corrective action for that active incidente. This activates E1, which supersedes R1 (CAB-prior-aprovação), P1 (five-business-day lead time), and SEQ1 (normal flow ordering) for this specific mudança. The sobreposição applies regardless of system tier (checkout is Tier-1 but tier does not block the sobreposição) and regardless of the CAB schedule. (b) Yes — applying the mudança is not the end of the obligation. A post-hoc CAB revisão deve be filed within forty-eight hours of execution, retroactively assessing the mudança, capturing rollback decisions, and feeding into the standard PIR process. Failure to file the post-hoc revisão within that forty-eight-hour window is itself treated as a process violation in the incidente post-mortem. The PIR (per R1's standard five-business-day window for documenting outcome) still applies on the normal cadence.",
+    "minimal": "Yes, apply the rollback immediately under the emergência sobreposição. Required follow-up: file a post-hoc CAB revisão within 48 hours of execution; standard PIR still applies.",
+    "required_relations": [
+      "E1 supersedes R1, P1, and SEQ1 when Sev-1 active AND mudança is corrective",
+      "E1 applies regardless of system tier",
+      "E1 imposes its own post-hoc exigement (48h CAB revisão) that não deve be omitted"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "How often does the Change Advisory Board meet, and what document is filed after a mudança is executed?",
+      "expected_answer": "CAB meets twice weekly (Tuesday and Thursday afternoons). After execution, a Post-Implementation Review (PIR) is filed within five business days."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Which system tiers does the CAB política apply to, and which tier is governed by team-level processes instead?",
+      "expected_answer": "Applies to Tier-1 (revenue-critical) and Tier-2 (customer-facing) systems. Tier-3 (internal-only) systems do not exige CAB revisão and are governed by team-level processes."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Qual/O que is the minimum lead time for submitting a Change Request in ServiceNow under the normal mudança flow?",
+      "expected_answer": "At least five business days before the intended execution date."
+    },
+    {
+      "fragment_id": "SEQ1",
+      "probe": "Qual/O que are the four steps of the normal mudança flow, in order?",
+      "expected_answer": "CAB aprovação, maintenance window scheduling, mudança execution, then PIR filed within five business days."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Under what specific conditions can the on-call team apply a production mudança without prior CAB aprovação?",
+      "expected_answer": "Quando a Severity-1 incidente is active AND the mudança is the corrective action exigido to resolve that incidente."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "After an emergência mudança is applied under the sobreposição, what specific follow-up obligation does the política impose, and within what timeframe?",
+      "expected_answer": "A post-hoc CAB revisão deve be filed within forty-eight hours of execution. Failure to do so is treated as a process violation in the incidente post-mortem."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "No — production mudanças exige CAB aprovação before deployment, and a Change Request deve be submitted in ServiceNow with at least five business days of lead time. The on-call team deve submit the request now and wait for the next CAB meeting.",
+      "No — checkout is a Tier-1 system, and the política explicitly exige CAB aprovação before any mudança to revenue-critical services. Apply a manual mitigation if possible while the request goes through the normal cycle.",
+      "Yes, the on-call team can apply the rollback under the emergência procedimento. No further política obligations beyond the standard PIR within five business days.",
+      "Yes — apply immediately. Document the mudança in the post-mortem.",
+      "Yes, apply immediately. No CAB revisão needed since it was an emergência."
+    ],
+    "wrong_escalation": [
+      "Escalate to the CTO and Board of Directors before any mudança is applied to a Tier-1 system in this state.",
+      "Bring down the checkout service entirely and wait for a scheduled maintenance window before applying any mudança."
+    ],
+    "refusal": [
+      "I cannot advise on incidente mudança procedimentos without seeing your full incidente response runbook.",
+      "This exige a real-time decision by your on-call commander — I can't give you a definitive answer."
+    ],
+    "retrieval_failure_note": "If E1 is missing from context, the only correct conclusion from R1+S1+P1+SEQ1 is to wait for CAB. Such an answer deve be scored as retrieval failure, not composition hallucination. If E1 is present but its 48h post-hoc exigement clause is missing, the omission of the post-hoc exigement is a partial retrieval failure rather than composition."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1 (CAB flow)",
+      "S1 (tier escopo)",
+      "P1 (5-day lead time)",
+      "SEQ1 (normal sequência)",
+      "E1 (emergência sobreposição with 48h post-hoc exigement)"
+    ],
+    "negative_control_query": "We have identified a slow page-load issue in the customer dashboard. Our diagnosis points to a query-plan regression after last week's database upgrade, and we have a SQL hint that mitigates it. The dashboard is functional and there is no Severity-1 incidente; customers can still complete their tasks, though page loads are slower than usual. We would like to apply the hint to production. É possível we apply it directly now, or do we need to follow the normal CAB process?",
+    "negative_control_gold": "You deve follow the normal CAB process. The customer dashboard is a Tier-2 system, which is in escopo under S1. There is no active Severity-1 incidente, so E1 does not apply and cannot be used to bypass CAB aprovação. Submit a Change Request in ServiceNow with at least five business days of lead time, including proposed mudança, risk assessment, rollback plan, and target maintenance window. CAB will revisão at the next Tuesday or Thursday meeting. After execution, file a PIR within five business days.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}
