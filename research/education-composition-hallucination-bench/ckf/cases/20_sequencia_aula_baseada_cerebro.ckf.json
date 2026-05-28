@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "id": "20_sequencia_aula_baseada_cerebro",
+    "title": "Aula baseada no cérebro exige cadeia de atenção, relevância, atividade e consolidação",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Um assistente de IA propôs uma aula de 45 minutos com fala expositiva contínua, slides densos e um quiz apenas no final. O objetivo do professor é aprendizagem duradoura de um conceito novo. O plano está adequado às orientações baseadas no cérebro?",
+    "expected_outcome": "Não — para aprendizagem duradoura, a aula precisa combinar atenção, relevância, segurança emocional, atividade e consolidação distribuída."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "planejamento de aula",
+      "neuroeducação"
+    ],
+    "relation_type": "sequence",
+    "complexity_level": 3
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Um assistente de IA propôs uma aula de 45 minutos com fala expositiva contínua, slides densos e um quiz apenas no final. O objetivo do professor é aprendizagem duradoura de um conceito novo. O plano está adequado às orientações baseadas no cérebro?",
+      "then": "Não — para aprendizagem duradoura, a aula precisa combinar atenção, relevância, segurança emocional, atividade e consolidação distribuída.",
+      "requires": [
+        "SEQ1 define a cadeia de desenho da aula",
+        "C1 contraindica exposição única com quiz final como suficiente"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Se o conteúdo está nos slides e há quiz final, a aprendizagem duradoura está garantida.",
+        "Sim. Aulas baseadas no cérebro exigem apenas explicar bem e avaliar no final."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "SEQ1 define a cadeia de desenho da aula",
+        "C1 contraindica exposição única com quiz final como suficiente"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Um assistente de IA propôs uma aula de 45 minutos com fala expositiva contínua, slides densos e um quiz apenas no final. O objetivo do professor é aprendizagem duradoura de um conceito novo. O plano está adequado às orientações baseadas no cérebro?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — para aprendizagem duradoura, a aula precisa combinar atenção, relevância, segurança emocional, atividade e consolidação distribuída."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "sequence",
+      "description": "SEQ1 define a cadeia de desenho da aula; C1 contraindica exposição única com quiz final como suficiente"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Um assistente de IA propôs uma aula de 45 minutos com fala expositiva contínua, slides densos e um quiz apenas no final. O objetivo do professor é aprendizagem duradoura de um conceito novo. O plano está adequado às orientações baseadas no cérebro?",
+      "answer": "Não. O plano depende de exposição contínua e quiz final, mas ignora a cadeia necessária: capturar atenção, conectar ao conhecimento prévio e à relevância, manter segurança emocional, envolver os alunos ativamente e consolidar com prática de recuperação distribuída. Ele deve ser redesenhado em blocos com perguntas, exemplos significativos, interação e revisões ao longo do tempo."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Porta de entrada. A atenção é ponto de partida para aprendizagem; perguntas, histórias, surpresa ou desafios podem preparar o cérebro para processar o conteúdo.\n\nSeção B — Significado e segurança. Para que a aprendizagem seja profunda, o conteúdo deve se conectar ao que o aluno já sabe, à sua realidade ou utilidade. O ambiente emocional precisa ser seguro, pois medo e ansiedade prejudicam atenção e memória.\n\nSeção C — Atividade e consolidação. O aprendizado melhora quando há participação ativa, interações positivas, revisão e prática de recuperação distribuída ao longo do tempo. Uma explicação única seguida de quiz final não garante consolidação."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "SEQ1",
+      "text": "Atenção, conexão com conhecimento prévio/relevância, segurança emocional, atividade/interação e consolidação por recuperação distribuída."
+    },
+    {
+      "id": "C1",
+      "text": "Porque não garante atenção, relevância, segurança, participação ativa nem consolidação distribuída."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "11-15, 45-61, 70-77, 86-94, 112-121",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

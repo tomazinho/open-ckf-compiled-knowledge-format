@@ -1,0 +1,75 @@
+{
+  "case_id": "08_sequencia_replanejamento_semanal_dados",
+  "metadata": {
+    "title": "Replanejamento semanal segue evidências antes da intervenção",
+    "domain": "education",
+    "subdomains": [
+      "replanejamento",
+      "dados pedagógicos"
+    ],
+    "relation_type": "sequence",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Propósito do replanejamento. A avaliação formativa produz impacto quando as evidências e feedbacks são usados como bússola para reorientar o ensino.\n\nSeção B — Sequência mínima. Um replanejamento semanal deve indicar a habilidade foco, o que as evidências mostraram, as dificuldades observadas, a intervenção planejada e o critério de sucesso. Pular a análise das evidências transforma o replanejamento em impressão subjetiva.",
+    "annotated": "<rule id=\"R1\">Replanejamento formativo usa evidências e feedbacks para reorientar o ensino.</rule>\n\n<sequence id=\"SEQ1\" required_for=\"R1\">1. definir habilidade foco; 2. analisar evidências; 3. identificar dificuldades; 4. planejar intervenção; 5. definir critério de sucesso.</sequence>",
+    "compiled": "case:\n    title: Replanejamento semanal segue evidências antes da intervenção\n    domain: education\n    relation_type: sequence\n    complexity_level: 2\n  fragments:\n- id: R1\n  statement: Replanejamento reorienta ensino com evidências.\n- id: SEQ1\n  statement: A sequência mínima exige habilidade, evidências, dificuldades, intervenção e critério de sucesso.\n  relations:\n- SEQ1 operationalizes R1; intervention before evidence analysis is out of sequence\n  decision:\n    correct_action: analisar evidências antes de escolher a intervenção"
+  },
+  "query": "A professora percebeu que “a turma parece desanimada” e decidiu trocar todo o plano da próxima semana por jogos, sem revisar checklists, rubricas ou critérios de sucesso. Isso é replanejamento formativo completo?",
+  "gold_answer": {
+    "full": "Não. Pode haver intuição pedagógica, mas o replanejamento formativo completo precisa partir de evidências: habilidade foco, dados coletados, dificuldades observadas, intervenção e critério de sucesso. Sem analisar evidências, a troca por jogos pode ser apenas impressão subjetiva.",
+    "minimal": "Não — replanejamento formativo exige análise de evidências antes da intervenção e critério de sucesso.",
+    "required_relations": [
+      "SEQ1 define a ordem necessária para R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual é a finalidade do replanejamento formativo?",
+      "expected_answer": "Reorientar o ensino com base em evidências e feedbacks."
+    },
+    {
+      "fragment_id": "SEQ1",
+      "probe": "Quais elementos mínimos aparecem na sequência de replanejamento semanal?",
+      "expected_answer": "Habilidade foco, evidências, dificuldades, intervenção planejada e critério de sucesso."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Qualquer mudança de atividade já é replanejamento formativo.",
+      "Sim. A percepção do professor substitui os dados porque ele conhece a turma."
+    ],
+    "wrong_escalation": [
+      "A professora só pode replanejar com autorização da secretaria municipal."
+    ],
+    "refusal": [
+      "Não é possível responder sem saber quais jogos seriam usados."
+    ],
+    "retrieval_failure_note": "Sem a sequência mínima, o item não testa composição temporal/procedural."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "SEQ1"
+    ],
+    "negative_control_query": "A professora revisou os checklists, identificou dificuldade em justificar respostas, planejou uma mini-oficina de justificativas e definiu que o sucesso será 70% da turma atingir nível 3. Isso é replanejamento formativo?",
+    "negative_control_gold": "Sim. A intervenção foi escolhida depois da análise das evidências e tem critério de sucesso.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "41-47, 55-61",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

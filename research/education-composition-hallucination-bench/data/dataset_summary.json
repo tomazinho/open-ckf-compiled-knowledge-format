@@ -1,0 +1,29 @@
+{
+  "dataset_name": "education-composition-hallucination-bench",
+  "version": "0.1.1-draft",
+  "language": "pt-BR",
+  "total_cases": 20,
+  "by_complexity_level": {
+    "1": 6,
+    "2": 8,
+    "3": 6
+  },
+  "by_relation_type": {
+    "contraindication": 3,
+    "scope": 2,
+    "precondition": 6,
+    "temporal_dependency": 1,
+    "override": 2,
+    "sequence": 5,
+    "exception": 1
+  },
+  "by_source_title": {
+    "Avaliação Sem Mistério": 9,
+    "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem": 11
+  },
+  "source_status": {
+    "adapted": 20
+  },
+  "created": "2026-05-28",
+  "notes": "20 adapted education cases based on two Paulo Tomazinho books. No runner script included; compatible with the generic composition-hallucination benchmark runner when configured for pt-BR."
+}

@@ -1,0 +1,82 @@
+{
+  "case_id": "15_excecao_interacao_social_segura",
+  "metadata": {
+    "title": "Interação social precisa ser positiva e emocionalmente segura",
+    "domain": "education",
+    "subdomains": [
+      "interação social",
+      "segurança emocional"
+    ],
+    "relation_type": "exception",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Valor da interação. Alunos aprendem uns com os outros quando trocam ideias, debatem, se ajudam e constroem conhecimento de modo colaborativo. A interação social positiva pode fortalecer compreensão, memória e motivação.\n\nSeção B — Condição emocional. A interação só cumpre esse papel quando o ambiente é seguro e respeitoso. Se a atividade expõe publicamente alunos inseguros ou aumenta medo e vergonha, a estratégia deixa de ser interação positiva e pode inibir aprendizagem.\n\nSeção C — Ajuste recomendado. Em turmas com alunos relutantes, inseguros ou ansiosos, o professor deve reduzir o risco de exposição, por exemplo começando com duplas, pequenos grupos ou contribuições mais protegidas antes de debates públicos.",
+    "annotated": "<rule id=\"R1\">Interação social positiva favorece aprendizagem, compreensão, memória e motivação.</rule>\n\n<exception id=\"E1\" limits=\"R1\" condition=\"interação aumenta exposição, medo ou vergonha\">A interação deixa de ser positiva quando ameaça a segurança emocional do aluno.</exception>\n\n<procedure id=\"P1\" applies_when=\"alunos inseguros ou ansiosos\">Começar com formas de participação protegidas, como duplas ou pequenos grupos, antes de exposição pública.</procedure>",
+    "compiled": "case:\n    title: Interação social precisa ser positiva e emocionalmente segura\n    domain: education\n    relation_type: exception\n    complexity_level: 3\n  fragments:\n- id: R1\n  statement: Interação social positiva favorece aprendizagem.\n- id: E1\n  statement: Exposição pública ameaçadora limita R1.\n- id: P1\n  statement: Com alunos inseguros, usar participação protegida primeiro.\n  relations:\n- E1 limits R1 when interaction is emotionally unsafe\n- P1 sequences safer participation before public exposure\n  decision:\n    correct_action: promover interação em pequenos grupos seguros, não debate público ameaçador"
+  },
+  "query": "Em uma turma com vários alunos inseguros para falar, a professora quer estimular aprendizagem social fazendo um debate público imediato em que cada aluno será chamado a defender sua resposta diante de todos. Isso aplica corretamente o princípio da interação social positiva?",
+  "gold_answer": {
+    "full": "Não. A interação social pode favorecer aprendizagem, mas precisa ser positiva e segura. Como há insegurança e risco de exposição pública, a professora deve começar com duplas, pequenos grupos ou formas protegidas de participação, criando confiança antes de exigir defesa pública.",
+    "minimal": "Não — interação social só ajuda se for positiva e segura; nesse caso, comece com participação protegida.",
+    "required_relations": [
+      "E1 restringe R1 quando a interação gera ameaça emocional",
+      "P1 define sequência segura para alunos inseguros"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual é o valor da interação social positiva?",
+      "expected_answer": "Ela favorece aprendizagem, compreensão, memória e motivação."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Quando uma interação deixa de cumprir esse papel positivo?",
+      "expected_answer": "Quando aumenta exposição, medo, vergonha ou insegurança emocional."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Que formato é recomendado para alunos inseguros antes de exposição pública?",
+      "expected_answer": "Participação protegida, como duplas ou pequenos grupos."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Como é interação social, qualquer debate público melhora a aprendizagem.",
+      "Sim. A vergonha inicial é necessária para que os alunos aprendam a participar."
+    ],
+    "wrong_escalation": [
+      "A professora deve proibir qualquer interação entre alunos durante todo o semestre."
+    ],
+    "refusal": [
+      "Não dá para responder sem avaliar clinicamente a timidez dos alunos."
+    ],
+    "retrieval_failure_note": "Sem a condição emocional, a resposta pode aplicar a regra geral de colaboração de forma indevida."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "E1",
+      "P1"
+    ],
+    "negative_control_query": "Em uma turma confiante, o professor organiza debate respeitoso com combinados claros e espaço para preparação em grupos. Isso pode aplicar interação social positiva?",
+    "negative_control_gold": "Sim. A interação está estruturada com segurança e respeito, então pode favorecer a aprendizagem.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "62-69, 86-94",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

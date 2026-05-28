@@ -1,0 +1,182 @@
+{
+  "metadata": {
+    "id": "15_excecao_interacao_social_segura",
+    "title": "Interação social precisa ser positiva e emocionalmente segura",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Em uma turma com vários alunos inseguros para falar, a professora quer estimular aprendizagem social fazendo um debate público imediato em que cada aluno será chamado a defender sua resposta diante de todos. Isso aplica corretamente o princípio da interação social positiva?",
+    "expected_outcome": "Não — interação social só ajuda se for positiva e segura; nesse caso, comece com participação protegida."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "interação social",
+      "segurança emocional"
+    ],
+    "relation_type": "exception",
+    "complexity_level": 3
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Em uma turma com vários alunos inseguros para falar, a professora quer estimular aprendizagem social fazendo um debate público imediato em que cada aluno será chamado a defender sua resposta diante de todos. Isso aplica corretamente o princípio da interação social positiva?",
+      "then": "Não — interação social só ajuda se for positiva e segura; nesse caso, comece com participação protegida.",
+      "requires": [
+        "E1 restringe R1 quando a interação gera ameaça emocional",
+        "P1 define sequência segura para alunos inseguros"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Como é interação social, qualquer debate público melhora a aprendizagem.",
+        "Sim. A vergonha inicial é necessária para que os alunos aprendam a participar."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "E1 restringe R1 quando a interação gera ameaça emocional",
+        "P1 define sequência segura para alunos inseguros"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Em uma turma com vários alunos inseguros para falar, a professora quer estimular aprendizagem social fazendo um debate público imediato em que cada aluno será chamado a defender sua resposta diante de todos. Isso aplica corretamente o princípio da interação social positiva?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — interação social só ajuda se for positiva e segura; nesse caso, comece com participação protegida."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "exception",
+      "description": "E1 restringe R1 quando a interação gera ameaça emocional; P1 define sequência segura para alunos inseguros"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Em uma turma com vários alunos inseguros para falar, a professora quer estimular aprendizagem social fazendo um debate público imediato em que cada aluno será chamado a defender sua resposta diante de todos. Isso aplica corretamente o princípio da interação social positiva?",
+      "answer": "Não. A interação social pode favorecer aprendizagem, mas precisa ser positiva e segura. Como há insegurança e risco de exposição pública, a professora deve começar com duplas, pequenos grupos ou formas protegidas de participação, criando confiança antes de exigir defesa pública."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Valor da interação. Alunos aprendem uns com os outros quando trocam ideias, debatem, se ajudam e constroem conhecimento de modo colaborativo. A interação social positiva pode fortalecer compreensão, memória e motivação.\n\nSeção B — Condição emocional. A interação só cumpre esse papel quando o ambiente é seguro e respeitoso. Se a atividade expõe publicamente alunos inseguros ou aumenta medo e vergonha, a estratégia deixa de ser interação positiva e pode inibir aprendizagem.\n\nSeção C — Ajuste recomendado. Em turmas com alunos relutantes, inseguros ou ansiosos, o professor deve reduzir o risco de exposição, por exemplo começando com duplas, pequenos grupos ou contribuições mais protegidas antes de debates públicos."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Ela favorece aprendizagem, compreensão, memória e motivação."
+    },
+    {
+      "id": "E1",
+      "text": "Quando aumenta exposição, medo, vergonha ou insegurança emocional."
+    },
+    {
+      "id": "P1",
+      "text": "Participação protegida, como duplas ou pequenos grupos."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "62-69, 86-94",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

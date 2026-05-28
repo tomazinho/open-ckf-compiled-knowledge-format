@@ -1,0 +1,182 @@
+{
+  "metadata": {
+    "id": "18_override_solo_espinhos_emocao",
+    "title": "Condição emocional pode ter prioridade sobre nova explicação de conteúdo",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Uma aluna que antes participava passou a ficar em silêncio, evita olhar para o professor e relata problemas familiares. Ela erra uma atividade simples. O professor decide aumentar a lista de exercícios e fazer cobrança pública, porque “conteúdo se resolve com mais treino”. Essa é a composição correta das orientações?",
+    "expected_outcome": "Não — quando o bloqueio é emocional, segurança e vínculo têm prioridade sobre cobrança pública e mais exercícios."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "emoções",
+      "gestão de sala"
+    ],
+    "relation_type": "override",
+    "complexity_level": 3
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Uma aluna que antes participava passou a ficar em silêncio, evita olhar para o professor e relata problemas familiares. Ela erra uma atividade simples. O professor decide aumentar a lista de exercícios e fazer cobrança pública, porque “conteúdo se resolve com mais treino”. Essa é a composição correta das orientações?",
+      "then": "Não — quando o bloqueio é emocional, segurança e vínculo têm prioridade sobre cobrança pública e mais exercícios.",
+      "requires": [
+        "S1 delimita quando R1 se aplica",
+        "O1 sobrepõe R1 diante de bloqueio emocional"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Qualquer erro deve ser resolvido com mais exercícios, independentemente do estado emocional.",
+        "Sim. Cobrança pública é boa para vencer resistência emocional."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "S1 delimita quando R1 se aplica",
+        "O1 sobrepõe R1 diante de bloqueio emocional"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Uma aluna que antes participava passou a ficar em silêncio, evita olhar para o professor e relata problemas familiares. Ela erra uma atividade simples. O professor decide aumentar a lista de exercícios e fazer cobrança pública, porque “conteúdo se resolve com mais treino”. Essa é a composição correta das orientações?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — quando o bloqueio é emocional, segurança e vínculo têm prioridade sobre cobrança pública e mais exercícios."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "override",
+      "description": "S1 delimita quando R1 se aplica; O1 sobrepõe R1 diante de bloqueio emocional"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Uma aluna que antes participava passou a ficar em silêncio, evita olhar para o professor e relata problemas familiares. Ela erra uma atividade simples. O professor decide aumentar a lista de exercícios e fazer cobrança pública, porque “conteúdo se resolve com mais treino”. Essa é a composição correta das orientações?",
+      "answer": "Não. Revisar conteúdo pode ajudar quando a dificuldade é conceitual, mas os sinais indicam bloqueio emocional. Nesse caso, a prioridade é criar segurança, acolhimento e vínculo, reduzindo ameaça antes de intensificar explicação ou cobrança. Depois disso, o professor pode retomar o conteúdo com apoio."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Ensino de conteúdo. Quando um aluno não aprende, o professor pode pensar em explicar novamente, oferecer exercício extra ou revisar o conteúdo.\n\nSeção B — Solo com espinhos. Alguns alunos estão emocionalmente distantes, resistentes ou atravessados por problemas familiares e sociais. Nesses casos, o obstáculo principal pode ser emocional, afetando concentração e engajamento.\n\nSeção C — Prioridade emocional. Quando medo, ansiedade ou estresse estão em alerta, a capacidade de aprender é prejudicada. Antes de intensificar explicações e exercícios, o professor deve criar ambiente seguro, acolhedor e encorajador, reduzindo ameaça e fortalecendo confiança."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Quando a dificuldade é principalmente cognitiva ou conceitual."
+    },
+    {
+      "id": "S1",
+      "text": "Ela se aplica quando o aluno está emocionalmente disponível e o obstáculo é conceitual."
+    },
+    {
+      "id": "O1",
+      "text": "Criar segurança emocional, acolhimento e vínculo antes de intensificar conteúdo."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "19-22, 86-94, 103-111",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

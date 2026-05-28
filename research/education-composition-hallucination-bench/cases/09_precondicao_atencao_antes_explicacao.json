@@ -1,0 +1,75 @@
+{
+  "case_id": "09_precondicao_atencao_antes_explicacao",
+  "metadata": {
+    "title": "Atenção é pré-condição para aprendizagem significativa",
+    "domain": "education",
+    "subdomains": [
+      "atenção",
+      "neuroeducação"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Explicação do conteúdo. O professor pode explicar claramente um conceito e usar exemplos corretos.\n\nSeção B — Pré-condição atencional. Sem atenção do aluno, não há aprendizagem significativa. Captar a atenção no início da aula, por meio de perguntas provocativas, surpresa, histórias ou desafios, prepara o cérebro para processar o conteúdo.",
+    "annotated": "<rule id=\"R1\">Uma explicação clara ajuda a apresentar o conteúdo.</rule>\n\n<precondition id=\"P1\" required_for=\"R1_to_support_learning\">A atenção do aluno é pré-condição para que a explicação seja processada de forma significativa.</precondition>",
+    "compiled": "case:\n    title: Atenção é pré-condição para aprendizagem significativa\n    domain: education\n    relation_type: precondition\n    complexity_level: 1\n  fragments:\n- id: R1\n  statement: Explicação clara apresenta conteúdo.\n- id: P1\n  statement: Atenção é pré-condição para processamento significativo do conteúdo.\n  relations:\n- P1 must hold before R1 can be expected to support meaningful learning\n  decision:\n    correct_action: capturar a atenção antes de aprofundar a explicação"
+  },
+  "query": "A turma está dispersa, com vários alunos olhando para o celular. O professor decide continuar explicando um conceito difícil com mais detalhes, sem mudar a dinâmica da aula. Essa é a melhor decisão segundo o princípio apresentado?",
+  "gold_answer": {
+    "full": "Não. A explicação pode estar correta, mas sem atenção ela tende a não ser processada de forma significativa. O professor deveria primeiro recuperar a atenção com uma pergunta provocativa, surpresa, história, desafio ou interação, e só então aprofundar a explicação.",
+    "minimal": "Não — é preciso capturar a atenção antes de esperar aprendizagem significativa pela explicação.",
+    "required_relations": [
+      "P1 é pré-condição para R1 produzir aprendizagem significativa"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Uma explicação clara pode ajudar em quê?",
+      "expected_answer": "A apresentar o conteúdo corretamente."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "O que é necessário antes de esperar aprendizagem significativa?",
+      "expected_answer": "Captar a atenção do aluno."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Se a explicação for mais detalhada, a atenção deixa de importar.",
+      "Sim. O problema é apenas falta de disciplina; o conteúdo pode continuar igual."
+    ],
+    "wrong_escalation": [
+      "O professor deve cancelar a aula imediatamente."
+    ],
+    "refusal": [
+      "Não posso responder sem saber a idade dos alunos."
+    ],
+    "retrieval_failure_note": "Se a pré-condição atencional estiver ausente, o caso vira julgamento genérico de didática."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1"
+    ],
+    "negative_control_query": "A turma está atenta após uma pergunta instigante e participa da discussão. O professor pode avançar para explicar o conceito?",
+    "negative_control_gold": "Sim. Com a atenção capturada, a explicação tem melhores condições de ser processada.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "45-52",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

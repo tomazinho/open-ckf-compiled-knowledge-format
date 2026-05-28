@@ -1,0 +1,82 @@
+{
+  "case_id": "18_override_solo_espinhos_emocao",
+  "metadata": {
+    "title": "Condição emocional pode ter prioridade sobre nova explicação de conteúdo",
+    "domain": "education",
+    "subdomains": [
+      "emoções",
+      "gestão de sala"
+    ],
+    "relation_type": "override",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Ensino de conteúdo. Quando um aluno não aprende, o professor pode pensar em explicar novamente, oferecer exercício extra ou revisar o conteúdo.\n\nSeção B — Solo com espinhos. Alguns alunos estão emocionalmente distantes, resistentes ou atravessados por problemas familiares e sociais. Nesses casos, o obstáculo principal pode ser emocional, afetando concentração e engajamento.\n\nSeção C — Prioridade emocional. Quando medo, ansiedade ou estresse estão em alerta, a capacidade de aprender é prejudicada. Antes de intensificar explicações e exercícios, o professor deve criar ambiente seguro, acolhedor e encorajador, reduzindo ameaça e fortalecendo confiança.",
+    "annotated": "<rule id=\"R1\">Diante de dificuldade de aprendizagem, o professor pode revisar conteúdo, explicar novamente ou propor exercício extra.</rule>\n\n<scope id=\"S1\" condition=\"aluno emocionalmente disponível\">R1 é apropriado quando o obstáculo principal é cognitivo ou conceitual.</scope>\n\n<override id=\"O1\" overrides=\"R1\" condition=\"medo, ansiedade, resistência emocional ou estresse bloqueando engajamento\">Priorizar segurança emocional e vínculo antes de intensificar conteúdo.</override>",
+    "compiled": "case:\n    title: Condição emocional pode ter prioridade sobre nova explicação de conteúdo\n    domain: education\n    relation_type: override\n    complexity_level: 3\n  fragments:\n- id: R1\n  statement: Reexplicação/exercício é uma resposta possível a dificuldade conceitual.\n- id: S1\n  statement: R1 se aplica quando obstáculo principal é cognitivo.\n- id: O1\n  statement: Bloqueio emocional tem prioridade: segurança e vínculo antes de intensificar conteúdo.\n  relations:\n- S1 scopes R1\n- O1 overrides R1 when emotional stress blocks engagement\n  decision:\n    correct_action: intervir primeiro no ambiente emocional e vínculo"
+  },
+  "query": "Uma aluna que antes participava passou a ficar em silêncio, evita olhar para o professor e relata problemas familiares. Ela erra uma atividade simples. O professor decide aumentar a lista de exercícios e fazer cobrança pública, porque “conteúdo se resolve com mais treino”. Essa é a composição correta das orientações?",
+  "gold_answer": {
+    "full": "Não. Revisar conteúdo pode ajudar quando a dificuldade é conceitual, mas os sinais indicam bloqueio emocional. Nesse caso, a prioridade é criar segurança, acolhimento e vínculo, reduzindo ameaça antes de intensificar explicação ou cobrança. Depois disso, o professor pode retomar o conteúdo com apoio.",
+    "minimal": "Não — quando o bloqueio é emocional, segurança e vínculo têm prioridade sobre cobrança pública e mais exercícios.",
+    "required_relations": [
+      "S1 delimita quando R1 se aplica",
+      "O1 sobrepõe R1 diante de bloqueio emocional"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Quando reexplicar ou propor exercício extra pode ser uma resposta possível?",
+      "expected_answer": "Quando a dificuldade é principalmente cognitiva ou conceitual."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Qual é o escopo da intervenção puramente cognitiva?",
+      "expected_answer": "Ela se aplica quando o aluno está emocionalmente disponível e o obstáculo é conceitual."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "O que deve ter prioridade quando há medo, ansiedade ou estresse bloqueando engajamento?",
+      "expected_answer": "Criar segurança emocional, acolhimento e vínculo antes de intensificar conteúdo."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Qualquer erro deve ser resolvido com mais exercícios, independentemente do estado emocional.",
+      "Sim. Cobrança pública é boa para vencer resistência emocional."
+    ],
+    "wrong_escalation": [
+      "O professor deve virar terapeuta da aluna e abandonar todos os objetivos acadêmicos."
+    ],
+    "refusal": [
+      "Não é possível responder sem diagnóstico psicológico formal."
+    ],
+    "retrieval_failure_note": "Sem O1, o caso pode parecer apenas uma escolha entre metodologias de revisão."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1",
+      "O1"
+    ],
+    "negative_control_query": "Um aluno tranquilo errou por não compreender o procedimento, pediu ajuda e quer tentar de novo. Revisão de conteúdo e exercícios guiados podem ser apropriados?",
+    "negative_control_gold": "Sim. Nesse caso, o obstáculo parece conceitual, então R1 pode se aplicar.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "19-22, 86-94, 103-111",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

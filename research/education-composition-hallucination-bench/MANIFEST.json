@@ -1,0 +1,288 @@
+{
+  "dataset_name": "education-composition-hallucination-bench",
+  "version": "0.1.1-draft",
+  "created": "2026-05-28",
+  "manifest_note": "MANIFEST.json is excluded from its own checksum list to avoid self-reference.",
+  "files": [
+    {
+      "path": "CITATION.cff",
+      "sha256": "52c3e1452c8235eac8eff47b8959d4ebdd1ec5434e927b1758a8f217f0b99b6b",
+      "bytes": 518
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "54502a0b65542f0903957d63de6aa5cda2260915a5ee3d07eb21ff875b0a9445",
+      "bytes": 505
+    },
+    {
+      "path": "README.md",
+      "sha256": "2286b0c18bf326a671f9e9b1412e58502e31d8d2f10bfc3322310a217f236d8e",
+      "bytes": 4741
+    },
+    {
+      "path": "cases/01_contraindicacao_nota_isolada_feedback.json",
+      "sha256": "8e1216517773a81c5bc00d6069753a1085ba9a4ba58bc1ddcf026383edb0c071",
+      "bytes": 5610
+    },
+    {
+      "path": "cases/02_escopo_rubrica_descritores_observaveis.json",
+      "sha256": "b2dcfbb85e0612c1bb84cd7d7a7cebdbce499d6494ab16565341d37474e2ae50",
+      "bytes": 5246
+    },
+    {
+      "path": "cases/03_precondicao_feedback_criterio_evidencia.json",
+      "sha256": "02ea78b660afbba546f022284aa34fad8f9369d2d022fe393e4235551dac4d3c",
+      "bytes": 5110
+    },
+    {
+      "path": "cases/04_dependencia_temporal_evidencia_durante_atividade.json",
+      "sha256": "73206548f55e11d6fc3399821101e3d5d326df131cf8a26ace9fc39b4426bb7f",
+      "bytes": 5194
+    },
+    {
+      "path": "cases/05_precondicao_bncc_evidencias_observaveis.json",
+      "sha256": "f169afafae1b043acfd686fe759ae74075e62011bd0836c79dbefb53106f744e",
+      "bytes": 5903
+    },
+    {
+      "path": "cases/06_override_erro_como_evidencia_replanejamento.json",
+      "sha256": "0159eb621a3ba4d9b15cd51e49ff4eeb2d74023d8fdf78730946d56abef3dcec",
+      "bytes": 5224
+    },
+    {
+      "path": "cases/07_precondicao_autoavaliacao_observacao_docente.json",
+      "sha256": "8a37996e41bcddb6d97e11751c490c4da18facb5b2d988504462774a6c461913",
+      "bytes": 5049
+    },
+    {
+      "path": "cases/08_sequencia_replanejamento_semanal_dados.json",
+      "sha256": "57dea8796a6704bcd0ec3e6a13bb51bdfe9253ac2cac881eedd8708c68c77038",
+      "bytes": 5052
+    },
+    {
+      "path": "cases/09_precondicao_atencao_antes_explicacao.json",
+      "sha256": "92796801c54256b12e17e5feb43bf114fcca77186100839675be6e6040aff1c3",
+      "bytes": 4799
+    },
+    {
+      "path": "cases/10_contraindicacao_ansiedade_pressao.json",
+      "sha256": "ae047641e3e10445d1bad53a718bbb83c232637a93c42333881a68231ceeb2c3",
+      "bytes": 5148
+    },
+    {
+      "path": "cases/11_sequencia_blocos_curto_atividade.json",
+      "sha256": "3fe5725ccbfe026e4f231d8b2ff6c52cab389f2001cc64e843a1605c3b3ca31a",
+      "bytes": 4869
+    },
+    {
+      "path": "cases/12_precondicao_conhecimento_previo_ponte.json",
+      "sha256": "eb40dd4681729c2b0968db3376442d2809622c2e8ac9706fad77593f3177d7e6",
+      "bytes": 5214
+    },
+    {
+      "path": "cases/13_sequencia_pratica_distribuida_memoria.json",
+      "sha256": "188d0eb1e794d3d046d31374cabbc3f60910ef6da1a518cf10f61cbc3275bf87",
+      "bytes": 4968
+    },
+    {
+      "path": "cases/14_escopo_relevancia_sustenta_interesse.json",
+      "sha256": "194f68ffb97a6367f5e782c69fca65662017a204a465c5d2ad2edb66be40cf92",
+      "bytes": 5057
+    },
+    {
+      "path": "cases/15_excecao_interacao_social_segura.json",
+      "sha256": "40c2722f2dffbe867d33db8d0a0fa7f3a3276696f5cb8c5be152b49cc12a8fe8",
+      "bytes": 6121
+    },
+    {
+      "path": "cases/16_contraindicacao_fluxo_desafio_habilidade.json",
+      "sha256": "0f44115b9366981deb98f2093abc2413cdddc760b3ed7820dfc10072c746d930",
+      "bytes": 5863
+    },
+    {
+      "path": "cases/17_precondicao_solo_pedregoso_bases.json",
+      "sha256": "150bbde7eb0169e969ce6fb0e76a125748d14b0b623f7344bbbd3f9f180c8272",
+      "bytes": 6122
+    },
+    {
+      "path": "cases/18_override_solo_espinhos_emocao.json",
+      "sha256": "bb93ad456b3826a8ac7f94612b2a5890040374fc9b6c781435704145ecb28422",
+      "bytes": 6143
+    },
+    {
+      "path": "cases/19_sequencia_ciclo_avaliacao_formativa.json",
+      "sha256": "694133e28b3bdbff301fd4a975183da0561b2ed76d0b174d8e6b752fa206e57c",
+      "bytes": 5745
+    },
+    {
+      "path": "cases/20_sequencia_aula_baseada_cerebro.json",
+      "sha256": "e8f59dfeec54a1d6c2ac0020429ae1af2bbe7bea438334731468c2e87e2c7210",
+      "bytes": 6165
+    },
+    {
+      "path": "ckf/README.md",
+      "sha256": "f67b74c4f4c9bf9d3bf3d89f87e18003ee663e16d77bcc1029f50f0ae31a572d",
+      "bytes": 717
+    },
+    {
+      "path": "ckf/cases/01_contraindicacao_nota_isolada_feedback.ckf.json",
+      "sha256": "9ad0345655d6b01f464dc6966059f477a32f4c0bbf1a510f2b209591eaa83ef4",
+      "bytes": 7264
+    },
+    {
+      "path": "ckf/cases/02_escopo_rubrica_descritores_observaveis.ckf.json",
+      "sha256": "06d40172bd7fcf9d68ed6ab3000374708c1f844b2ed2520ddf324acd0e76dcbd",
+      "bytes": 6984
+    },
+    {
+      "path": "ckf/cases/03_precondicao_feedback_criterio_evidencia.ckf.json",
+      "sha256": "ff5171510ba58730650c94f8ea2dbcb9e5d7a4b065597821a8fde388b04ec754",
+      "bytes": 6752
+    },
+    {
+      "path": "ckf/cases/04_dependencia_temporal_evidencia_durante_atividade.ckf.json",
+      "sha256": "cd3af6df069b595d194e0d2191a89aba62d3f1cb1ef359a7dffddfb4ab5f8793",
+      "bytes": 6865
+    },
+    {
+      "path": "ckf/cases/05_precondicao_bncc_evidencias_observaveis.ckf.json",
+      "sha256": "70054676758cd88eafde96e7f807ceea8bc5068ee0df5c9cdb9ba55321d10237",
+      "bytes": 7387
+    },
+    {
+      "path": "ckf/cases/06_override_erro_como_evidencia_replanejamento.ckf.json",
+      "sha256": "8095e0fddc17ec0429ef664009329b8e0871644b279338e37a0b8a7ede68eee0",
+      "bytes": 7143
+    },
+    {
+      "path": "ckf/cases/07_precondicao_autoavaliacao_observacao_docente.ckf.json",
+      "sha256": "343eaff5931d39a6cc73e9ecbd67eeb46eb32b97e04c7a412ee74cd79f063d99",
+      "bytes": 6779
+    },
+    {
+      "path": "ckf/cases/08_sequencia_replanejamento_semanal_dados.ckf.json",
+      "sha256": "06d21a84c811e7bae178658e8e1e7daaac2d1f7adc622dddc6fd2bc54719cce7",
+      "bytes": 6673
+    },
+    {
+      "path": "ckf/cases/09_precondicao_atencao_antes_explicacao.ckf.json",
+      "sha256": "48d43d65ae5f62b00cf0cfc2212ce2a742ce4d8d1b92e16a6437b8d6dfb01373",
+      "bytes": 6669
+    },
+    {
+      "path": "ckf/cases/10_contraindicacao_ansiedade_pressao.ckf.json",
+      "sha256": "e39eb38ab51cd9956a0bd1e09bb52029690af745cc53b88ede86e43d350c562a",
+      "bytes": 6850
+    },
+    {
+      "path": "ckf/cases/11_sequencia_blocos_curto_atividade.ckf.json",
+      "sha256": "ae19e59b131583b9af0a53ecce8090126371d0210764cbc514b5e3b1198fdeda",
+      "bytes": 6750
+    },
+    {
+      "path": "ckf/cases/12_precondicao_conhecimento_previo_ponte.ckf.json",
+      "sha256": "1dce9b78c525fb667ced34085de2be41137b0437c2525bd0a2a57cf61deb5b43",
+      "bytes": 6944
+    },
+    {
+      "path": "ckf/cases/13_sequencia_pratica_distribuida_memoria.ckf.json",
+      "sha256": "c9b3f97e92f310ed63793eeb81bbedbbdfc3adc4ed212b05301ff6e72929d0a0",
+      "bytes": 6728
+    },
+    {
+      "path": "ckf/cases/14_escopo_relevancia_sustenta_interesse.ckf.json",
+      "sha256": "e6f512b625e0e877333284f1265857184188fac20f56a43fbe226a4c57c111ee",
+      "bytes": 6955
+    },
+    {
+      "path": "ckf/cases/15_excecao_interacao_social_segura.ckf.json",
+      "sha256": "5e242b9ca2c5beef772c7a10d46831217d8705566855dcbc1a32047a34cc6c4d",
+      "bytes": 7621
+    },
+    {
+      "path": "ckf/cases/16_contraindicacao_fluxo_desafio_habilidade.ckf.json",
+      "sha256": "2c17e046f6750fe65fc5afbca68c545604c62b78316b0a17cbc54285dfb47041",
+      "bytes": 7584
+    },
+    {
+      "path": "ckf/cases/17_precondicao_solo_pedregoso_bases.ckf.json",
+      "sha256": "9896dc3afba58859b6256c746a0253b9793e55d5fe116069b0597f12d2f901ec",
+      "bytes": 7650
+    },
+    {
+      "path": "ckf/cases/18_override_solo_espinhos_emocao.ckf.json",
+      "sha256": "5590b3318a715bb0960a5a2912da7c08f8bcc50a3040a4549d604b421e17e929",
+      "bytes": 7766
+    },
+    {
+      "path": "ckf/cases/19_sequencia_ciclo_avaliacao_formativa.ckf.json",
+      "sha256": "d6b1e806a2934c42305e2fc9b8425728ea478ab6e3a554b5a1f2e88badb8b845",
+      "bytes": 7254
+    },
+    {
+      "path": "ckf/cases/20_sequencia_aula_baseada_cerebro.ckf.json",
+      "sha256": "ab1296ed1ed1865abd80263cc14bf647b114de4d211ee07cc969ce38a25286d0",
+      "bytes": 7749
+    },
+    {
+      "path": "ckf/ckf_schema_mapping.md",
+      "sha256": "98d1e6d4d9374548da682d9f5feee3ec9f64a7ff44c4dfdfaf759c6031ec8aee",
+      "bytes": 900
+    },
+    {
+      "path": "data/case_index.csv",
+      "sha256": "ce8b98b17712c12f67e7dc0eac5232cb4a9908db7e332c2048587d640b06d545",
+      "bytes": 4796
+    },
+    {
+      "path": "data/cases.jsonl",
+      "sha256": "5382c5252046551be81b3c4e2d9a7e70728bbe18b4af5b01f50329cee9b5506f",
+      "bytes": 101924
+    },
+    {
+      "path": "data/dataset_summary.json",
+      "sha256": "f4c2aba61cd5561cc367c73cbe83f51d7d0615cc843dd32861e8382f5fafd79b",
+      "bytes": 809
+    },
+    {
+      "path": "dataset_infos.json",
+      "sha256": "b3cc2ab2f931960349a82a56a88431b68d33f436217445d7787325bf03e31b56",
+      "bytes": 1349
+    },
+    {
+      "path": "docs/ANNOTATOR_GUIDELINES.md",
+      "sha256": "1a7814b3ba3c6652856fc0659d50e52bf4766460428533c0737cfbe2c171e3dd",
+      "bytes": 582
+    },
+    {
+      "path": "docs/CASE_PLAN.md",
+      "sha256": "50e5f1b13291841a73a4ccb755e8cc5b2a72743ea4bac29def0414765fe4321d",
+      "bytes": 4047
+    },
+    {
+      "path": "docs/CONTENT_EQUIVALENCE_AUDIT.md",
+      "sha256": "459465f914c437368fc361fad7a476e28086b7f18c12cfe3104b292e16d29c2a",
+      "bytes": 533
+    },
+    {
+      "path": "docs/DATASHEET.md",
+      "sha256": "6a7f15b0356231bbe4de055b94b510fff1ee73b41c16884ef1151967151438ea",
+      "bytes": 1911
+    },
+    {
+      "path": "docs/SCORING.md",
+      "sha256": "5435fc95c353ce5adcae33fad94160011f6c43511e768828d77e5a5238b8fb80",
+      "bytes": 1077
+    },
+    {
+      "path": "docs/SOURCE_PROVENANCE.md",
+      "sha256": "3e7549f70ea09f7be4346981c0a03b6ff4c82c1d98f50864d4468b93ea710b69",
+      "bytes": 497
+    },
+    {
+      "path": "schema/case_schema.json",
+      "sha256": "d9dab8e62483be5ebc523015fa17f926b875beb125759ed9814295ce0616ae26",
+      "bytes": 6538
+    }
+  ]
+}

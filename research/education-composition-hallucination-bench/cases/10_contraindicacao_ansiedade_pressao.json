@@ -1,0 +1,75 @@
+{
+  "case_id": "10_contraindicacao_ansiedade_pressao",
+  "metadata": {
+    "title": "Pressão emocional é contraindicada quando a ansiedade já bloqueia a aprendizagem",
+    "domain": "education",
+    "subdomains": [
+      "emoções",
+      "ambiente seguro"
+    ],
+    "relation_type": "contraindication",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Desafio escolar. Um desafio moderado pode mobilizar atenção e esforço quando os alunos se sentem seguros para participar e errar.\n\nSeção B — Contraindicação emocional. Quando os alunos estão ansiosos ou estressados, o cortisol pode interferir na formação de novas memórias e na recuperação do que já foi aprendido. Nesse contexto, aumentar medo, ameaça ou exposição pública é contraindicado; o professor deve criar um ambiente seguro e encorajador.",
+    "annotated": "<rule id=\"R1\">Desafios moderados podem mobilizar atenção e esforço em ambiente seguro.</rule>\n\n<contraindication id=\"C1\" blocks=\"pressure_based_strategy\" condition=\"alunos ansiosos ou estressados\">Aumentar ameaça, medo ou exposição pública é contraindicado; deve-se favorecer segurança emocional.</contraindication>",
+    "compiled": "case:\n    title: Pressão emocional é contraindicada quando a ansiedade já bloqueia a aprendizagem\n    domain: education\n    relation_type: contraindication\n    complexity_level: 1\n  fragments:\n- id: R1\n  statement: Desafio moderado pode favorecer atenção quando há segurança.\n- id: C1\n  statement: Ansiedade/estresse contraindica estratégias de pressão e ameaça.\n  relations:\n- C1 blocks pressure strategy when anxiety/stress is present\n  decision:\n    correct_action: reduzir ameaça e criar segurança emocional antes de exigir desempenho"
+  },
+  "query": "Antes de uma atividade difícil, vários alunos dizem que estão nervosos e com medo de errar. Para “aumentar o foco”, a professora anuncia que quem errar será chamado ao quadro e perderá pontos. Essa estratégia é adequada?",
+  "gold_answer": {
+    "full": "Não. Como há ansiedade e medo, aumentar ameaça e exposição pública é contraindicado. A professora deveria criar segurança emocional, explicar que o erro é parte do processo, oferecer apoio e propor um desafio moderado sem punição pública.",
+    "minimal": "Não — com alunos ansiosos, ameaça e exposição pública são contraindicadas; é preciso segurança emocional.",
+    "required_relations": [
+      "C1 contraindica estratégia de pressão quando há ansiedade/estresse"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Quando um desafio pode ajudar a mobilizar atenção?",
+      "expected_answer": "Quando é moderado e ocorre em ambiente seguro."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "O que deve ser evitado quando alunos estão ansiosos ou estressados?",
+      "expected_answer": "Aumentar medo, ameaça ou exposição pública; deve-se criar segurança emocional."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Medo de perder pontos aumenta foco e melhora memória.",
+      "Sim. Ansiedade é sinal de que os alunos precisam de pressão adicional."
+    ],
+    "wrong_escalation": [
+      "A professora deve eliminar todos os desafios cognitivos pelo resto do bimestre."
+    ],
+    "refusal": [
+      "Não é possível responder sem diagnóstico clínico dos alunos."
+    ],
+    "retrieval_failure_note": "Sem a Seção B, a resposta pode confundir desafio moderado com pressão emocional."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "C1"
+    ],
+    "negative_control_query": "A turma está tranquila e o professor propõe um desafio em duplas, deixando claro que erros serão discutidos sem punição. Isso pode ser adequado?",
+    "negative_control_gold": "Sim. Nesse caso há desafio moderado em ambiente seguro, sem acionar a contraindicação.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "86-94, 103-111",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "13_sequencia_pratica_distribuida_memoria",
+    "title": "Consolidação exige repetição distribuída, não revisão única",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Os alunos entenderam fotossíntese na aula de segunda-feira. O professor planeja não retomar o tema até uma revisão de duas horas na véspera da prova, porque “eles já entenderam”. Isso favorece consolidação duradoura?",
+    "expected_outcome": "Não — consolidação exige repetição e recuperação distribuídas ao longo do tempo."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "memória",
+      "prática distribuída"
+    ],
+    "relation_type": "sequence",
+    "complexity_level": 2
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Os alunos entenderam fotossíntese na aula de segunda-feira. O professor planeja não retomar o tema até uma revisão de duas horas na véspera da prova, porque “eles já entenderam”. Isso favorece consolidação duradoura?",
+      "then": "Não — consolidação exige repetição e recuperação distribuídas ao longo do tempo.",
+      "requires": [
+        "SEQ1 é necessário para transformar compreensão inicial em memória duradoura"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Se entenderam uma vez, basta revisar tudo na véspera.",
+        "Sim. Repetição distribuída é desnecessária quando a primeira explicação foi clara."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "SEQ1 é necessário para transformar compreensão inicial em memória duradoura"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Os alunos entenderam fotossíntese na aula de segunda-feira. O professor planeja não retomar o tema até uma revisão de duas horas na véspera da prova, porque “eles já entenderam”. Isso favorece consolidação duradoura?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — consolidação exige repetição e recuperação distribuídas ao longo do tempo."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "sequence",
+      "description": "SEQ1 é necessário para transformar compreensão inicial em memória duradoura"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Os alunos entenderam fotossíntese na aula de segunda-feira. O professor planeja não retomar o tema até uma revisão de duas horas na véspera da prova, porque “eles já entenderam”. Isso favorece consolidação duradoura?",
+      "answer": "Não. Entender no momento não garante memória duradoura. Para consolidar, o professor deveria planejar revisões curtas, práticas de recuperação e aplicações distribuídas ao longo dos dias ou semanas, em vez de depender apenas de uma revisão longa na véspera."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Entender na aula. Um aluno pode compreender um conceito durante a explicação e ainda assim esquecê-lo dias depois.\n\nSeção B — Consolidação. Para que a informação passe de compreensão inicial a memória duradoura, o cérebro precisa de repetição, recuperação e prática distribuída ao longo do tempo. Uma única revisão longa na véspera não substitui esse processo."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Não. Entendimento inicial não garante lembrança duradoura."
+    },
+    {
+      "id": "SEQ1",
+      "text": "Repetição, prática de recuperação e revisões distribuídas ao longo do tempo."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "70-77",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

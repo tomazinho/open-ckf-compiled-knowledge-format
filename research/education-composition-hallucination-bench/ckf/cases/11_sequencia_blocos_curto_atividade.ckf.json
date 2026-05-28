@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "11_sequencia_blocos_curto_atividade",
+    "title": "Aula longa deve ser organizada em blocos de atenção",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Um professor planejou 50 minutos de exposição contínua sobre um conteúdo novo, sem pausas, perguntas, discussão ou prática. Ele afirma que isso é melhor porque evita interrupções. O plano está alinhado à orientação baseada no cérebro?",
+    "expected_outcome": "Não — a aula deve alternar blocos curtos de informação com atividades ou interação."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "atenção",
+      "planejamento de aula"
+    ],
+    "relation_type": "sequence",
+    "complexity_level": 2
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Um professor planejou 50 minutos de exposição contínua sobre um conteúdo novo, sem pausas, perguntas, discussão ou prática. Ele afirma que isso é melhor porque evita interrupções. O plano está alinhado à orientação baseada no cérebro?",
+      "then": "Não — a aula deve alternar blocos curtos de informação com atividades ou interação.",
+      "requires": [
+        "SEQ1 aplica a regra do limite de atenção ao desenho da aula"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Interrupções sempre prejudicam, então a exposição contínua é superior.",
+        "Sim. Se o professor domina o conteúdo, 50 minutos de fala são adequados para qualquer turma."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "SEQ1 aplica a regra do limite de atenção ao desenho da aula"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Um professor planejou 50 minutos de exposição contínua sobre um conteúdo novo, sem pausas, perguntas, discussão ou prática. Ele afirma que isso é melhor porque evita interrupções. O plano está alinhado à orientação baseada no cérebro?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — a aula deve alternar blocos curtos de informação com atividades ou interação."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "sequence",
+      "description": "SEQ1 aplica a regra do limite de atenção ao desenho da aula"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Um professor planejou 50 minutos de exposição contínua sobre um conteúdo novo, sem pausas, perguntas, discussão ou prática. Ele afirma que isso é melhor porque evita interrupções. O plano está alinhado à orientação baseada no cérebro?",
+      "answer": "Não. Como a atenção sustentada é limitada, uma exposição contínua longa tende a reduzir processamento e retenção. O plano deveria alternar blocos curtos de explicação com discussão, perguntas, prática ou reflexão."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Limite de atenção. A atenção sustentada dos alunos é limitada. Depois de um período de concentração, a mente tende a vagar.\n\nSeção B — Sequência didática recomendada. Para favorecer retenção, uma aula deve alternar blocos curtos de informação com momentos de discussão, prática, reflexão ou interação. A explicação contínua e longa aumenta a chance de perda de atenção."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Ela é limitada e tende a cair depois de certo período."
+    },
+    {
+      "id": "SEQ1",
+      "text": "Em blocos curtos de informação intercalados com discussão, prática, reflexão ou interação."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "11-15, 39-41",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

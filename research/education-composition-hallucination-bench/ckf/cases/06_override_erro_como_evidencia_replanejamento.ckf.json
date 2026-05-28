@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "06_override_erro_como_evidencia_replanejamento",
+    "title": "Erro recorrente deve orientar intervenção, não punição",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Em uma atividade de porcentagem, 18 de 30 alunos erraram o mesmo tipo de interpretação do enunciado. O professor afirma que isso mostra falta de estudo individual e decide apenas lançar zero para quem errou e seguir para o próximo conteúdo. Essa é a decisão formativa adequada?",
+    "expected_outcome": "Não — o padrão coletivo de erro deve orientar replanejamento, não apenas punição ou avanço de conteúdo."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "erros",
+      "replanejamento"
+    ],
+    "relation_type": "override",
+    "complexity_level": 2
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Em uma atividade de porcentagem, 18 de 30 alunos erraram o mesmo tipo de interpretação do enunciado. O professor afirma que isso mostra falta de estudo individual e decide apenas lançar zero para quem errou e seguir para o próximo conteúdo. Essa é a decisão formativa adequada?",
+      "then": "Não — o padrão coletivo de erro deve orientar replanejamento, não apenas punição ou avanço de conteúdo.",
+      "requires": [
+        "O1 tem prioridade sobre leitura punitiva quando há erro recorrente coletivo"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Se muitos erraram, todos estudaram pouco; a ação formativa é registrar zero.",
+        "Sim. Como já houve atividade, o professor deve avançar para não atrasar o cronograma."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "O1 tem prioridade sobre leitura punitiva quando há erro recorrente coletivo"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Em uma atividade de porcentagem, 18 de 30 alunos erraram o mesmo tipo de interpretação do enunciado. O professor afirma que isso mostra falta de estudo individual e decide apenas lançar zero para quem errou e seguir para o próximo conteúdo. Essa é a decisão formativa adequada?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — o padrão coletivo de erro deve orientar replanejamento, não apenas punição ou avanço de conteúdo."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "override",
+      "description": "O1 tem prioridade sobre leitura punitiva quando há erro recorrente coletivo"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Em uma atividade de porcentagem, 18 de 30 alunos erraram o mesmo tipo de interpretação do enunciado. O professor afirma que isso mostra falta de estudo individual e decide apenas lançar zero para quem errou e seguir para o próximo conteúdo. Essa é a decisão formativa adequada?",
+      "answer": "Não. Como o erro é recorrente em parte significativa da turma, ele deve ser tratado como evidência coletiva de uma lacuna. A decisão formativa é replanejar a intervenção sobre interpretação de enunciados e porcentagem, talvez com exemplos guiados, atividade em grupo ou feedback direcionado, antes de seguir adiante."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Erro individual. Um erro pode indicar que um aluno ainda não consolidou uma habilidade específica e precisa de orientação.\n\nSeção B — Erro recorrente como dado pedagógico. Quando um padrão de erro aparece em muitos alunos, ele deve ser tratado como evidência coletiva de uma lacuna de aprendizagem. Nesse caso, a função formativa da avaliação supera a leitura punitiva do erro: o professor deve replanejar a intervenção em vez de apenas sancionar ou seguir adiante."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Que um aluno ainda precisa de orientação em uma habilidade específica."
+    },
+    {
+      "id": "O1",
+      "text": "Uma evidência coletiva de lacuna de aprendizagem que deve orientar replanejamento."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Avaliação Sem Mistério",
+      "source_pages": "26-33, 41-47",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

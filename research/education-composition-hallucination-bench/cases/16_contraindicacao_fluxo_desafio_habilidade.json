@@ -1,0 +1,82 @@
+{
+  "case_id": "16_contraindicacao_fluxo_desafio_habilidade",
+  "metadata": {
+    "title": "Fluxo exige equilíbrio entre desafio e habilidade",
+    "domain": "education",
+    "subdomains": [
+      "fluxo",
+      "diferenciação pedagógica"
+    ],
+    "relation_type": "contraindication",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Estado de fluxo. O fluxo ocorre quando o aluno está imerso, concentrado e produtivo em uma tarefa. O professor pode criar condições para que isso aconteça.\n\nSeção B — Condição de equilíbrio. O fluxo depende do equilíbrio entre desafio e habilidade. Se a tarefa é fácil demais, tende a gerar tédio; se é difícil demais, tende a gerar frustração.\n\nSeção C — Ajuste pedagógico. Quando a mesma tarefa provoca tédio em alguns alunos e frustração em outros, a resposta não é manter tudo igual. O professor deve ajustar níveis de desafio, apoio ou variações da tarefa para aproximar cada grupo de um desafio possível.",
+    "annotated": "<rule id=\"R1\">O fluxo envolve imersão, concentração e produtividade.</rule>\n\n<precondition id=\"P1\" required_for=\"R1\">Fluxo requer equilíbrio entre desafio da tarefa e habilidade do aluno.</precondition>\n\n<contraindication id=\"C1\" blocks=\"same_task_for_all\" condition=\"tarefa simultaneamente fácil demais para alguns e difícil demais para outros\">Manter a mesma tarefa sem ajuste é contraindicado; deve-se ajustar desafio ou apoio.</contraindication>",
+    "compiled": "case:\n    title: Fluxo exige equilíbrio entre desafio e habilidade\n    domain: education\n    relation_type: contraindication\n    complexity_level: 3\n  fragments:\n- id: R1\n  statement: Fluxo é imersão produtiva.\n- id: P1\n  statement: Equilíbrio entre desafio e habilidade é pré-condição.\n- id: C1\n  statement: Mesma tarefa sem ajuste é contraindicada quando gera tédio e frustração simultâneos.\n  relations:\n- P1 required for R1\n- C1 blocks uniform task when challenge-skill mismatch appears\n  decision:\n    correct_action: diferenciar desafio e apoio para restaurar equilíbrio"
+  },
+  "query": "Na mesma atividade, os alunos avançados terminaram em cinco minutos e ficaram entediados, enquanto outros travaram e ficaram frustrados. O professor diz que manterá exatamente a mesma tarefa para todos, porque fluxo significa deixar a turma trabalhando em silêncio. Ele está aplicando corretamente o conceito?",
+  "gold_answer": {
+    "full": "Não. Silêncio e trabalho simultâneo não garantem fluxo. O fluxo requer equilíbrio entre desafio e habilidade. Como a tarefa está fácil demais para alguns e difícil demais para outros, o professor deve ajustar desafio, apoio ou versões da atividade para aproximar cada grupo de uma zona produtiva.",
+    "minimal": "Não — fluxo exige equilíbrio entre desafio e habilidade; a tarefa precisa ser ajustada.",
+    "required_relations": [
+      "P1 é pré-condição para R1",
+      "C1 bloqueia manter a mesma tarefa quando há tédio e frustração por desequilíbrio"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "O que caracteriza o estado de fluxo?",
+      "expected_answer": "Imersão, concentração e produtividade na tarefa."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Qual é a condição central para o fluxo?",
+      "expected_answer": "Equilíbrio entre desafio da tarefa e habilidade do aluno."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "O que fazer quando a mesma tarefa gera tédio em uns e frustração em outros?",
+      "expected_answer": "Ajustar desafio, apoio ou versões da tarefa."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Se todos estão em silêncio, o fluxo está acontecendo.",
+      "Sim. O professor deve manter igualdade absoluta de tarefa, mesmo que ela esteja inadequada para vários alunos."
+    ],
+    "wrong_escalation": [
+      "O professor deve criar um plano individual completo e distinto para cada aluno em todas as aulas."
+    ],
+    "refusal": [
+      "Não é possível responder sem aplicar um teste psicológico de fluxo."
+    ],
+    "retrieval_failure_note": "Sem P1 e C1, o caso pode ser respondido superficialmente por preferência por diferenciação."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1",
+      "C1"
+    ],
+    "negative_control_query": "A professora oferece uma tarefa-base, um desafio extra para quem conclui cedo e pistas graduais para quem travou. Isso se aproxima do conceito de fluxo?",
+    "negative_control_gold": "Sim. Ela ajusta desafio e apoio para equilibrar tarefa e habilidade.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "78-85",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "case_id": "20_sequencia_aula_baseada_cerebro",
+  "metadata": {
+    "title": "Aula baseada no cérebro exige cadeia de atenção, relevância, atividade e consolidação",
+    "domain": "education",
+    "subdomains": [
+      "planejamento de aula",
+      "neuroeducação"
+    ],
+    "relation_type": "sequence",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Porta de entrada. A atenção é ponto de partida para aprendizagem; perguntas, histórias, surpresa ou desafios podem preparar o cérebro para processar o conteúdo.\n\nSeção B — Significado e segurança. Para que a aprendizagem seja profunda, o conteúdo deve se conectar ao que o aluno já sabe, à sua realidade ou utilidade. O ambiente emocional precisa ser seguro, pois medo e ansiedade prejudicam atenção e memória.\n\nSeção C — Atividade e consolidação. O aprendizado melhora quando há participação ativa, interações positivas, revisão e prática de recuperação distribuída ao longo do tempo. Uma explicação única seguida de quiz final não garante consolidação.",
+    "annotated": "<sequence id=\"SEQ1\">1. capturar atenção; 2. conectar ao conhecimento prévio/relevância; 3. manter segurança emocional; 4. promover atividade/interação; 5. consolidar com recuperação e revisão distribuída.</sequence>\n\n<contraindication id=\"C1\" blocks=\"lecture_only_design\" condition=\"objetivo é aprendizagem duradoura\">Uma exposição única com quiz final é insuficiente quando não inclui atenção, relevância, segurança, atividade e consolidação.</contraindication>",
+    "compiled": "case:\n    title: Aula baseada no cérebro exige cadeia de atenção, relevância, atividade e consolidação\n    domain: education\n    relation_type: sequence\n    complexity_level: 3\n  fragments:\n- id: SEQ1\n  statement: Cadeia didática: atenção -> relevância/prévio -> segurança -> atividade -> consolidação.\n- id: C1\n  statement: Exposição única + quiz final é contraindicada para aprendizagem duradoura.\n  relations:\n- SEQ1 orders brain-based lesson design\n- C1 blocks lecture-only plan for durable learning\n  decision:\n    correct_action: redesenhar a aula com atenção, relevância, segurança, atividade e prática distribuída"
+  },
+  "query": "Um assistente de IA propôs uma aula de 45 minutos com fala expositiva contínua, slides densos e um quiz apenas no final. O objetivo do professor é aprendizagem duradoura de um conceito novo. O plano está adequado às orientações baseadas no cérebro?",
+  "gold_answer": {
+    "full": "Não. O plano depende de exposição contínua e quiz final, mas ignora a cadeia necessária: capturar atenção, conectar ao conhecimento prévio e à relevância, manter segurança emocional, envolver os alunos ativamente e consolidar com prática de recuperação distribuída. Ele deve ser redesenhado em blocos com perguntas, exemplos significativos, interação e revisões ao longo do tempo.",
+    "minimal": "Não — para aprendizagem duradoura, a aula precisa combinar atenção, relevância, segurança emocional, atividade e consolidação distribuída.",
+    "required_relations": [
+      "SEQ1 define a cadeia de desenho da aula",
+      "C1 contraindica exposição única com quiz final como suficiente"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "SEQ1",
+      "probe": "Quais elementos compõem a cadeia de uma aula baseada no cérebro?",
+      "expected_answer": "Atenção, conexão com conhecimento prévio/relevância, segurança emocional, atividade/interação e consolidação por recuperação distribuída."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "Por que uma exposição única com quiz final é insuficiente para aprendizagem duradoura?",
+      "expected_answer": "Porque não garante atenção, relevância, segurança, participação ativa nem consolidação distribuída."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Se o conteúdo está nos slides e há quiz final, a aprendizagem duradoura está garantida.",
+      "Sim. Aulas baseadas no cérebro exigem apenas explicar bem e avaliar no final."
+    ],
+    "wrong_escalation": [
+      "O professor deve eliminar slides e quizzes de todas as aulas."
+    ],
+    "refusal": [
+      "Não é possível responder sem saber qual ferramenta de IA gerou o plano."
+    ],
+    "retrieval_failure_note": "Sem a cadeia completa, o item vira uma crítica genérica a aulas expositivas."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "SEQ1",
+      "C1"
+    ],
+    "negative_control_query": "O assistente propõe 8 minutos de pergunta-problema, conexão com exemplo cotidiano, explicação curta, atividade em pares, checagem sem punição e retomadas na semana. Isso está mais alinhado?",
+    "negative_control_gold": "Sim. O plano contempla a cadeia de atenção, relevância, segurança, atividade e consolidação.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "11-15, 45-61, 70-77, 86-94, 112-121",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

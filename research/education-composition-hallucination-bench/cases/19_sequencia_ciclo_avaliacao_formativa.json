@@ -1,0 +1,83 @@
+{
+  "case_id": "19_sequencia_ciclo_avaliacao_formativa",
+  "metadata": {
+    "title": "Ciclo formativo só se completa com feedback e replanejamento",
+    "domain": "education",
+    "subdomains": [
+      "ciclo avaliativo",
+      "rubricas",
+      "replanejamento"
+    ],
+    "relation_type": "sequence",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Ciclo formativo. A avaliação que ensina envolve uma sequência integrada: definir evidências ligadas à habilidade, construir rubricas curtas, coletar evidências durante atividades, dar feedback rápido e replanejar com base nos dados.\n\nSeção B — Dependência entre etapas. Rubrica e coleta de evidências não completam o ciclo se o aluno não recebe devolutiva e se o professor não usa os dados para ajustar o ensino.\n\nSeção C — Função transformadora. A avaliação deixa de ser apenas registro quando ilumina caminhos: mostra onde o aluno está, qual é o próximo passo e como o ensino será ajustado.",
+    "annotated": "<sequence id=\"SEQ1\">1. definir evidências; 2. construir rubrica curta; 3. coletar evidências durante atividades; 4. dar feedback rápido; 5. replanejar com base nos dados.</sequence>\n\n<precondition id=\"P1\" required_for=\"formative_cycle_complete\">O ciclo só é completo quando feedback e replanejamento acontecem após a coleta.</precondition>\n\n<principle id=\"PR1\">Avaliação transforma quando orienta aluno e professor, não quando apenas registra desempenho.</principle>",
+    "compiled": "case:\n    title: Ciclo formativo só se completa com feedback e replanejamento\n    domain: education\n    relation_type: sequence\n    complexity_level: 3\n  fragments:\n- id: SEQ1\n  statement: Ciclo: evidências -> rubrica -> coleta -> feedback -> replanejamento.\n- id: P1\n  statement: Feedback e replanejamento são necessários para completar o ciclo.\n- id: PR1\n  statement: Avaliação formativa orienta próximos passos de aluno e professor.\n  relations:\n- SEQ1 orders the formative cycle\n- P1 requires downstream action after collection\n  decision:\n    correct_action: completar o ciclo com devolutiva e ajuste do ensino"
+  },
+  "query": "A professora definiu evidências da BNCC, criou uma rubrica e marcou níveis em um checklist durante a atividade. Depois arquivou os dados para lançar notas, sem dar feedback aos alunos nem ajustar o planejamento. Ela completou o ciclo de avaliação formativa?",
+  "gold_answer": {
+    "full": "Não. Ela realizou etapas importantes, mas o ciclo formativo não se completa sem feedback rápido ao aluno e replanejamento com base nos dados. Do contrário, as evidências viram apenas registro. Para transformar ensino em aprendizagem, os dados precisam orientar próximos passos e ajustes no ensino.",
+    "minimal": "Não — faltam feedback ao aluno e replanejamento do ensino com base nos dados.",
+    "required_relations": [
+      "SEQ1 define a cadeia completa",
+      "P1 exige feedback e replanejamento após a coleta"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "SEQ1",
+      "probe": "Quais são as etapas do ciclo formativo descrito?",
+      "expected_answer": "Definir evidências, construir rubrica, coletar evidências, dar feedback rápido e replanejar com base nos dados."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "O que falta se há rubrica e checklist, mas não há devolutiva nem ajuste de ensino?",
+      "expected_answer": "Faltam feedback e replanejamento; o ciclo não está completo."
+    },
+    {
+      "fragment_id": "PR1",
+      "probe": "Quando a avaliação deixa de ser apenas registro?",
+      "expected_answer": "Quando orienta o aluno e o professor sobre próximos passos e ajustes."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Como ela coletou evidências com rubrica, a avaliação formativa já terminou.",
+      "Sim. O objetivo dos dados é apenas lançar notas com mais precisão."
+    ],
+    "wrong_escalation": [
+      "Não — a avaliação só seria formativa se eliminasse todas as notas da escola."
+    ],
+    "refusal": [
+      "Não posso responder sem ver a planilha de notas."
+    ],
+    "retrieval_failure_note": "Sem P1, o item não testa a dependência das etapas finais."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "SEQ1",
+      "P1",
+      "PR1"
+    ],
+    "negative_control_query": "A professora coletou evidências, devolveu feedback no mesmo dia e ajustou a aula seguinte para trabalhar a lacuna mais frequente. Ela completou melhor o ciclo?",
+    "negative_control_gold": "Sim. Ela usou os dados para orientar aluno e ensino, completando a lógica formativa.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "48-54, 55-61",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

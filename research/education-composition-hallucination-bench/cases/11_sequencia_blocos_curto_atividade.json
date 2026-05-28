@@ -1,0 +1,75 @@
+{
+  "case_id": "11_sequencia_blocos_curto_atividade",
+  "metadata": {
+    "title": "Aula longa deve ser organizada em blocos de atenção",
+    "domain": "education",
+    "subdomains": [
+      "atenção",
+      "planejamento de aula"
+    ],
+    "relation_type": "sequence",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Limite de atenção. A atenção sustentada dos alunos é limitada. Depois de um período de concentração, a mente tende a vagar.\n\nSeção B — Sequência didática recomendada. Para favorecer retenção, uma aula deve alternar blocos curtos de informação com momentos de discussão, prática, reflexão ou interação. A explicação contínua e longa aumenta a chance de perda de atenção.",
+    "annotated": "<rule id=\"R1\">A atenção sustentada dos alunos é limitada.</rule>\n\n<sequence id=\"SEQ1\" required_for=\"lesson_design_under_R1\">Organizar a aula em blocos curtos de informação intercalados com discussão, prática, reflexão ou interação.</sequence>",
+    "compiled": "case:\n    title: Aula longa deve ser organizada em blocos de atenção\n    domain: education\n    relation_type: sequence\n    complexity_level: 2\n  fragments:\n- id: R1\n  statement: Atenção sustentada é limitada.\n- id: SEQ1\n  statement: Planejamento deve alternar blocos curtos com atividades/interações.\n  relations:\n- SEQ1 operationalizes R1 for lesson planning\n  decision:\n    correct_action: dividir a explicação em blocos intercalados com atividade"
+  },
+  "query": "Um professor planejou 50 minutos de exposição contínua sobre um conteúdo novo, sem pausas, perguntas, discussão ou prática. Ele afirma que isso é melhor porque evita interrupções. O plano está alinhado à orientação baseada no cérebro?",
+  "gold_answer": {
+    "full": "Não. Como a atenção sustentada é limitada, uma exposição contínua longa tende a reduzir processamento e retenção. O plano deveria alternar blocos curtos de explicação com discussão, perguntas, prática ou reflexão.",
+    "minimal": "Não — a aula deve alternar blocos curtos de informação com atividades ou interação.",
+    "required_relations": [
+      "SEQ1 aplica a regra do limite de atenção ao desenho da aula"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "O que a regra afirma sobre atenção sustentada?",
+      "expected_answer": "Ela é limitada e tende a cair depois de certo período."
+    },
+    {
+      "fragment_id": "SEQ1",
+      "probe": "Como a aula deve ser organizada para respeitar esse limite?",
+      "expected_answer": "Em blocos curtos de informação intercalados com discussão, prática, reflexão ou interação."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Interrupções sempre prejudicam, então a exposição contínua é superior.",
+      "Sim. Se o professor domina o conteúdo, 50 minutos de fala são adequados para qualquer turma."
+    ],
+    "wrong_escalation": [
+      "O professor deve abandonar completamente a explicação oral."
+    ],
+    "refusal": [
+      "Não dá para avaliar sem assistir à aula inteira."
+    ],
+    "retrieval_failure_note": "Sem o fragmento de sequência, o item não distingue saber que atenção é limitada de saber como agir."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "SEQ1"
+    ],
+    "negative_control_query": "O professor planejou 12 minutos de explicação, 8 minutos de resolução em duplas, nova síntese curta e uma checagem final. Isso respeita a orientação?",
+    "negative_control_gold": "Sim. O plano alterna foco e atividade, reduzindo perda de atenção.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "11-15, 39-41",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}
