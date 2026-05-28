@@ -42,7 +42,7 @@ npm run build
 | Run on your own infra / behind a VPN | Open CKF |
 | 100% offline / air-gapped | Open CKF (heuristic mode) |
 | White-label deployment | Open CKF (MIT licensed) |
-| Lovable AI free credits | Hosted site (admin allowlist) |
+| Advanced AI free credits | Hosted site (admin allowlist) |
 
 # Research
 
