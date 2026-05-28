@@ -68,7 +68,7 @@ The materials are organized as a research timeline: from the motivating failure 
 - [Composition Hallucination Bench](10%20-%20research/composition-hallucination-bench)  
   A general RAG benchmark for testing whether models can compose implicit relations among retrieved fragments, such as exceptions, overrides, scope constraints, preconditions, temporal dependencies, contraindications, and procedural sequences.
 
-- [Education Composition Hallucination Bench](research/education-composition-hallucination-bench)  
+- [Education Composition Hallucination Bench](10%20-%20research/education-composition-hallucination-bench)  
   A pt-BR education benchmark for testing composition hallucination in pedagogical reasoning, assessment design, formative feedback, classroom decision-making, and brain-based learning strategies.
   
 ## Suggested reading order
