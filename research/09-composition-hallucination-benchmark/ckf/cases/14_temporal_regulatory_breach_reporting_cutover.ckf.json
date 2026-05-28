@@ -1,0 +1,121 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "temporal_regulatory_breach_reporting_cutover",
+    "title": "Temporal Regulatory Breach Reporting Cutover",
+    "language": "en",
+    "license": "CC-BY-4.0",
+    "source_status": "synthetic",
+    "domain": "regulatory",
+    "relation_type": "temporal_dependency",
+    "complexity_level": 2,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {},
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "S1"
+      },
+      {
+        "id": "F3",
+        "description": "T1"
+      }
+    ],
+    "raw_representation_sha256": "2e13b88017f661a1f2f80e263b19d23762037b80424e7c2f366764ecf8240b68",
+    "annotated_representation_sha256": "86857edba752163189aeb34adb2c927bb364c6778d9944f676dcf82936b08a3c",
+    "compiled_representation_sha256": "323c3b96f280a28a5caa4fcbbd2bd3f27c8f59536028c87adbe7959ddfda9563"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Synthetic Data Incident Reporting Rulebook.\n\nSection 3. Covered Incident Reporting. Covered processors must notify the Data Oversight Authority within seventy-two hours after confirming a reportable personal-data breach. The seventy-two-hour period begins at the time the processor confirms that production personal data was accessed or disclosed without authorization.\n\nSection 4. Sandbox and Masked Data. Incidents limited entirely to masked sandbox data are not reportable to the Data Oversight Authority under Section 3. Such incidents must still be recorded in the internal incident log within five business days. This exclusion does not apply if any production personal data was involved.\n\nSection 7. Small-Processor Pilot Cutover. Until 31 December 2025, processors enrolled in the small-processor pilot could report covered incidents within ten business days after confirmation. Effective 1 January 2026, the pilot reporting window ended, and all covered processors use the seventy-two-hour reporting window in Section 3. The applicable reporting window is determined by the incident confirmation date, not by the date the investigation began."
+      },
+      {
+        "id": "annotated",
+        "text": "Synthetic Data Incident Reporting Rulebook.\n\n<rule id=\"R1\">Section 3. Covered Incident Reporting. Covered processors must notify the Data Oversight Authority within seventy-two hours after confirming a reportable personal-data breach. The seventy-two-hour period begins at the time the processor confirms that production personal data was accessed or disclosed without authorization.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" condition=\"production personal data involved\">Section 4. Sandbox and Masked Data. Incidents limited entirely to masked sandbox data are not reportable to the Data Oversight Authority under Section 3. Such incidents must still be recorded in the internal incident log within five business days. This exclusion does not apply if any production personal data was involved.</scope>\n\n<temporal_dependency id=\"T1\" governs=\"reporting_window\" cutover_date=\"2026-01-01\" anchor=\"incident_confirmation_date\" retroactive=\"false\">Section 7. Small-Processor Pilot Cutover. Until 31 December 2025, processors enrolled in the small-processor pilot could report covered incidents within ten business days after confirmation. Effective 1 January 2026, the pilot reporting window ended, and all covered processors use the seventy-two-hour reporting window in Section 3. The applicable reporting window is determined by the incident confirmation date, not by the date the investigation began.</temporal_dependency>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    name: covered_incident_reporting\n    applies_to: covered_processors\n    trigger: confirmed_reportable_personal_data_breach\n    authority: Data Oversight Authority\n    reporting_window: 72_hours\n    window_start: confirmation_time\nscopes:\n  - id: S1\n    bounds: R1\n    reportable_when:\n      production_personal_data_involved: true\n    excluded_when:\n      data_environment: masked_sandbox_only\n    excluded_incident_requirement:\n      internal_incident_log_window: 5_business_days\n    exclusion_not_available_if:\n      production_personal_data_involved: true\ntemporal_dependencies:\n  - id: T1\n    governs: reporting_window\n    anchor: incident_confirmation_date\n    before_or_on: 2025-12-31\n    small_processor_pilot_window: 10_business_days\n    on_or_after: 2026-01-01\n    all_processors_window: 72_hours\n    investigation_start_date_irrelevant: true\n    priority: date_anchor_controls_window"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "temporal_dependency",
+        "description": "Synthetic regulatory/tax-style case. Level-2 composition: temporal cutover plus production-data scope."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A processor enrolled in the small-processor pilot began investigating suspicious access on 29 December 2025. On 2 January 2026 at 10:00, it confirmed that production customer email addresses had been disclosed without authorization. What reporting window applies?",
+        "expected_decision": "Seventy-two hours from confirmation on 2 January 2026 at 10:00; the ten-business-day pilot window does not apply.",
+        "rationale": "The processor must notify the Data Oversight Authority within seventy-two hours after confirmation on 2 January 2026 at 10:00. The incident involves production personal data, so the sandbox exclusion does not apply. Although the investigation began in December and the processor was in the small-processor pilot, Section 7 anchors the reporting window to the confirmation date. Because confirmation occurred on or after 1 January 2026, the pilot ten-business-day window no longer applies."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A processor enrolled in the small-processor pilot began investigating suspicious access on 29 December 2025. On 2 January 2026 at 10:00, it confirmed that production customer email addresses had been disclosed without authorization. What reporting window applies?",
+        "answer": "The processor must notify the Data Oversight Authority within seventy-two hours after confirmation on 2 January 2026 at 10:00. The incident involves production personal data, so the sandbox exclusion does not apply. Although the investigation began in December and the processor was in the small-processor pilot, Section 7 anchors the reporting window to the confirmation date. Because confirmation occurred on or after 1 January 2026, the pilot ten-business-day window no longer applies."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "It begins when the processor confirms that production personal data was accessed or disclosed without authorization."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "No. They are not reportable to the Authority but must be recorded internally within five business days."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "The incident confirmation date determines the applicable window, not the investigation start date."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "The processor has ten business days because the investigation began before 1 January 2026 and it was enrolled in the pilot.",
+        "No Authority notice is required because small processors are excluded after the cutover."
+      ],
+      "wrong_escalation": [
+        "The processor must notify within one hour because any post-cutover breach is automatically critical.",
+        "The processor must notify a court rather than the Data Oversight Authority."
+      ],
+      "refusal": [
+        "The rulebook does not say whether the investigation start date or confirmation date controls."
+      ],
+      "retrieval_failure_note": "If Section 7 is absent, choosing a reporting window is a retrieval failure. If Section 4 is absent, determining reportability is incomplete."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "S1",
+        "T1"
+      ],
+      "negative_control_query": "A small-processor pilot participant confirmed on 30 December 2025 that production personal data had been disclosed without authorization. What reporting window applies?",
+      "negative_control_gold": "Ten business days after confirmation. The incident is reportable production data, and the confirmation date falls before the 1 January 2026 cutover.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "low"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "14_temporal_regulatory_breach_reporting_cutover.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

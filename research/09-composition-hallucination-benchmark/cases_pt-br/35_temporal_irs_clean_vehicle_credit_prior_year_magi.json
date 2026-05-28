@@ -1,0 +1,76 @@
+{
+  "case_id": "temporal_irs_clean_vehicle_credit_prior_year_magi",
+  "metadata": {
+    "domain": "regulatory",
+    "relation_type": "temporal_dependency",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from IRS clean vehicle credit guidance. Tax evaluation artifact only. Level-2 dependência temporal: current or prior-year MAGI can be used, whichever is less.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Used Clean Vehicle Credit",
+    "source_organization": "Internal Revenue Service",
+    "source_url": "https://www.irs.gov/credits-deductions/used-clean-vehicle-credit",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Used clean vehicle credit income note.\n\nSeção A. Income limit. The used clean vehicle credit has modified adjusted gross income limits that depend on filing status.\n\nSeção B. Year selection. For the income test, the contribuinte pode use modified AGI from either the year the vehicle is placed in service or the preceding year, whichever is less. If income is below the threshold in one of those two years, the income limit is satisfied.\n\nSeção C. Other elegibilidade. The vehicle deve still satisfy separate exigements, including used-vehicle and sale exigements. Passing the income test alone does not prove the whole credit.",
+    "annotated": "Used clean vehicle credit income note.\n\n<rule id=\"R1\">Seção A. Income limit. The used clean vehicle credit has modified adjusted gross income limits that depend on filing status.</rule>\n\n<temporal_dependency id=\"T1\" applies_to=\"R1\">Seção B. Year selection. For the income test, the contribuinte pode use modified AGI from either the year the vehicle is placed in service or the preceding year, whichever is less. If income is below the threshold in one of those two years, the income limit is satisfied.</temporal_dependency>\n\n<scope id=\"S1\">Seção C. Other elegibilidade. The vehicle deve still satisfy separate exigements, including used-vehicle and sale exigements. Passing the income test alone does not prove the whole credit.</scope>",
+    "compiled": "regras:\n  - id: R1\n    credit: used_clean_vehicle_credit\n    exigement: modified_AGI_not_above_filing_status_threshold\n  - id: T1\n    income_years_considered:\n      - year_vehicle_placed_in_service\n      - preceding_year\n    comparison: use_lesser_MAGI\n    passes_if_below_threshold_in_either_year: true\n  - id: S1\n    income_test_not_sufficient_for_entire_credit: true\n    other_exigements_still_apply: [vehicle_exigements, sale_exigements]"
+  },
+  "query": "A contribuinte takes delivery of a used clean vehicle in 2025. Their 2025 MAGI is above the relevant threshold, but their 2024 MAGI is below it. Does the income limit automatically fail porque the delivery-year income is too high?",
+  "gold_answer": {
+    "full": "No. The income test can use the lesser of the delivery-year MAGI and the prior-year MAGI. If the prior-year MAGI is below the threshold, the income limit is satisfied, embora other vehicle and sale exigements still need to be met.",
+    "minimal": "No. Prior-year MAGI pode be used if it is lower and below the threshold.",
+    "required_relations": [
+      "temporal_dependency:T1 permitirs current/prior-year MAGI comparison",
+      "escopo:S1 prevents treating income test as full credit elegibilidade"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que does the income limit depend on?",
+      "expected_answer": "Modified AGI thresholds based on filing status."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Which years pode be used for the used clean vehicle income test?",
+      "expected_answer": "The year the vehicle is placed in service and the preceding year, using the lesser MAGI."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Does passing the income test alone prove full credit elegibilidade?",
+      "expected_answer": "No. Other vehicle and sale exigements still apply."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "The credit fails porque only 2025 income matters.",
+      "The credit is fully guaranteed porque the 2024 MAGI is below the threshold."
+    ],
+    "wrong_escalation": [
+      "Use only the year the vehicle was purchased by the dealer, not the contribuinte delivery year or prior year."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "T1",
+      "S1"
+    ],
+    "negative_control_query": "A contribuinte has MAGI above the relevant threshold in both the delivery year and the preceding year. Does the year-selection regra rescue the income test?",
+    "negative_control_gold": "No. If both years are above the threshold, the income limit is not satisfied.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

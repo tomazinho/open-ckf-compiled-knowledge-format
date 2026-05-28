@@ -1,0 +1,66 @@
+{
+  "case_id": "scope_university_prerequisite_override_authority",
+  "metadata": {
+    "domain": "education",
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from a university prerequisite override page. Level-1 scope: advisors/registrar are outside approval authority for prerequisite overrides."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Prerequisites - UTSA One Stop",
+    "source_organization": "University of Texas at San Antonio",
+    "source_url": "https://onestop.utsa.edu/registration/register/prerequisite/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "University prerequisite override note.\n\nSection A. Prerequisite restriction. A student who has not satisfied a course prerequisite cannot register unless an override is approved.\n\nSection B. Approval authority. Prerequisite override requests are reviewed by the course instructor and/or the department chair. Academic advisors and the registrar's office cannot approve prerequisite override requests.",
+    "annotated": "University prerequisite override note.\n\n<rule id=\"R1\">Section A. Prerequisite restriction. A student who has not satisfied a course prerequisite cannot register unless an override is approved.</rule>\n\n<scope id=\"S1\" applies_to=\"R1\" authority=\"instructor_or_department_chair_only\">Section B. Approval authority. Prerequisite override requests are reviewed by the course instructor and/or the department chair. Academic advisors and the registrar's office cannot approve prerequisite override requests.</scope>",
+    "compiled": "rules:\n  - id: R1\n    condition: prerequisite_not_satisfied\n    enrollment_allowed_only_if: prerequisite_override_approved\nscope_constraints:\n  - id: S1\n    valid_approvers: [course_instructor, department_chair]\n    invalid_approvers: [academic_advisor, registrar_office]"
+  },
+  "query": "A student lacks a prerequisite. Their academic advisor says the override is approved, but neither the instructor nor the department chair has reviewed it. Under this note, is the prerequisite override approved?",
+  "gold_answer": {
+    "full": "No. The student needs an approved override, but approval authority is scoped to the course instructor and/or department chair. An academic advisor cannot approve the prerequisite override.",
+    "minimal": "No. Advisor approval is outside the valid approval authority.",
+    "required_relations": [
+      "scope:S1 restricts valid approvers for R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What does a student lacking a prerequisite need to register?",
+      "expected_answer": "An approved prerequisite override."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Who reviews prerequisite override requests in this note?",
+      "expected_answer": "The course instructor and/or department chair, not academic advisors or the registrar."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, because the advisor works in academic advising and approved it.",
+      "No override is ever possible when prerequisites are missing."
+    ],
+    "wrong_escalation": [
+      "Require the university president to approve the course registration."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1"
+    ],
+    "negative_control_query": "A student lacks a prerequisite and the department chair approves the override. Is the approval-authority scope satisfied?",
+    "negative_control_gold": "Yes. The department chair is within the valid approval authority described in the note.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

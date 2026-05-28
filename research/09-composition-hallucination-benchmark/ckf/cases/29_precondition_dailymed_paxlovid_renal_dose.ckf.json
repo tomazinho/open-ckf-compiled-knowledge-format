@@ -1,0 +1,131 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "precondition_dailymed_paxlovid_renal_dose",
+    "title": "Precondition Dailymed Paxlovid Renal Dose",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "clinical",
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "PAXLOVID label",
+      "source_organization": "DailyMed / U.S. National Library of Medicine",
+      "source_url": "https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=human&query=Nirmatrelvir",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "P1"
+      },
+      {
+        "id": "F3",
+        "description": "S1"
+      },
+      {
+        "id": "F4",
+        "description": "S2"
+      }
+    ],
+    "raw_representation_sha256": "b4f5761d0a440744f0ff0fc83ad6c1935465982616e73d39b565a03a2a04549f",
+    "annotated_representation_sha256": "e107fee4f8776e74915c1739f03131c330b30ffb7e1ff95897ff28e73a95fc55",
+    "compiled_representation_sha256": "a16a94ee9ca89dfd75e7a2ac4f37c5a1cf58447f124f8d3d23090a6f6f289a48"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Paxlovid renal dosing note.\n\nSection A. Standard adult dosing. Paxlovid has a standard dosing regimen for patients whose renal function is normal or only mildly impaired.\n\nSection B. Renal impairment assessment. Renal impairment increases nirmatrelvir exposure. Before selecting the regimen, determine the patient's eGFR category.\n\nSection C. Moderate impairment. For eGFR from 30 to less than 60 mL/min, the dose should be reduced rather than using the standard regimen.\n\nSection D. Severe impairment. For eGFR below 30 mL/min, including hemodialysis, a reduced dose and reduced dose frequency are used under the label's severe-impairment regimen."
+      },
+      {
+        "id": "annotated",
+        "text": "Paxlovid renal dosing note.\n\n<rule id=\"R1\">Section A. Standard adult dosing. Paxlovid has a standard dosing regimen for patients whose renal function is normal or only mildly impaired.</rule>\n\n<precondition id=\"P1\" applies_to=\"R1\">Section B. Renal impairment assessment. Renal impairment increases nirmatrelvir exposure. Before selecting the regimen, determine the patient's eGFR category.</precondition>\n\n<scope id=\"S1\" overrides=\"R1\" condition=\"30 <= eGFR < 60\">Section C. Moderate impairment. For eGFR from 30 to less than 60 mL/min, the dose should be reduced rather than using the standard regimen.</scope>\n\n<scope id=\"S2\" overrides=\"R1\" condition=\"eGFR < 30\">Section D. Severe impairment. For eGFR below 30 mL/min, including hemodialysis, a reduced dose and reduced dose frequency are used under the label's severe-impairment regimen.</scope>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    regimen: standard\n    applies_when:\n      renal_impairment: none_or_mild\npreconditions:\n  - id: P1\n    before_regimen_selection: determine_eGFR_category\nscope_rules:\n  - id: S1\n    condition: '30 <= eGFR < 60'\n    regimen: reduced_dose\n    overrides: R1\n  - id: S2\n    condition: 'eGFR < 30'\n    regimen: reduced_dose_and_reduced_frequency\n    overrides: R1"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "precondition",
+        "description": "Adapted from a DailyMed PAXLOVID label. Clinical evaluation artifact only. Level-2 precondition/scope: renal function changes dose instead of simple standard dosing."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A patient has eGFR 42 mL/min and is otherwise being considered for Paxlovid. Should the standard regimen be used just because eGFR is above 30?",
+        "expected_decision": "No. eGFR 42 requires the moderate renal impairment reduced dose, not the standard regimen.",
+        "rationale": "No. eGFR 42 falls in the moderate renal impairment range, where the dose should be reduced. Being above 30 avoids the severe-impairment regimen, but it does not permit standard dosing."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A patient has eGFR 42 mL/min and is otherwise being considered for Paxlovid. Should the standard regimen be used just because eGFR is above 30?",
+        "answer": "No. eGFR 42 falls in the moderate renal impairment range, where the dose should be reduced. Being above 30 avoids the severe-impairment regimen, but it does not permit standard dosing."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "When renal function is normal or only mildly impaired."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "The patient's eGFR category."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "A reduced dose."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Use standard dosing because eGFR is above 30.",
+        "Use the severe impairment regimen because the eGFR is below 60."
+      ],
+      "wrong_escalation": [
+        "Deny all antiviral therapy because renal impairment exists."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "P1",
+        "S1",
+        "S2"
+      ],
+      "negative_control_query": "A patient has eGFR 72 mL/min. Is the moderate or severe renal adjustment triggered?",
+      "negative_control_gold": "No. eGFR 72 is not in the moderate or severe renal impairment categories described here.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "29_precondition_dailymed_paxlovid_renal_dose.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "case_id": "override_aws_s3_lifecycle_same_day_precedence",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "override",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from AWS S3 Lifecycle precedence regras. Level-2 sobreposição: same-day lifecycle actions have fixed precedence.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Amazon S3 Lifecycle configuration examples",
+    "source_organization": "Amazon Web Services",
+    "source_url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-configuration-examples.html",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "S3 lifecycle note.\n\nSeção A. Lifecycle actions. A bucket can have multiple lifecycle regras that make an object elegível for actions such as transition to another storage class, expiration, or creation of a delete marker.\n\nSeção B. Same-day precedence. If multiple lifecycle regras make the same object elegível for more than one action on the same day, S3 follows precedence regras: permanent deletion takes precedence over transition, and transition takes precedence over creating a delete marker.",
+    "annotated": "S3 lifecycle note.\n\n<rule id=\"R1\">Seção A. Lifecycle actions. A bucket can have multiple lifecycle regras that make an object elegível for actions such as transition to another storage class, expiration, or creation of a delete marker.</rule>\n\n<override id=\"O1\" applies_to=\"R1\" condition=\"same object eligible for multiple lifecycle actions on same day\">Seção B. Same-day precedence. If multiple lifecycle regras make the same object elegível for more than one action on the same day, S3 follows precedence regras: permanent deletion takes precedence over transition, and transition takes precedence over creating a delete marker.</override>",
+    "compiled": "regras:\n  - id: R1\n    lifecycle_actions: [transition, expiration, create_delete_marker, permanent_deletion]\nsobreposiçãos:\n  - id: O1\n    trigger: same_object_same_day_multiple_actions\n    precedence_order:\n      - permanent_deletion\n      - transition\n      - create_delete_marker"
+  },
+  "query": "An S3 object becomes elegível today for both permanent deletion and transition to another storage class under two lifecycle regras. Which lifecycle action takes precedence?",
+  "gold_answer": {
+    "full": "Permanent deletion takes precedence. The general availability of transition does not control when the same object is also elegível for permanent deletion on the same day.",
+    "minimal": "Permanent deletion takes precedence over transition.",
+    "required_relations": [
+      "sobreposição:O1 orders same-day lifecycle actions"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que kinds of actions can lifecycle regras trigger?",
+      "expected_answer": "Actions such as transition, expiration, delete marker creation, or permanent deletion."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "Qual/O que takes precedence when permanent deletion and transition are both due on the same day?",
+      "expected_answer": "Permanent deletion takes precedence over transition."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Transition it first porque lifecycle transitions are configured for the object.",
+      "Create a delete marker porque expiration is one of the regras."
+    ],
+    "wrong_escalation": [
+      "Disable all lifecycle regras to avoid conflict."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "O1"
+    ],
+    "negative_control_query": "An S3 object becomes elegível today for transition and creation of a delete marker, but not permanent deletion. Which action takes precedence?",
+    "negative_control_gold": "Transition takes precedence over creation of a delete marker.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

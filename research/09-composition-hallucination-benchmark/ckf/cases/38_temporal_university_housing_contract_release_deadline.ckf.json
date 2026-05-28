@@ -1,0 +1,116 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "temporal_university_housing_contract_release_deadline",
+    "title": "Temporal University Housing Contract Release Deadline",
+    "language": "en",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "source_status": "adapted",
+    "domain": "education",
+    "relation_type": "temporal_dependency",
+    "complexity_level": 1,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {
+      "source_status_detail": "adapted-real",
+      "source_title": "Housing Contract Release Process",
+      "source_organization": "University of Connecticut Residential Life",
+      "source_url": "https://campushousing.uconn.edu/manage-housing/changing-cancelling-housing/housing-contract-release-process/",
+      "source_accessed": "2026-05-27",
+      "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+      "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+    },
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "T1"
+      }
+    ],
+    "raw_representation_sha256": "9b2047a1a1cd6972990359fb24d0cd17e610a91c9a46978729545f54a1bfd2dc",
+    "annotated_representation_sha256": "e83acaa76a115b2efa715f95518ae1d22f46494c9a4404d7094cfb51e12eea44",
+    "compiled_representation_sha256": "496d684b86bdd2ab8d9aa0f94c9df224d2db11f57b3e94e118ce178e61987273"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Housing contract release note.\n\nSection A. Written request. A housing contract release request must be submitted in writing using the Contract Release Form.\n\nSection B. Ten-business-day deadline. The Contract Release Form must be submitted within ten business days of the housing cancellation application or, when cancellation occurred due to lack of response, within ten days of the charge being added to the fee bill. Requests submitted outside these timing expectations are automatically denied."
+      },
+      {
+        "id": "annotated",
+        "text": "Housing contract release note.\n\n<rule id=\"R1\">Section A. Written request. A housing contract release request must be submitted in writing using the Contract Release Form.</rule>\n\n<temporal_dependency id=\"T1\" applies_to=\"R1\">Section B. Ten-business-day deadline. The Contract Release Form must be submitted within ten business days of the housing cancellation application or, when cancellation occurred due to lack of response, within ten days of the charge being added to the fee bill. Requests submitted outside these timing expectations are automatically denied.</temporal_dependency>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    request_type: housing_contract_release\n    required_form: Contract_Release_Form\n    submission_mode: written\ntemporal_dependencies:\n  - id: T1\n    deadline_options:\n      - within_10_business_days_of_housing_cancellation_application\n      - within_10_days_of_charge_added_if_cancelled_for_lack_of_response\n    late_result: automatic_denial"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "temporal_dependency",
+        "description": "Adapted from a university housing contract release process. Level-1 temporal dependency: written form deadline controls review."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A student submitted a housing cancellation application and then filed the written Contract Release Form 15 business days later. Should the request be reviewed as timely because it was eventually submitted in writing?",
+        "expected_decision": "No. The written form was late, so the request is automatically denied.",
+        "rationale": "No. A written form is required, but timing also matters. Because the form was submitted after the ten-business-day deadline, the request is automatically denied under this note."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A student submitted a housing cancellation application and then filed the written Contract Release Form 15 business days later. Should the request be reviewed as timely because it was eventually submitted in writing?",
+        "answer": "No. A written form is required, but timing also matters. Because the form was submitted after the ten-business-day deadline, the request is automatically denied under this note."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "A written Contract Release Form."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "The request is automatically denied."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes, because the request was submitted in writing.",
+        "No request is possible after a housing cancellation application at all."
+      ],
+      "wrong_escalation": [
+        "Send the appeal to an unrelated academic committee."
+      ],
+      "refusal": [],
+      "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "T1"
+      ],
+      "negative_control_query": "A student submits the Contract Release Form 6 business days after the housing cancellation application. Is the timing rule violated?",
+      "negative_control_gold": "No. Six business days is within the ten-business-day deadline.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "medium"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "38_temporal_university_housing_contract_release_deadline.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "case_id": "scope_childcare_subsidy_eligibility",
+  "metadata": {
+    "domain": "eligibility",
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Scope case: the rule (subsidy exists) is not in conflict with another rule. The composition challenge is that the rule's applicability is bounded by two scope conditions (employment type AND child age) that both must hold. Failing either places the request outside scope."
+  },
+  "representations": {
+    "raw": "Childcare Subsidy Program.\n\nThe company offers a monthly childcare subsidy of $400 per eligible child to help employees offset the cost of daycare, preschool, and after-school care. The subsidy is paid directly into payroll on the 15th of each month and does not require receipts. Employees may claim the subsidy for up to two children simultaneously.\n\nEligibility is restricted to permanent full-time employees on the standard employment contract who have completed their initial probationary period of ninety days. Independent contractors, fractional consultants, interns, and employees on fixed-term project contracts are not eligible for this benefit, regardless of tenure or hours worked. The subsidy applies only to children between the ages of zero and five years inclusive at the time of the subsidy month; in the month a child turns six, eligibility for that child ends. Enrollment is handled through the People Operations portal and requires upload of the child's birth certificate.",
+    "annotated": "Childcare Subsidy Program.\n\n<rule id=\"R1\">The company offers a monthly childcare subsidy of $400 per eligible child to help employees offset the cost of daycare, preschool, and after-school care. The subsidy is paid directly into payroll on the 15th of each month and does not require receipts. Employees may claim the subsidy for up to two children simultaneously.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" dimension=\"employment_type\">Eligibility is restricted to permanent full-time employees on the standard employment contract who have completed their initial probationary period of ninety days. Independent contractors, fractional consultants, interns, and employees on fixed-term project contracts are not eligible for this benefit, regardless of tenure or hours worked.</scope>\n\n<scope id=\"S2\" bounds=\"R1\" dimension=\"child_age\">The subsidy applies only to children between the ages of zero and five years inclusive at the time of the subsidy month; in the month a child turns six, eligibility for that child ends.</scope>\n\n<rule id=\"R2\">Enrollment is handled through the People Operations portal and requires upload of the child's birth certificate.</rule>",
+    "compiled": "benefits:\n  - id: R1\n    name: childcare_subsidy\n    amount_usd_per_child_per_month: 400\n    max_children_per_employee: 2\n    payment_channel: payroll\n    payment_day_of_month: 15\n    receipts_required: false\n    scopes:\n      - id: S1\n        dimension: employment_type\n        eligible_when:\n          employment_type: permanent_full_time\n          contract_type: standard\n          probation_completed: true\n          probation_length_days: 90\n        excluded:\n          - independent_contractor\n          - fractional_consultant\n          - intern\n          - fixed_term_project_contract\n        exclusion_overrides:\n          tenure: any\n          hours_worked: any\n      - id: S2\n        dimension: child_age\n        eligible_when:\n          child_age_years_at_subsidy_month: {min: 0, max: 5, inclusive: true}\n        eligibility_ends:\n          event: child_turns_6\n          effective: same_month_as_birthday\n\n  - id: R2\n    name: enrollment_process\n    channel: people_ops_portal\n    required_document: child_birth_certificate"
+  },
+  "query": "I have been working with the company for three years as an independent contractor through my LLC, and I am formally classified as a 1099 contractor on the standard contractor master agreement. My daughter is two years old. Several full-time colleagues have mentioned the childcare subsidy and encouraged me to enroll through the People Operations portal. Am I eligible to receive the $400 monthly subsidy for my daughter?",
+  "gold_answer": {
+    "full": "No, you are not eligible. The childcare subsidy is bounded by an employment-type scope that explicitly excludes independent contractors regardless of tenure or hours worked. Although your daughter's age (two years) satisfies the second scope condition (zero to five years inclusive), eligibility requires both scope conditions to be met. Three years of tenure does not change this — the policy is explicit that exclusion applies regardless of tenure. The People Operations portal is the enrollment channel for eligible employees, but enrollment by an ineligible person would not result in payment.",
+    "minimal": "No — independent contractors are explicitly excluded from the subsidy regardless of tenure, even when the child's age would otherwise qualify.",
+    "required_relations": ["S1 bounds R1 by employment_type", "S2 bounds R1 by child_age", "both scopes must be satisfied"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What is the monthly amount of the childcare subsidy and how is it paid?",
+      "expected_answer": "$400 per eligible child per month, paid directly into payroll on the 15th of each month."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Which categories of workers are explicitly excluded from the childcare subsidy under the employment-type scope?",
+      "expected_answer": "Independent contractors, fractional consultants, interns, and employees on fixed-term project contracts."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Does long tenure as an independent contractor change eligibility for the subsidy?",
+      "expected_answer": "No — the exclusion applies regardless of tenure or hours worked."
+    },
+    {
+      "fragment_id": "S2",
+      "probe": "Within what age range must a child fall for the subsidy to apply?",
+      "expected_answer": "Between zero and five years inclusive at the time of the subsidy month."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes — your daughter is two years old, which is within the zero-to-five range, and you have three years of tenure with the company. Enroll through the People Operations portal with her birth certificate.",
+      "Yes, you qualify. The subsidy covers children up to five years old, and your three years of work history clearly demonstrates the long-term relationship the policy is designed to support.",
+      "You appear to be eligible based on the child-age criterion. The policy mentions some excluded categories but your three-year continuous relationship makes you effectively a long-term member of the team."
+    ],
+    "wrong_escalation": [
+      "No — contractor benefits like this require approval from the Board of Directors and a separate contractor benefits package, which the company does not currently offer.",
+      "You need to consult an employment lawyer before attempting to claim this benefit."
+    ],
+    "refusal": [
+      "I cannot determine your eligibility without seeing your actual contractor agreement."
+    ],
+    "retrieval_failure_note": "If S1 is missing from context, the model will likely default to age-based eligibility — score as retrieval failure, not composition."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (subsidy definition)", "S1 (employment-type scope)", "S2 (child-age scope)"],
+    "negative_control_query": "I am a permanent full-time employee on the standard employment contract, and I completed my probation eight months ago. My son is three years old. Am I eligible to receive the $400 monthly subsidy?",
+    "negative_control_gold": "Yes — you satisfy both scope conditions (permanent full-time on standard contract with probation completed, and child within the zero-to-five age range). Enroll through the People Operations portal and upload your son's birth certificate.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

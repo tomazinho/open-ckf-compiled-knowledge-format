@@ -1,0 +1,78 @@
+{
+  "case_id": "chained_education_loan_program",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "exception",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Level-3 chained relations. The case combines four relation types that must all be composed: scope (S1 - employment type), threshold-based precondition (P1 - tenure with a temporal version), amount-based precondition (P2 - extra approver above threshold), and temporal dependency (T1 - interest rate cutover). The primary relation_type label is 'exception' because P2 effectively functions as an exception to the standard approval flow when the amount exceeds the threshold, but the case is intentionally multi-relational. A correct answer requires touching all four. The most pedagogically interesting failure modes are partial composition — getting two or three of the four relations right while missing one."
+  },
+  "representations": {
+    "raw": "Education Loan Program — Internal Policy.\n\nThe company operates an internal Education Loan Program to help employees finance approved continuing-education and degree programs. Loans are offered up to a maximum principal of $20,000 with a repayment term of 36 months. Loan disbursement occurs within ten business days of full approval. Repayment is handled through payroll deduction.\n\nEligibility is restricted to permanent full-time employees on the standard employment contract. Independent contractors, fractional consultants, interns, and employees on fixed-term project contracts are not eligible for the program, regardless of tenure.\n\nBefore submitting an application, the employee must have completed a minimum tenure with the company. Until 30 June 2025, the minimum-tenure requirement was twelve months of continuous full-time employment. Effective 1 July 2025, the minimum-tenure requirement was raised to twenty-four months of continuous full-time employment, applied to all new applications submitted on or after that date. Applications submitted before 1 July 2025 are evaluated against the prior twelve-month requirement, even if the approval process extends into the post-cutover period.\n\nFor loan amounts of $10,000 or less, the employee's direct manager is the sole required approver. For loan amounts above $10,000, both the direct manager and the Chief Financial Officer must approve in writing; the CFO approval is required regardless of the employee's role, department, or business unit. This dual-approval requirement does not change the maximum principal limit.\n\nInterest rates on Education Loan Program loans were set at 2.0 percent per annum on the disbursed principal until 30 June 2025. Effective 1 July 2025, the rate was raised to 4.0 percent per annum for all applications submitted on or after that date, in line with updated treasury benchmarks. Applications submitted before 1 July 2025 retain the prior 2.0 percent rate for the full life of the loan, including for disbursements that occur after the cutover, provided the application was complete and on file before the cutover.",
+    "annotated": "Education Loan Program — Internal Policy.\n\n<rule id=\"R1\">The company operates an internal Education Loan Program to help employees finance approved continuing-education and degree programs. Loans are offered up to a maximum principal of $20,000 with a repayment term of 36 months. Loan disbursement occurs within ten business days of full approval. Repayment is handled through payroll deduction.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" dimension=\"employment_type\">Eligibility is restricted to permanent full-time employees on the standard employment contract. Independent contractors, fractional consultants, interns, and employees on fixed-term project contracts are not eligible for the program, regardless of tenure.</scope>\n\n<precondition id=\"P1\" required_for=\"R1\" condition=\"minimum tenure satisfied per applicable version\">Before submitting an application, the employee must have completed a minimum tenure with the company.</precondition>\n\n<temporal_dependency id=\"T1\" governs=\"version selection for P1\" cutover_date=\"2025-07-01\" anchor=\"application_submission_date\" retroactive=\"false\">Until 30 June 2025, the minimum-tenure requirement was twelve months of continuous full-time employment. Effective 1 July 2025, the minimum-tenure requirement was raised to twenty-four months of continuous full-time employment, applied to all new applications submitted on or after that date. Applications submitted before 1 July 2025 are evaluated against the prior twelve-month requirement, even if the approval process extends into the post-cutover period.</temporal_dependency>\n\n<exception id=\"E1\" overrides=\"default_approver_for_R1\" condition=\"loan_amount > 10000\">For loan amounts of $10,000 or less, the employee's direct manager is the sole required approver. For loan amounts above $10,000, both the direct manager and the Chief Financial Officer must approve in writing; the CFO approval is required regardless of the employee's role, department, or business unit. This dual-approval requirement does not change the maximum principal limit.</exception>\n\n<temporal_dependency id=\"T2\" governs=\"interest_rate selection\" cutover_date=\"2025-07-01\" anchor=\"application_submission_date\" retroactive=\"false\">Interest rates on Education Loan Program loans were set at 2.0 percent per annum on the disbursed principal until 30 June 2025. Effective 1 July 2025, the rate was raised to 4.0 percent per annum for all applications submitted on or after that date, in line with updated treasury benchmarks. Applications submitted before 1 July 2025 retain the prior 2.0 percent rate for the full life of the loan, including for disbursements that occur after the cutover, provided the application was complete and on file before the cutover.</temporal_dependency>",
+    "compiled": "program:\n  id: R1\n  name: education_loan_program\n  max_principal_usd: 20000\n  repayment_term_months: 36\n  disbursement_within_business_days: 10\n  repayment_mechanism: payroll_deduction\n\neligibility_scope:\n  id: S1\n  bounds: R1\n  dimension: employment_type\n  eligible_when:\n    employment_type: permanent_full_time\n    contract_type: standard\n  excluded_regardless_of_tenure:\n    - independent_contractor\n    - fractional_consultant\n    - intern\n    - fixed_term_project_contract\n\nminimum_tenure_precondition:\n  id: P1\n  required_for: R1\n  versions:\n    - version_id: P1_pre_2025_07\n      months_required: 12\n      applies_when:\n        application_submission_date:\n          before: \"2025-07-01\"\n    - version_id: P1_post_2025_07\n      months_required: 24\n      applies_when:\n        application_submission_date:\n          on_or_after: \"2025-07-01\"\n  selector:\n    id: T1\n    anchor: application_submission_date\n    retroactive: false\n    crosses_cutover_during_approval: prior_version_retained\n\napprover_requirement:\n  id: E1\n  governs: who_must_approve\n  default_when_amount_le_10000:\n    approvers: [direct_manager]\n  exception_when_amount_gt_10000:\n    approvers: [direct_manager, chief_financial_officer]\n    cfo_required_regardless_of:\n      - employee_role\n      - department\n      - business_unit\n  does_not_change: max_principal_limit\n\ninterest_rate_selector:\n  id: T2\n  governs: applicable_interest_rate\n  anchor: application_submission_date\n  retroactive: false\n  rate_table:\n    - version_id: rate_pre_2025_07\n      annual_rate_percent: 2.0\n      applies_when:\n        application_submission_date:\n          before: \"2025-07-01\"\n    - version_id: rate_post_2025_07\n      annual_rate_percent: 4.0\n      applies_when:\n        application_submission_date:\n          on_or_after: \"2025-07-01\"\n  application_complete_before_cutover:\n    rate_retained_for_loan_life: true\n    even_if_disbursement_after_cutover: true"
+  },
+  "query": "I am evaluating an Education Loan Program application for Camila. She is a permanent full-time employee on the standard contract, with 30 months of continuous tenure. She is requesting $15,000 to finance a part-time MBA. Her application was submitted on 20 May 2025 and is complete; the approval process has extended into November 2025 due to scheduling conflicts. Three questions: (a) Is she eligible? (b) Who must approve? (c) What annual interest rate applies to her loan?",
+  "gold_answer": {
+    "full": "Camila is eligible and the application can proceed. (a) Eligibility: she satisfies the employment-type scope (permanent full-time on the standard contract, S1) and the minimum-tenure precondition (P1). Because her application was submitted on 20 May 2025 — before the 1 July 2025 cutover — the prior twelve-month tenure requirement applies under T1; her 30 months exceeds that comfortably. The fact that the cutover passed during the approval process does not change the applicable version, because T1 anchors on submission date, not on approval-completion date. (b) Approvers: the requested amount of $15,000 exceeds the $10,000 threshold, so both her direct manager and the Chief Financial Officer must approve in writing under E1. The CFO approval is required regardless of her role, department, or business unit. (c) Interest rate: 2.0 percent per annum. Because her application was submitted and complete before 1 July 2025, the prior rate applies under T2 and is retained for the full life of the loan, even though disbursement will occur after the cutover.",
+    "minimal": "Yes, eligible. Approvers: direct manager AND CFO (because amount > $10k). Interest rate: 2.0% per annum (application submitted before 1 July 2025 cutover).",
+    "required_relations": ["S1 satisfied (permanent full-time)", "P1 satisfied under pre-cutover version (12-month requirement applies because submission < 2025-07-01)", "E1 triggers dual approval because amount > $10k", "T2 selects 2.0% rate based on submission date, not approval date"]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What is the maximum loan principal under the Education Loan Program and what is the repayment term?",
+      "expected_answer": "$20,000 maximum principal, with a 36-month repayment term."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Which employment types are excluded from the Education Loan Program regardless of tenure?",
+      "expected_answer": "Independent contractors, fractional consultants, interns, and employees on fixed-term project contracts."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "What is the minimum-tenure requirement for applications submitted on or after 1 July 2025?",
+      "expected_answer": "Twenty-four months of continuous full-time employment."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "If an application is submitted before 1 July 2025 but the approval process extends past that date, which minimum-tenure version applies?",
+      "expected_answer": "The prior twelve-month requirement, because the cutover anchors on submission date, not on approval-completion date."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "For loan amounts above $10,000, who must approve the application?",
+      "expected_answer": "Both the direct manager and the Chief Financial Officer must approve in writing."
+    },
+    {
+      "fragment_id": "T2",
+      "probe": "What annual interest rate applies to applications submitted before 1 July 2025, and is that rate retained if disbursement happens after the cutover?",
+      "expected_answer": "2.0 percent per annum, and the rate is retained for the full life of the loan as long as the application was complete and on file before the cutover."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, she is eligible (30 months exceeds the 24-month requirement). Her direct manager and the CFO must approve. The interest rate is 4.0 percent per annum since we are now well past the 1 July 2025 cutover.",
+      "Yes, eligible. The direct manager approves. The interest rate is 2.0 percent for applications submitted before the cutover.",
+      "Yes — she has 30 months tenure which exceeds 24, the amount is within the $20,000 cap, and the rate is 4.0 percent for the current period. Her manager can approve as the sole approver since the program is designed for the manager-level relationship.",
+      "Yes, she is eligible. Direct manager and CFO approval are required for $15,000. Interest rate: 4.0 percent annual (the updated treasury benchmark applies to all current loans)."
+    ],
+    "wrong_escalation": [
+      "This requires manager, CFO, and Board sign-off because it is a multi-year financial commitment to an individual employee.",
+      "Education loans of this size should not be processed internally — refer Camila to an external lender."
+    ],
+    "refusal": [
+      "I cannot evaluate this application without seeing Camila's full employment record and the MBA program details.",
+      "This requires HR and Finance to coordinate directly — I can't give a definitive answer."
+    ],
+    "retrieval_failure_note": "If T2 (interest-rate temporal selector) is missing from context, the model cannot determine which rate applies based on submission date — score as retrieval failure. Similarly for T1 and tenure version."
+  },
+  "controls": {
+    "necessary_fragments": ["R1 (program parameters)", "S1 (employment-type scope)", "P1 (tenure precondition with two versions)", "T1 (tenure-version selector)", "E1 (approver exception above $10k)", "T2 (interest-rate temporal selector)"],
+    "negative_control_query": "I am evaluating an Education Loan Program application for Marcos. He is a permanent full-time employee on the standard contract, with 18 months of continuous tenure. He is requesting $8,000 to finance a professional certification program. His application was submitted on 15 September 2025. Three questions: (a) Is he eligible? (b) Who must approve? (c) What annual interest rate applies to his loan?",
+    "negative_control_gold": "Marcos is not eligible at this time. (a) His employment-type scope is satisfied (permanent full-time on standard contract, S1), but his minimum-tenure precondition is not. Because his application was submitted on 15 September 2025 — after the 1 July 2025 cutover — the updated twenty-four-month tenure requirement applies under T1. His 18 months of tenure does not meet that threshold; he should be advised to reapply once he reaches 24 months. (b) Moot given the eligibility failure, but if he were eligible: $8,000 is at or below the $10,000 threshold, so his direct manager would be the sole required approver under E1, no CFO involvement. (c) Moot given the eligibility failure, but if he were eligible: 4.0 percent per annum, because his application is after the cutover date under T2.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}

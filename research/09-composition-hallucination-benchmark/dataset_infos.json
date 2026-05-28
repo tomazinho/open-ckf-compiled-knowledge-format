@@ -1,0 +1,21 @@
+{
+  "composition_hallucination_bench": {
+    "version": "0.5.0",
+    "description": "Composition Hallucination Benchmark: 40 canonical English cases (20 synthetic, 20 adapted-real), 40 pt-BR draft translations, 40 experimental CKF-compatible exports, and a Python evaluation runner. Authored by CKF Research and Paulo Tomazinho.",
+    "homepage": "https://github.com/ckf-research/composition-hallucination-bench",
+    "license": "cc-by-4.0",
+    "citation": "Tomazinho, P. (2026). Composition Hallucination in Retrieval-Augmented Generation: A Failure Mode and Benchmark Protocol. CKF Research.",
+    "features": {
+      "canonical_cases": 40,
+      "pt_br_cases": 40,
+      "ckf_exports": 40,
+      "python_runner_included": true
+    },
+    "splits": {
+      "train": {
+        "name": "train",
+        "num_examples": 40
+      }
+    }
+  }
+}

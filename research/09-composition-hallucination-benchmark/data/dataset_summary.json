@@ -1,0 +1,39 @@
+{
+  "version": "0.5.0",
+  "total_cases": 40,
+  "canonical_language": "en",
+  "parallel_languages": [
+    "pt-BR"
+  ],
+  "ckf_compatible_exports": 40,
+  "python_runner_included": true,
+  "by_domain": {
+    "clinical": 8,
+    "corporate_policy": 5,
+    "education": 4,
+    "eligibility": 3,
+    "legal": 1,
+    "regulatory": 5,
+    "technical_ops": 14
+  },
+  "by_relation_type": {
+    "contraindication": 5,
+    "exception": 6,
+    "exception_of_exception": 4,
+    "override": 8,
+    "precondition": 5,
+    "scope": 5,
+    "sequence": 3,
+    "temporal_dependency": 4
+  },
+  "by_complexity_level": {
+    "1": 12,
+    "2": 17,
+    "3": 11
+  },
+  "by_source_status": {
+    "adapted": 20,
+    "synthetic": 20
+  },
+  "updated": "2026-05-28"
+}

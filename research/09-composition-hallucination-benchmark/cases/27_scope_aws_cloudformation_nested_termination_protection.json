@@ -1,0 +1,66 @@
+{
+  "case_id": "scope_aws_cloudformation_nested_termination_protection",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "scope",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from AWS CloudFormation termination protection docs. Level-2 scope/precondition: nested stack setting is controlled at root stack."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Protect CloudFormation stacks from being deleted",
+    "source_organization": "Amazon Web Services",
+    "source_url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-protect-stacks.html",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Paraphrased and condensed into a synthetic scenario while preserving the relation pattern needed for benchmark evaluation. The case is not a substitute for the source document.",
+    "professional_guidance_warning": "Evaluation artifact only; do not use as legal, tax, clinical, cloud operations, immigration, or institutional policy advice."
+  },
+  "representations": {
+    "raw": "CloudFormation protection note.\n\nSection A. Termination protection. When termination protection is enabled on a stack, attempts to delete that stack fail and the stack remains unchanged.\n\nSection B. Nested stack scope. For a nested stack, termination protection is controlled on the root stack to which the nested stack belongs. The nested stack cannot have termination protection changed directly.",
+    "annotated": "CloudFormation protection note.\n\n<rule id=\"R1\">Section A. Termination protection. When termination protection is enabled on a stack, attempts to delete that stack fail and the stack remains unchanged.</rule>\n\n<scope id=\"S1\" restricts=\"R1\" condition=\"stack is nested\">Section B. Nested stack scope. For a nested stack, termination protection is controlled on the root stack to which the nested stack belongs. The nested stack cannot have termination protection changed directly.</scope>",
+    "compiled": "rules:\n  - id: R1\n    setting: termination_protection\n    effect_when_enabled: delete_stack_fails_and_stack_unchanged\nscope_constraints:\n  - id: S1\n    applies_when:\n      stack_type: nested\n    control_location: root_stack\n    direct_change_on_nested_stack_allowed: false"
+  },
+  "query": "A nested CloudFormation stack has termination protection inherited from its root stack. An operator tries to disable termination protection directly on the nested stack before deletion. Is that the correct operation?",
+  "gold_answer": {
+    "full": "No. Termination protection can block stack deletion, but for a nested stack the setting is controlled on the root stack. The operator must change termination protection on the root stack, not directly on the nested stack.",
+    "minimal": "No. For nested stacks, termination protection must be changed on the root stack.",
+    "required_relations": [
+      "scope:S1 restricts where R1 can be changed for nested stacks"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "What does enabled termination protection do?",
+      "expected_answer": "It causes delete attempts to fail and leaves the stack unchanged."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Where is termination protection controlled for a nested stack?",
+      "expected_answer": "On the root stack, not directly on the nested stack."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, disable termination protection directly on the nested stack and then delete it.",
+      "No deletion can ever happen because nested stacks cannot have termination protection changed."
+    ],
+    "wrong_escalation": [
+      "Delete the nested stack outside CloudFormation."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragment is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1"
+    ],
+    "negative_control_query": "A standalone root stack has termination protection enabled. Can an operator disable termination protection directly on that root stack before deletion?",
+    "negative_control_gold": "Yes. The nested-stack scope restriction does not apply to a standalone/root stack.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "case_id": "exception_kubernetes_nonpreempting_priorityclass",
+  "metadata": {
+    "domain": "technical_ops",
+    "relation_type": "exception",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark adaptation; original source remains under its own terms.",
+    "notes": "Adapted from Kubernetes docs on non-preempting PriorityClass. Level-2 exceção: high queue priority does not imply preemption when preemptionPolicy is Never.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "provenance": {
+    "source_status_detail": "adapted-real",
+    "source_title": "Pod Priority and Preemption",
+    "source_organization": "Kubernetes",
+    "source_url": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+    "source_accessed": "2026-05-27",
+    "adaptation_method": "Parafraseado e condensado em um cenário sintético, preservando o padrão relacional necessário para a avaliação do benchmark. O caso não substitui o documento-fonte.",
+    "professional_guidance_warning": "Artefato apenas para avaliação; não use como aconselhamento jurídico, tributário, clínico, de operações em nuvem, imigração ou política institucional."
+  },
+  "representations": {
+    "raw": "Kubernetes scheduling política.\n\nSeção A. Priority. A Pod with a higher PriorityClass is more important than Pods with lower priority. Higher priority affects ordering in the scheduling queue.\n\nSeção B. Default preemption behavior. A high-priority pending Pod can cause lower-priority Pods to be preempted if that is needed to make the pending Pod schedulable.\n\nSeção C. Non-preempting PriorityClass. If a PriorityClass sets preemptionPolicy to Never, Pods using that class still get the higher queue priority, but they do not trigger preemption of other Pods. They wait for resources to become available rather than removendo por remover por evictionion lower-priority Pods.",
+    "annotated": "Kubernetes scheduling política.\n\n<rule id=\"R1\">Seção A. Priority. A Pod with a higher PriorityClass is more important than Pods with lower priority. Higher priority affects ordering in the scheduling queue.</rule>\n\n<rule id=\"R2\">Seção B. Default preemption behavior. A high-priority pending Pod can cause lower-priority Pods to be preempted if that is needed to make the pending Pod schedulable.</rule>\n\n<exception id=\"E1\" overrides=\"R2\" condition=\"PriorityClass.preemptionPolicy == Never\">Seção C. Non-preempting PriorityClass. If a PriorityClass sets preemptionPolicy to Never, Pods using that class still get the higher queue priority, but they do not trigger preemption of other Pods. They wait for resources to become available rather than removendo por remover por evictionion lower-priority Pods.</exception>",
+    "compiled": "regras:\n  - id: R1\n    property: higher_priority\n    effects: [queue_order_preference]\n  - id: R2\n    default_preemption: high_priority_pending_pod_pode_preempt_lower_priority_pods\nexceçãos:\n  - id: E1\n    sobreposiçãos: R2\n    condition:\n      preemptionPolicy: Never\n    retained_effect: queue_order_preference\n    bloqueado_effect: triggering_preemption"
+  },
+  "query": "A pending Pod uses a very high PriorityClass, but that PriorityClass has preemptionPolicy set to Never. The Pod cannot currently fit on any nó. Deve-se the scheduler preempt lower-priority Pods to make room for it?",
+  "gold_answer": {
+    "full": "No. The Pod keeps its higher scheduling queue priority, but the non-preempting PriorityClass exceção blocks the usual preemption behavior. It deve wait for resources rather than removendo por remover por evictionion lower-priority Pods.",
+    "minimal": "No. preemptionPolicy: Never preserves queue priority but prevents triggering preemption.",
+    "required_relations": [
+      "exceção:E1 sobreposiçãos default preemption R2 while preserving priority ordering R1"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que does higher priority affect?",
+      "expected_answer": "It affects ordering and importance in the scheduling queue."
+    },
+    {
+      "fragment_id": "R2",
+      "probe": "Qual/O que is the default behavior for a high-priority pending Pod?",
+      "expected_answer": "It pode preempt lower-priority Pods to become schedulable."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "Qual/O que does preemptionPolicy: Never mudança?",
+      "expected_answer": "It prevents the Pod from triggering preemption while retaining higher queue priority."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, porque high priority always preempts lower priority Pods.",
+      "No, porque preemptionPolicy Never removes all priority effects, so the Pod has no scheduling advantage."
+    ],
+    "wrong_escalation": [
+      "Manually remover por eviction the lower-priority Pods porque the scheduler cannot do it."
+    ],
+    "refusal": [],
+    "retrieval_failure_note": "If any necessary fragmento is absent from context, classify the run as retrieval failure rather than composition hallucination."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "R2",
+      "E1"
+    ],
+    "negative_control_query": "A pending Pod uses a high PriorityClass with the default preemption behavior and cannot fit on any nó. May it trigger preemption of lower-priority Pods?",
+    "negative_control_gold": "Yes. Without preemptionPolicy: Never, the default high-priority preemption regra pode apply.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  }
+}

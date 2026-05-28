@@ -1,0 +1,121 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "sequence_education_exam_accommodation_packet",
+    "title": "Sequence Education Exam Accommodation Packet",
+    "language": "en",
+    "license": "CC-BY-4.0",
+    "source_status": "synthetic",
+    "domain": "education",
+    "relation_type": "sequence",
+    "complexity_level": 2,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {},
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "P1"
+      },
+      {
+        "id": "F3",
+        "description": "SEQ1"
+      }
+    ],
+    "raw_representation_sha256": "b2b4018bfe73cc3712a83fff0d02095b01d212b3a612847b1e4c7f370b9be6c6",
+    "annotated_representation_sha256": "377358b53457ff074cb8ca2e8b1332ea2c7569527ef6a87384a8f05a7b0ad990",
+    "compiled_representation_sha256": "29216451b6d912b6c71dbb9ada8bce29e808e983de8cfd0e78c6c86330d62b5b"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "University Assessment Accessibility Procedure.\n\nSection 2. Accommodation Eligibility. Students with an active accommodation letter may take approved timed assessments with the Accessibility Testing Center. The letter must list the assessment type and approved time adjustment. A valid letter allows the student to request testing-center administration instead of standard classroom administration.\n\nSection 3. Instructor Exam Packet. The Accessibility Testing Center may not schedule a testing-center administration until the course instructor has uploaded the final exam packet to the secure portal. The packet must include the exam file, permitted materials, standard time limit, and any instructor-specific restrictions.\n\nSection 4. Scheduling Order. After the student's active accommodation letter is on file and the instructor exam packet has been uploaded, the Testing Center schedules the appointment and sends confirmation to the student and instructor. The appointment confirmation is the final scheduling step and must not be sent before both inputs are complete."
+      },
+      {
+        "id": "annotated",
+        "text": "University Assessment Accessibility Procedure.\n\n<rule id=\"R1\">Section 2. Accommodation Eligibility. Students with an active accommodation letter may take approved timed assessments with the Accessibility Testing Center. The letter must list the assessment type and approved time adjustment. A valid letter allows the student to request testing-center administration instead of standard classroom administration.</rule>\n\n<precondition id=\"P1\" required_for=\"scheduling\" condition=\"instructor exam packet uploaded\">Section 3. Instructor Exam Packet. The Accessibility Testing Center may not schedule a testing-center administration until the course instructor has uploaded the final exam packet to the secure portal. The packet must include the exam file, permitted materials, standard time limit, and any instructor-specific restrictions.</precondition>\n\n<sequence id=\"SEQ1\" order=\"R1 and P1 before confirmation\">Section 4. Scheduling Order. After the student's active accommodation letter is on file and the instructor exam packet has been uploaded, the Testing Center schedules the appointment and sends confirmation to the student and instructor. The appointment confirmation is the final scheduling step and must not be sent before both inputs are complete.</sequence>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    name: accommodation_testing_center_eligibility\n    student_may_request_testing_center_when:\n      active_accommodation_letter: true\n      letter_lists_assessment_type: true\n      letter_lists_time_adjustment: true\npreconditions:\n  - id: P1\n    required_for: scheduling\n    name: instructor_exam_packet_uploaded\n    must_include: [exam_file, permitted_materials, standard_time_limit, instructor_specific_restrictions]\n    upload_location: secure_portal\n    scheduling_allowed_before_upload: false\nsequences:\n  - id: SEQ1\n    steps:\n      - accommodation_letter_on_file\n      - instructor_exam_packet_uploaded\n      - testing_center_schedules_appointment\n      - confirmation_sent_to_student_and_instructor\n    confirmation_before_inputs_complete: prohibited"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "sequence",
+        "description": "Synthetic educational procedure case. Level-2 sequence plus precondition: accommodation letter alone is insufficient until exam packet is received."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A student has an active accommodation letter for the final exam with the approved time adjustment listed. The instructor has not yet uploaded the final exam packet. Can the Accessibility Testing Center schedule and confirm the testing-center appointment now?",
+        "expected_decision": "No. The accommodation letter is on file, but scheduling and confirmation must wait until the instructor uploads the exam packet.",
+        "rationale": "No. The active accommodation letter allows the student to request Testing Center administration, but the Testing Center may not schedule until the instructor uploads the final exam packet. Section 4 also requires the appointment confirmation to come only after both the accommodation letter is on file and the exam packet has been uploaded. The correct action is to wait for the instructor packet before scheduling and confirmation."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A student has an active accommodation letter for the final exam with the approved time adjustment listed. The instructor has not yet uploaded the final exam packet. Can the Accessibility Testing Center schedule and confirm the testing-center appointment now?",
+        "answer": "No. The active accommodation letter allows the student to request Testing Center administration, but the Testing Center may not schedule until the instructor uploads the final exam packet. Section 4 also requires the appointment confirmation to come only after both the accommodation letter is on file and the exam packet has been uploaded. The correct action is to wait for the instructor packet before scheduling and confirmation."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "Testing Center administration of approved timed assessments instead of standard classroom administration."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "The course instructor must upload the final exam packet to the secure portal."
+      },
+      {
+        "id": "local_probe_3",
+        "question": "",
+        "answer": "After both the active accommodation letter is on file and the instructor exam packet has been uploaded."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes. The student has a valid accommodation letter, so the Testing Center can confirm the appointment now.",
+        "The Testing Center can schedule now and add the exam packet later because eligibility is already established."
+      ],
+      "wrong_escalation": [
+        "The dean must personally approve the appointment before scheduling.",
+        "The student must retake the course if the packet is not uploaded."
+      ],
+      "refusal": [
+        "The procedure does not say whether the instructor packet is needed before scheduling."
+      ],
+      "retrieval_failure_note": "If Section 3 or Section 4 is absent, a scheduling answer cannot be classified as composition-evaluable."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "P1",
+        "SEQ1"
+      ],
+      "negative_control_query": "A student has an active accommodation letter on file, and the instructor has uploaded the final exam packet with the exam file, permitted materials, standard time limit, and restrictions. Can the Testing Center schedule and send confirmation?",
+      "negative_control_gold": "Yes. Both inputs are complete, so the Testing Center can schedule the appointment and send confirmation.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "low"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "16_sequence_education_exam_accommodation_packet.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

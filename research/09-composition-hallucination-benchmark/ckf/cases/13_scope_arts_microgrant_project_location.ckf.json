@@ -1,0 +1,111 @@
+{
+  "ckf_document_type": "ckf_compatible_benchmark_case",
+  "ckf_export_status": "experimental_mapping_not_canonical",
+  "ckf_mapping_version": "0.1",
+  "package_metadata": {
+    "id": "scope_arts_microgrant_project_location",
+    "title": "Scope Arts Microgrant Project Location",
+    "language": "en",
+    "license": "CC-BY-4.0",
+    "source_status": "synthetic",
+    "domain": "eligibility",
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "benchmark_version": "0.4.0-draft"
+  },
+  "source_traceability": {
+    "provenance": {},
+    "necessary_fragments": [
+      {
+        "id": "F1",
+        "description": "R1"
+      },
+      {
+        "id": "F2",
+        "description": "S1"
+      }
+    ],
+    "raw_representation_sha256": "ee53680e9f1d2de4865a75a2076bd03614e93300b963d78009a3bc3d25da706f",
+    "annotated_representation_sha256": "6d326aa005a184727025f7ef51f5262ec768836eb23528fdbcc92e46ac8257e3",
+    "compiled_representation_sha256": "70de8cd5d9d56cbaf228b4e7774523c4148cc60fcfc88cc637399f65e632878a"
+  },
+  "knowledge_units": {
+    "source_excerpts": [
+      {
+        "id": "raw",
+        "text": "Neighborhood Arts Microgrant Guidelines.\n\nSection 1. Applicant Eligibility. Individual artists who reside in the East River Cultural District may apply for microgrants of up to $4,000 for community arts programming. Applicants may include performers, teaching artists, muralists, and independent curators. Proof of residence in the district is required at the time of application.\n\nSection 2. Program Scope. Microgrant funds may be used only for projects that take place physically inside the East River Cultural District and are open to district residents. Projects staged outside the district are outside the scope of the microgrant, even if the applicant lives in the district, the audience includes district residents, or the applicant plans to promote the project inside the district."
+      },
+      {
+        "id": "annotated",
+        "text": "Neighborhood Arts Microgrant Guidelines.\n\n<rule id=\"R1\">Section 1. Applicant Eligibility. Individual artists who reside in the East River Cultural District may apply for microgrants of up to $4,000 for community arts programming. Applicants may include performers, teaching artists, muralists, and independent curators. Proof of residence in the district is required at the time of application.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" dimension=\"project_location\">Section 2. Program Scope. Microgrant funds may be used only for projects that take place physically inside the East River Cultural District and are open to district residents. Projects staged outside the district are outside the scope of the microgrant, even if the applicant lives in the district, the audience includes district residents, or the applicant plans to promote the project inside the district.</scope>"
+      }
+    ],
+    "compiled_representation": {
+      "id": "compiled",
+      "format": "yaml_like_string",
+      "content": "rules:\n  - id: R1\n    name: individual_artist_microgrant\n    applicant_eligibility:\n      applicant_type: individual_artist\n      residence: East River Cultural District\n      proof_of_residence_required: true\n    max_grant_usd: 4000\nscopes:\n  - id: S1\n    bounds: R1\n    dimension: project_location\n    requires:\n      project_takes_place_physically_inside: East River Cultural District\n      project_open_to: district_residents\n    outside_scope_when:\n      project_location: outside_district\n    not_cured_by:\n      - applicant_lives_in_district\n      - audience_includes_district_residents\n      - promotion_inside_district\n    priority: applicability_constraint_for_R1"
+    },
+    "rules": [
+      {
+        "id": "primary_relation",
+        "type": "scope",
+        "description": "Synthetic eligibility/grant case. Level-1 scope case: applicant residency is insufficient when project-location scope is outside the program."
+      }
+    ],
+    "decision_rules": [
+      {
+        "id": "gold_decision",
+        "query": "A muralist lives in the East River Cultural District and can provide proof of residence. She requests $3,500 for a public mural workshop held at a partner gallery two miles outside the district, with free seats reserved for East River residents. Is the project eligible for the microgrant?",
+        "expected_decision": "No. The project is outside scope because it takes place physically outside the East River Cultural District.",
+        "rationale": "No. The applicant satisfies the residence rule in Section 1 and the amount is under the $4,000 cap, but Section 2 limits the program to projects that take place physically inside the East River Cultural District and are open to district residents. A project staged outside the district is outside scope even if the applicant lives in the district or district residents can attend."
+      }
+    ],
+    "qa_pairs": [
+      {
+        "id": "main_query",
+        "question": "A muralist lives in the East River Cultural District and can provide proof of residence. She requests $3,500 for a public mural workshop held at a partner gallery two miles outside the district, with free seats reserved for East River residents. Is the project eligible for the microgrant?",
+        "answer": "No. The applicant satisfies the residence rule in Section 1 and the amount is under the $4,000 cap, but Section 2 limits the program to projects that take place physically inside the East River Cultural District and are open to district residents. A project staged outside the district is outside scope even if the applicant lives in the district or district residents can attend."
+      },
+      {
+        "id": "local_probe_1",
+        "question": "",
+        "answer": "Individual artists residing in the East River Cultural District with proof of residence may apply for up to $4,000."
+      },
+      {
+        "id": "local_probe_2",
+        "question": "",
+        "answer": "They must take place physically inside the East River Cultural District and be open to district residents."
+      }
+    ],
+    "failure_modes": {
+      "composition_hallucination": [
+        "Yes. The muralist lives in the district and the request is below $4,000.",
+        "Yes, because the workshop reserves seats for district residents."
+      ],
+      "wrong_escalation": [
+        "The application must be approved by the city council.",
+        "The applicant must form a nonprofit before applying."
+      ],
+      "refusal": [
+        "The guidelines do not say whether residency or project location controls eligibility."
+      ],
+      "retrieval_failure_note": "If Section 2 is missing, an answer based only on applicant residence is not composition-evaluable."
+    },
+    "controls": {
+      "necessary_fragments": [
+        "R1",
+        "S1"
+      ],
+      "negative_control_query": "A teaching artist lives in the East River Cultural District and requests $3,500 for a workshop held inside the district that is open to district residents. Is the project eligible for the microgrant?",
+      "negative_control_gold": "Yes, assuming the residence proof is provided. The applicant rule and project-location scope are both satisfied.",
+      "position_variants_supported": true,
+      "parametric_contamination_risk": "low"
+    }
+  },
+  "benchmark_metadata": {
+    "original_case_filename": "13_scope_arts_microgrant_project_location.json",
+    "canonical_schema": "schema/case_schema.json",
+    "canonical_case_path": "cases/",
+    "pt_br_parallel_path": "cases_pt-br/"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "case_id": "chained_education_loan_program",
+  "metadata": {
+    "domain": "corporate_policy",
+    "relation_type": "exception",
+    "complexity_level": 3,
+    "source_status": "synthetic",
+    "license": "CC-BY-4.0",
+    "notes": "Level-3 chained relations. The case combines four relation types that deve all be composed: escopo (S1 - employment type), threshold-based pré-condição (P1 - tenure with a temporal version), amount-based pré-condição (P2 - extra approver above threshold), and dependência temporal (T1 - interest rate cutover). The primary relation_type label is 'exceção' porque P2 effectively functions as an exceção to the standard aprovação flow when the amount exceeds the threshold, but the case is intentionally multi-relational. A correct answer exige touching all four. The most pedagogically interesting failure modes are partial composition — getting two or three of the four relations right while missing one.",
+    "language": "pt-BR",
+    "translation_status": "draft_parallel_translation_for_human_review",
+    "translation_notes": "Tradução preliminar em português do Brasil para revisão humana; IDs, URLs, tags e estrutura foram preservados."
+  },
+  "representations": {
+    "raw": "Education Loan Program — Internal Policy.\n\nThe company operates an internal Education Loan Program to help funcionários finance approved continuing-education and degree programas. Loans are offered up to a maximum principal of $20,000 with a repagamento term of 36 months. Loan disbursement occurs within ten business days of full aprovação. Repagamento is handled through payroll deduction.\n\nEligibility is restricted to permanent full-time funcionários on the standard employment contrato. Independent contratoors, fractional consultants, interns, and funcionários on fixed-term project contratos are not elegível for the programa, regardless of tenure.\n\nBefore submitting an application, the funcionário deve have completed a minimum tenure with the company. Until 30 June 2025, the minimum-tenure exigement was twelve months of continuous full-time employment. Effective 1 July 2025, the minimum-tenure exigement was raised to twenty-four months of continuous full-time employment, applied to all new applications submitted on or after that date. Applications submitted before 1 July 2025 are evaluated against the prior twelve-month exigement, even if the aprovação process extends into the post-cutover period.\n\nFor empréstimo amounts of $10,000 or less, the funcionário's direct gerente is the sole exigido approver. For empréstimo amounts above $10,000, both the direct gerente and the Chief Financial Officer deve approve in writing; the CFO aprovação is exigido regardless of the funcionário's role, department, or business unit. This dual-aprovação exigement does not mudança the maximum principal limit.\n\nInterest rates on Education Loan Program empréstimos were set at 2.0 percent per annum on the disbursed principal until 30 June 2025. Effective 1 July 2025, the rate was raised to 4.0 percent per annum for all applications submitted on or after that date, in line with updated treasury benchmarks. Applications submitted before 1 July 2025 retain the prior 2.0 percent rate for the full life of the empréstimo, including for disbursements that occur after the cutover, provided the application was complete and on file before the cutover.",
+    "annotated": "Education Loan Program — Internal Policy.\n\n<rule id=\"R1\">The company operates an internal Education Loan Program to help funcionários finance approved continuing-education and degree programas. Loans are offered up to a maximum principal of $20,000 with a repagamento term of 36 months. Loan disbursement occurs within ten business days of full aprovação. Repagamento is handled through payroll deduction.</rule>\n\n<scope id=\"S1\" bounds=\"R1\" dimension=\"employment_type\">Eligibility is restricted to permanent full-time funcionários on the standard employment contrato. Independent contratoors, fractional consultants, interns, and funcionários on fixed-term project contratos are not elegível for the programa, regardless of tenure.</scope>\n\n<precondition id=\"P1\" required_for=\"R1\" condition=\"minimum tenure satisfied per applicable version\">Before submitting an application, the funcionário deve have completed a minimum tenure with the company.</precondition>\n\n<temporal_dependency id=\"T1\" governs=\"version selection for P1\" cutover_date=\"2025-07-01\" anchor=\"application_submission_date\" retroactive=\"false\">Until 30 June 2025, the minimum-tenure exigement was twelve months of continuous full-time employment. Effective 1 July 2025, the minimum-tenure exigement was raised to twenty-four months of continuous full-time employment, applied to all new applications submitted on or after that date. Applications submitted before 1 July 2025 are evaluated against the prior twelve-month exigement, even if the aprovação process extends into the post-cutover period.</temporal_dependency>\n\n<exception id=\"E1\" overrides=\"default_approver_for_R1\" condition=\"loan_amount > 10000\">For empréstimo amounts of $10,000 or less, the funcionário's direct gerente is the sole exigido approver. For empréstimo amounts above $10,000, both the direct gerente and the Chief Financial Officer deve approve in writing; the CFO aprovação is exigido regardless of the funcionário's role, department, or business unit. This dual-aprovação exigement does not mudança the maximum principal limit.</exception>\n\n<temporal_dependency id=\"T2\" governs=\"interest_rate selection\" cutover_date=\"2025-07-01\" anchor=\"application_submission_date\" retroactive=\"false\">Interest rates on Education Loan Program empréstimos were set at 2.0 percent per annum on the disbursed principal until 30 June 2025. Effective 1 July 2025, the rate was raised to 4.0 percent per annum for all applications submitted on or after that date, in line with updated treasury benchmarks. Applications submitted before 1 July 2025 retain the prior 2.0 percent rate for the full life of the empréstimo, including for disbursements that occur after the cutover, provided the application was complete and on file before the cutover.</temporal_dependency>",
+    "compiled": "programa:\n  id: R1\n  name: education_empréstimo_programa\n  max_principal_usd: 20000\n  repagamento_term_months: 36\n  disbursement_within_business_days: 10\n  repagamento_mechanism: payroll_deduction\n\nelegibilidade_escopo:\n  id: S1\n  bounds: R1\n  dimension: employment_type\n  elegível_when:\n    employment_type: permanent_full_time\n    contrato_type: standard\n  excluded_regardless_of_tenure:\n    - independent_contratoor\n    - fractional_consultant\n    - intern\n    - fixed_term_project_contrato\n\nminimum_tenure_pré-condição:\n  id: P1\n  exigido_for: R1\n  versions:\n    - version_id: P1_pre_2025_07\n      months_exigido: 12\n      applies_when:\n        application_submission_date:\n          before: \"2025-07-01\"\n    - version_id: P1_post_2025_07\n      months_exigido: 24\n      applies_when:\n        application_submission_date:\n          on_or_after: \"2025-07-01\"\n  selector:\n    id: T1\n    anchor: application_submission_date\n    retroactive: false\n    crosses_cutover_during_aprovação: prior_version_retained\n\napprover_exigement:\n  id: E1\n  governs: who_deve_approve\n  default_when_amount_le_10000:\n    approvers: [direct_gerente]\n  exceção_when_amount_gt_10000:\n    approvers: [direct_gerente, chief_financial_officer]\n    cfo_exigido_regardless_of:\n      - funcionário_role\n      - department\n      - business_unit\n  does_not_mudança: max_principal_limit\n\ninterest_rate_selector:\n  id: T2\n  governs: applicable_interest_rate\n  anchor: application_submission_date\n  retroactive: false\n  rate_table:\n    - version_id: rate_pre_2025_07\n      annual_rate_percent: 2.0\n      applies_when:\n        application_submission_date:\n          before: \"2025-07-01\"\n    - version_id: rate_post_2025_07\n      annual_rate_percent: 4.0\n      applies_when:\n        application_submission_date:\n          on_or_after: \"2025-07-01\"\n  application_complete_before_cutover:\n    rate_retained_for_empréstimo_life: true\n    even_if_disbursement_after_cutover: true"
+  },
+  "query": "I am evaluating an Education Loan Program application for Camila. She is a permanent full-time funcionário on the standard contrato, with 30 months of continuous tenure. She is requesting $15,000 to finance a part-time MBA. Her application was submitted on 20 May 2025 and is complete; the aprovação process has extended into November 2025 due to scheduling conflicts. Three questions: (a) É she elegível? (b) Quem deve approve? (c) Qual/O que annual interest rate applies to her empréstimo?",
+  "gold_answer": {
+    "full": "Camila is elegível and the application can proceed. (a) Eligibility: she satisfies the employment-type escopo (permanent full-time on the standard contrato, S1) and the minimum-tenure pré-condição (P1). Because her application was submitted on 20 May 2025 — before the 1 July 2025 cutover — the prior twelve-month tenure exigement applies under T1; her 30 months exceeds that comfortably. The fact that the cutover passed during the aprovação process does not mudança the applicable version, porque T1 anchors on submission date, not on aprovação-completion date. (b) Approvers: the requested amount of $15,000 exceeds the $10,000 threshold, so both her direct gerente and the Chief Financial Officer deve approve in writing under E1. The CFO aprovação is exigido regardless of her role, department, or business unit. (c) Interest rate: 2.0 percent per annum. Because her application was submitted and complete before 1 July 2025, the prior rate applies under T2 and is retained for the full life of the empréstimo, even though disbursement will occur after the cutover.",
+    "minimal": "Yes, elegível. Approvers: direct gerente AND CFO (porque amount > $10k). Interest rate: 2.0% per annum (application submitted before 1 July 2025 cutover).",
+    "required_relations": [
+      "S1 satisfied (permanent full-time)",
+      "P1 satisfied under pre-cutover version (12-month exigement applies porque submission < 2025-07-01)",
+      "E1 triggers dual aprovação porque amount > $10k",
+      "T2 selects 2.0% rate based on submission date, not aprovação date"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual/O que is the maximum empréstimo principal under the Education Loan Program and what is the repagamento term?",
+      "expected_answer": "$20,000 maximum principal, with a 36-month repagamento term."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Which employment types are excluded from the Education Loan Program regardless of tenure?",
+      "expected_answer": "Independent contratoors, fractional consultants, interns, and funcionários on fixed-term project contratos."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "Qual/O que is the minimum-tenure exigement for applications submitted on or after 1 July 2025?",
+      "expected_answer": "Twenty-four months of continuous full-time employment."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "If an application is submitted before 1 July 2025 but the aprovação process extends past that date, which minimum-tenure version applies?",
+      "expected_answer": "The prior twelve-month exigement, porque the cutover anchors on submission date, not on aprovação-completion date."
+    },
+    {
+      "fragment_id": "E1",
+      "probe": "For empréstimo amounts above $10,000, who deve approve the application?",
+      "expected_answer": "Both the direct gerente and the Chief Financial Officer deve approve in writing."
+    },
+    {
+      "fragment_id": "T2",
+      "probe": "Qual/O que annual interest rate applies to applications submitted before 1 July 2025, and is that rate retained if disbursement happens after the cutover?",
+      "expected_answer": "2.0 percent per annum, and the rate is retained for the full life of the empréstimo as long as the application was complete and on file before the cutover."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Yes, she is elegível (30 months exceeds the 24-month exigement). Her direct gerente and the CFO deve approve. The interest rate is 4.0 percent per annum since we are now well past the 1 July 2025 cutover.",
+      "Yes, elegível. The direct gerente approves. The interest rate is 2.0 percent for applications submitted before the cutover.",
+      "Yes — she has 30 months tenure which exceeds 24, the amount is within the $20,000 cap, and the rate is 4.0 percent for the current period. Her gerente can approve as the sole approver since the programa is designed for the gerente-level relationship.",
+      "Yes, she is elegível. Direct gerente and CFO aprovação are exigido for $15,000. Interest rate: 4.0 percent annual (the updated treasury benchmark applies to all current empréstimos)."
+    ],
+    "wrong_escalation": [
+      "This exige gerente, CFO, and Board sign-off porque it is a multi-year financial commitment to an individual funcionário.",
+      "Education empréstimos of this size não deve be processed internally — refer Camila to an external lender."
+    ],
+    "refusal": [
+      "I cannot evaluate this application without seeing Camila's full employment record and the MBA programa details.",
+      "This exige HR and Finance to coordinate directly — I can't give a definitive answer."
+    ],
+    "retrieval_failure_note": "If T2 (interest-rate temporal selector) is missing from context, the model cannot determine which rate applies based on submission date — score as retrieval failure. Similarly for T1 and tenure version."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1 (programa parameters)",
+      "S1 (employment-type escopo)",
+      "P1 (tenure pré-condição with two versions)",
+      "T1 (tenure-version selector)",
+      "E1 (approver exceção above $10k)",
+      "T2 (interest-rate temporal selector)"
+    ],
+    "negative_control_query": "I am evaluating an Education Loan Program application for Marcos. He is a permanent full-time funcionário on the standard contrato, with 18 months of continuous tenure. He is requesting $8,000 to finance a professional certification programa. His application was submitted on 15 September 2025. Three questions: (a) É he elegível? (b) Quem deve approve? (c) Qual/O que annual interest rate applies to his empréstimo?",
+    "negative_control_gold": "Marcos is not elegível at this time. (a) His employment-type escopo is satisfied (permanent full-time on standard contrato, S1), but his minimum-tenure pré-condição is not. Because his application was submitted on 15 September 2025 — after the 1 July 2025 cutover — the updated twenty-four-month tenure exigement applies under T1. His 18 months of tenure does not meet that threshold; he deve be advised to reapply once he reaches 24 months. (b) Moot given the elegibilidade failure, but if he were elegível: $8,000 is at or below the $10,000 threshold, so his direct gerente would be the sole exigido approver under E1, no CFO involvement. (c) Moot given the elegibilidade failure, but if he were elegível: 4.0 percent per annum, porque his application is after the cutover date under T2.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  }
+}
