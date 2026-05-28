@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "02_escopo_rubrica_descritores_observaveis",
+    "title": "Rubrica só orienta quando contém descritores claros",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Um professor criou uma rubrica de produção textual com cinco níveis chamados “ruim”, “regular”, “bom”, “muito bom” e “excelente”, sem descrever o que muda de um nível para outro. Essa rubrica já cumpre a função de orientar o aluno?",
+    "expected_outcome": "Não — rótulos genéricos não bastam; a rubrica precisa de descritores claros, graduais e observáveis."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "rubricas",
+      "critérios"
+    ],
+    "relation_type": "scope",
+    "complexity_level": 1
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Um professor criou uma rubrica de produção textual com cinco níveis chamados “ruim”, “regular”, “bom”, “muito bom” e “excelente”, sem descrever o que muda de um nível para outro. Essa rubrica já cumpre a função de orientar o aluno?",
+      "then": "Não — rótulos genéricos não bastam; a rubrica precisa de descritores claros, graduais e observáveis.",
+      "requires": [
+        "S1 restringe a função da rubrica a casos com descritores claros, graduais e práticos"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Como há cinco níveis, a rubrica é ainda mais detalhada e suficiente.",
+        "Sim. Os nomes dos níveis já indicam a qualidade do trabalho."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "S1 restringe a função da rubrica a casos com descritores claros, graduais e práticos"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Um professor criou uma rubrica de produção textual com cinco níveis chamados “ruim”, “regular”, “bom”, “muito bom” e “excelente”, sem descrever o que muda de um nível para outro. Essa rubrica já cumpre a função de orientar o aluno?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — rótulos genéricos não bastam; a rubrica precisa de descritores claros, graduais e observáveis."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "scope",
+      "description": "S1 restringe a função da rubrica a casos com descritores claros, graduais e práticos"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Um professor criou uma rubrica de produção textual com cinco níveis chamados “ruim”, “regular”, “bom”, “muito bom” e “excelente”, sem descrever o que muda de um nível para outro. Essa rubrica já cumpre a função de orientar o aluno?",
+      "answer": "Não. Embora tenha níveis, ela não cumpre a função formativa porque os critérios permanecem implícitos. Para orientar o aluno, a rubrica precisa de descritores observáveis e progressivos, preferencialmente em 3 ou 4 níveis, mostrando o que o aluno já faz e o que precisa fazer para avançar."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Função da rubrica. Uma rubrica interpreta evidências de aprendizagem por meio de níveis de desempenho. Ela deve funcionar como uma régua transparente para professor e aluno.\n\nSeção B — Escopo de uma boa rubrica. Para cumprir essa função, a rubrica precisa ser clara, gradual e prática. Recomenda-se usar 3 ou 4 níveis com descrições observáveis. Rótulos genéricos como “ruim”, “bom” e “excelente” não mostram a progressão nem indicam como avançar."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Interpretar evidências por níveis de desempenho e tornar critérios visíveis."
+    },
+    {
+      "id": "S1",
+      "text": "Deve ser clara, gradual e prática, com 3 ou 4 níveis e descritores observáveis."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Avaliação Sem Mistério",
+      "source_pages": "19-25, 55-61",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "case_id": "02_escopo_rubrica_descritores_observaveis",
+  "metadata": {
+    "title": "Rubrica só orienta quando contém descritores claros",
+    "domain": "education",
+    "subdomains": [
+      "rubricas",
+      "critérios"
+    ],
+    "relation_type": "scope",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Função da rubrica. Uma rubrica interpreta evidências de aprendizagem por meio de níveis de desempenho. Ela deve funcionar como uma régua transparente para professor e aluno.\n\nSeção B — Escopo de uma boa rubrica. Para cumprir essa função, a rubrica precisa ser clara, gradual e prática. Recomenda-se usar 3 ou 4 níveis com descrições observáveis. Rótulos genéricos como “ruim”, “bom” e “excelente” não mostram a progressão nem indicam como avançar.",
+    "annotated": "<rule id=\"R1\">Rubricas interpretam evidências de aprendizagem por meio de níveis de desempenho e tornam os critérios visíveis.</rule>\n\n<scope id=\"S1\" limits=\"R1\" condition=\"rubrica clara, gradual e prática\">A rubrica cumpre sua função orientadora quando usa 3 ou 4 níveis com descrições observáveis; rótulos genéricos não bastam.</scope>",
+    "compiled": "case:\n    title: Rubrica só orienta quando contém descritores claros\n    domain: education\n    relation_type: scope\n    complexity_level: 1\n  fragments:\n- id: R1\n  statement: Rubricas tornam critérios visíveis.\n- id: S1\n  statement: A função orientadora só se aplica quando há níveis claros, graduais e observáveis.\n  relations:\n- S1 limits R1: generic labels are outside the effective scope of formative rubrics\n  decision:\n    correct_action: revisar a rubrica para incluir descritores observáveis de 3 ou 4 níveis"
+  },
+  "query": "Um professor criou uma rubrica de produção textual com cinco níveis chamados “ruim”, “regular”, “bom”, “muito bom” e “excelente”, sem descrever o que muda de um nível para outro. Essa rubrica já cumpre a função de orientar o aluno?",
+  "gold_answer": {
+    "full": "Não. Embora tenha níveis, ela não cumpre a função formativa porque os critérios permanecem implícitos. Para orientar o aluno, a rubrica precisa de descritores observáveis e progressivos, preferencialmente em 3 ou 4 níveis, mostrando o que o aluno já faz e o que precisa fazer para avançar.",
+    "minimal": "Não — rótulos genéricos não bastam; a rubrica precisa de descritores claros, graduais e observáveis.",
+    "required_relations": [
+      "S1 restringe a função da rubrica a casos com descritores claros, graduais e práticos"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual é a função de uma rubrica na avaliação formativa?",
+      "expected_answer": "Interpretar evidências por níveis de desempenho e tornar critérios visíveis."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Quais características uma boa rubrica deve ter?",
+      "expected_answer": "Deve ser clara, gradual e prática, com 3 ou 4 níveis e descritores observáveis."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Como há cinco níveis, a rubrica é ainda mais detalhada e suficiente.",
+      "Sim. Os nomes dos níveis já indicam a qualidade do trabalho."
+    ],
+    "wrong_escalation": [
+      "A rubrica só será válida se for aprovada por uma banca externa e registrada em cartório."
+    ],
+    "refusal": [
+      "Não tenho como saber se a rubrica é útil sem ver todos os textos dos alunos."
+    ],
+    "retrieval_failure_note": "Se a Seção B estiver ausente, a resposta pode virar apenas uma avaliação geral de rubricas e não um teste de composição."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1"
+    ],
+    "negative_control_query": "Uma professora criou quatro níveis para coerência textual: frases soltas; parágrafos com falhas de coesão; texto organizado; texto bem estruturado e argumentativo. Essa rubrica orienta melhor o aluno?",
+    "negative_control_gold": "Sim. Os níveis descrevem progressão observável e ajudam o aluno a saber onde está e como avançar.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "19-25, 55-61",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

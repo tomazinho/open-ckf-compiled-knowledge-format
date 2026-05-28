@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "14_escopo_relevancia_sustenta_interesse",
+    "title": "Surpresa capta atenção, mas relevância sustenta interesse",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Para uma aula de leis de Newton, o professor começa com um vídeo engraçado de um gato. Os alunos riem, mas o vídeo não é conectado ao conteúdo nem à experiência deles. Depois, ele faz uma explicação abstrata. A surpresa inicial é suficiente para manter o interesse significativo?",
+    "expected_outcome": "Não — o gancho precisa se conectar à relevância do conteúdo para sustentar o interesse."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "relevância",
+      "engajamento"
+    ],
+    "relation_type": "scope",
+    "complexity_level": 2
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Para uma aula de leis de Newton, o professor começa com um vídeo engraçado de um gato. Os alunos riem, mas o vídeo não é conectado ao conteúdo nem à experiência deles. Depois, ele faz uma explicação abstrata. A surpresa inicial é suficiente para manter o interesse significativo?",
+      "then": "Não — o gancho precisa se conectar à relevância do conteúdo para sustentar o interesse.",
+      "requires": [
+        "S1 limita R1: captura inicial não substitui relevância"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Se os alunos riram, o engajamento significativo está garantido.",
+        "Sim. Qualquer surpresa é suficiente, mesmo sem relação com o conteúdo."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "S1 limita R1: captura inicial não substitui relevância"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Para uma aula de leis de Newton, o professor começa com um vídeo engraçado de um gato. Os alunos riem, mas o vídeo não é conectado ao conteúdo nem à experiência deles. Depois, ele faz uma explicação abstrata. A surpresa inicial é suficiente para manter o interesse significativo?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — o gancho precisa se conectar à relevância do conteúdo para sustentar o interesse."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "scope",
+      "description": "S1 limita R1: captura inicial não substitui relevância"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Para uma aula de leis de Newton, o professor começa com um vídeo engraçado de um gato. Os alunos riem, mas o vídeo não é conectado ao conteúdo nem à experiência deles. Depois, ele faz uma explicação abstrata. A surpresa inicial é suficiente para manter o interesse significativo?",
+      "answer": "Não. A surpresa pode captar atenção inicial, mas precisa ser conectada ao conteúdo e à realidade dos alunos para sustentar interesse. O professor poderia relacionar as leis de Newton a esportes, transporte, quedas ou situações cotidianas, usando o vídeo apenas se ele servir de ponte para o conceito."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Captura inicial. Perguntas instigantes, surpresa e histórias podem captar a atenção dos alunos no início da aula.\n\nSeção B — Sustentação do interesse. Para manter o interesse, o conteúdo precisa fazer sentido para o aluno. Conectar o tema à vida, aos interesses, ao cotidiano ou a usos práticos torna o aprendizado mais significativo. Um gancho divertido, mas desconectado do objetivo da aula, não sustenta engajamento por si só."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Captar a atenção inicial dos alunos."
+    },
+    {
+      "id": "S1",
+      "text": "Conectar o conteúdo à realidade, utilidade ou interesses dos alunos."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "48-61",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

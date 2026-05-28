@@ -1,0 +1,75 @@
+{
+  "case_id": "01_contraindicacao_nota_isolada_feedback",
+  "metadata": {
+    "title": "Nota isolada como avaliação formativa insuficiente",
+    "domain": "education",
+    "subdomains": [
+      "avaliação formativa",
+      "feedback"
+    ],
+    "relation_type": "contraindication",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Registro administrativo. A escola pode continuar usando boletins, médias e notas para registrar resultados escolares quando o sistema institucional exige esse tipo de síntese.\n\nSeção B — Orientação da aprendizagem. Quando o objetivo é orientar o aluno sobre o que já sabe e o que precisa aprender, a nota isolada é insuficiente: ela não explicita quais habilidades foram consolidadas, quais estão frágeis, quais critérios foram usados nem qual é o próximo passo. Para funcionar formativamente, a avaliação precisa transformar desempenho em evidências, critérios visíveis e devolutivas acionáveis.",
+    "annotated": "<rule id=\"R1\">A escola pode usar boletins, médias e notas como registro administrativo quando o sistema institucional exige esse tipo de síntese.</rule>\n\n<contraindication id=\"C1\" blocks=\"R1_as_complete_formative_guidance\" condition=\"objetivo é orientar aprendizagem\">Quando o objetivo é orientar o aluno, a nota isolada é insuficiente; a avaliação precisa explicitar evidências, critérios e próximos passos.</contraindication>",
+    "compiled": "case:\n    title: Nota isolada como avaliação formativa insuficiente\n    domain: education\n    relation_type: contraindication\n    complexity_level: 1\n  fragments:\n- id: R1\n  statement: Notas podem funcionar como registro administrativo.\n- id: C1\n  statement: Notas isoladas não orientam aprendizagem sem evidências, critérios e próximos passos.\n  relations:\n- C1 blocks treating R1 as sufficient when purpose = formative guidance\n  decision:\n    correct_action: fornecer evidência + critério + próximo passo, não apenas nota"
+  },
+  "query": "Uma professora corrigiu uma redação e pretende devolver apenas “8/10” ao aluno, dizendo que a nota já mostra que ele foi bem e deve melhorar um pouco. Como o objetivo declarado é orientar a próxima versão do texto, essa devolutiva é suficiente?",
+  "gold_answer": {
+    "full": "Não. A nota pode existir como registro, mas não é suficiente para orientar a próxima versão do texto. Como o objetivo é formativo, a professora precisa explicitar evidências do desempenho, critérios da rubrica e um próximo passo claro, por exemplo: “você organiza bem os parágrafos, mas precisa justificar melhor suas ideias com exemplos”.",
+    "minimal": "Não — para orientar aprendizagem, a nota isolada deve ser acompanhada de evidências, critérios e próximo passo.",
+    "required_relations": [
+      "C1 contraindica tratar a nota administrativa como orientação formativa suficiente"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Em que situação a nota pode continuar existindo no documento?",
+      "expected_answer": "Como registro administrativo, quando boletins, médias ou sistemas institucionais exigem uma síntese."
+    },
+    {
+      "fragment_id": "C1",
+      "probe": "Por que a nota isolada não orienta a aprendizagem?",
+      "expected_answer": "Porque não mostra habilidades consolidadas ou frágeis, critérios usados nem próximo passo."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Como 8/10 é uma nota alta, o aluno já sabe que foi bem e basta estudar um pouco mais.",
+      "Sim. A nota é objetiva e dispensa explicar critérios ou evidências."
+    ],
+    "wrong_escalation": [
+      "Não — é preciso encaminhar o caso para coordenação pedagógica e família antes de qualquer devolutiva."
+    ],
+    "refusal": [
+      "Não é possível responder sem conhecer toda a política avaliativa da escola."
+    ],
+    "retrieval_failure_note": "Se apenas a Seção A estiver no contexto, o caso não é avaliável como composição; falta a contraindicação da Seção B."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "C1"
+    ],
+    "negative_control_query": "A secretaria escolar precisa lançar a média final no boletim oficial. Ela pode registrar uma nota numérica para fins administrativos?",
+    "negative_control_gold": "Sim. A nota pode ser usada como registro administrativo. O que ela não pode ser é a única devolutiva quando o objetivo é orientar a aprendizagem.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "3-10",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "case_id": "05_precondicao_bncc_evidencias_observaveis",
+  "metadata": {
+    "title": "Habilidade da BNCC precisa virar evidência observável",
+    "domain": "education",
+    "subdomains": [
+      "BNCC",
+      "evidências de aprendizagem"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Mudança de foco. A BNCC desloca o foco da simples transmissão de conteúdo para o desenvolvimento de competências e habilidades. Avaliar uma habilidade significa perguntar o que o aluno é capaz de fazer com o que aprendeu.\n\nSeção B — Pré-condição de evidência. Para avaliar uma habilidade, o professor precisa traduzi-la em evidências observáveis: ações, produções ou comportamentos que mostrem o nível de domínio. Uma pergunta de memorização pode verificar lembrança, mas não prova sozinha que a habilidade foi desenvolvida.",
+    "annotated": "<rule id=\"R1\">A BNCC orienta a avaliação para competências e habilidades, isto é, para o que o aluno consegue fazer com o que aprendeu.</rule>\n\n<precondition id=\"P1\" required_for=\"R1_skill_assessment\">Para avaliar uma habilidade, é preciso definir evidências observáveis de desempenho.</precondition>\n\n<scope id=\"S1\" limits=\"memory_questions\">Questões de memorização verificam lembrança pontual; sozinhas, não bastam para evidenciar habilidade aplicada.</scope>",
+    "compiled": "case:\n    title: Habilidade da BNCC precisa virar evidência observável\n    domain: education\n    relation_type: precondition\n    complexity_level: 2\n  fragments:\n- id: R1\n  statement: BNCC foca competências e habilidades.\n- id: P1\n  statement: Avaliar habilidade requer evidências observáveis.\n- id: S1\n  statement: Memorização isolada está fora do escopo de evidência suficiente para habilidade aplicada.\n  relations:\n- P1 required for R1\n- S1 limits memory-only assessment\n  decision:\n    correct_action: transformar a habilidade em evidências de desempenho observáveis"
+  },
+  "query": "A habilidade planejada é “argumentar oralmente defendendo uma opinião com justificativas”. O professor pretende avaliar apenas perguntando: “o que é argumentação?” em uma prova escrita. Isso é suficiente para avaliar a habilidade?",
+  "gold_answer": {
+    "full": "Não. A pergunta pode verificar se o aluno lembra uma definição, mas a habilidade exige observar o aluno argumentando, defendendo uma opinião e usando justificativas. Pela lógica da BNCC, o professor deve transformar a habilidade em evidências observáveis de desempenho, como uma fala argumentativa, debate, gravação ou apresentação com critérios claros.",
+    "minimal": "Não — a habilidade deve ser avaliada por evidências observáveis do aluno argumentando, não apenas por memorização da definição.",
+    "required_relations": [
+      "P1 é pré-condição para avaliar R1",
+      "S1 impede tratar memorização isolada como evidência suficiente"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Segundo a mudança de foco descrita, a avaliação deve observar apenas o que o aluno memorizou?",
+      "expected_answer": "Não. Deve observar o que o aluno é capaz de fazer com o que aprendeu."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "O que o professor deve definir para avaliar uma habilidade?",
+      "expected_answer": "Evidências observáveis, como ações, produções ou comportamentos."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "Uma pergunta de memorização, sozinha, prova desenvolvimento de habilidade aplicada?",
+      "expected_answer": "Não. Ela verifica lembrança pontual, mas não basta para evidenciar a habilidade aplicada."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Se o aluno sabe definir argumentação, ele demonstrou a habilidade de argumentar.",
+      "Sim. Prova escrita é sempre suficiente para qualquer habilidade da BNCC."
+    ],
+    "wrong_escalation": [
+      "A avaliação só será válida se for filmada e homologada pela secretaria de educação."
+    ],
+    "refusal": [
+      "Não posso responder sem a matriz curricular completa da escola."
+    ],
+    "retrieval_failure_note": "Sem a Seção B, o item vira uma discussão genérica sobre BNCC, não um teste de composição."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1",
+      "S1"
+    ],
+    "negative_control_query": "A habilidade é “identificar a ideia central em textos”. A professora pede que o aluno sublinhe palavras-chave, resuma em uma frase e escolha a melhor síntese do texto. Isso gera evidências observáveis?",
+    "negative_control_gold": "Sim. Essas ações mostram desempenho relacionado à habilidade e podem ser usadas como evidências.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "11-18",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

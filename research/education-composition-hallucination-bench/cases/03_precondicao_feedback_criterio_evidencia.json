@@ -1,0 +1,75 @@
+{
+  "case_id": "03_precondicao_feedback_criterio_evidencia",
+  "metadata": {
+    "title": "Feedback acionável depende de critérios e evidências",
+    "domain": "education",
+    "subdomains": [
+      "feedback",
+      "avaliação formativa"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Finalidade do feedback. O feedback formativo devolve ao aluno um retrato do desempenho e indica o próximo passo. Ele deve ser rápido, compreensível, centrado na tarefa e relacionado aos critérios da atividade.\n\nSeção B — Pré-condição. Para ser acionável, o feedback precisa se apoiar em evidências observadas e critérios visíveis. Comentários genéricos como “capriche mais” ou “estude mais” não indicam o que fazer na próxima tentativa.",
+    "annotated": "<rule id=\"R1\">Feedback formativo deve devolver ao aluno um retrato do desempenho e indicar o próximo passo.</rule>\n\n<precondition id=\"P1\" required_for=\"R1_actionable_feedback\">O feedback só é acionável quando se apoia em evidências observadas e critérios visíveis; comentários genéricos não orientam a próxima ação.</precondition>",
+    "compiled": "case:\n    title: Feedback acionável depende de critérios e evidências\n    domain: education\n    relation_type: precondition\n    complexity_level: 1\n  fragments:\n- id: R1\n  statement: Feedback formativo indica desempenho e próximo passo.\n- id: P1\n  statement: Critérios visíveis e evidências observadas são pré-condições para feedback acionável.\n  relations:\n- P1 must hold before R1 can be considered actionable\n  decision:\n    correct_action: dar feedback específico baseado na evidência e no critério"
+  },
+  "query": "Após uma apresentação oral, o professor escreveu “você precisa se esforçar mais” duas semanas depois da atividade. Ele não mencionou evidências nem critérios. Isso conta como feedback formativo acionável?",
+  "gold_answer": {
+    "full": "Não. O comentário até expressa uma expectativa, mas não é acionável porque não informa evidência, critério nem próximo passo específico. Um feedback formativo deveria ser rápido e dizer algo como: “você explicou bem o exemplo inicial, mas precisa organizar a conclusão; na próxima apresentação, use uma frase final que retome a ideia principal”.",
+    "minimal": "Não — feedback acionável precisa ser rápido, específico, ligado a evidências e critérios.",
+    "required_relations": [
+      "P1 é pré-condição para o feedback de R1 ser acionável"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "O que o feedback formativo deve entregar ao aluno?",
+      "expected_answer": "Um retrato do desempenho e um próximo passo."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "O que torna um feedback acionável?",
+      "expected_answer": "Apoiar-se em evidências observadas e critérios visíveis, evitando comentários genéricos."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. A frase motiva o aluno e, por isso, já é feedback formativo.",
+      "Sim. O aluno sabe que precisa se esforçar, então a devolutiva já basta."
+    ],
+    "wrong_escalation": [
+      "Não — o professor deve aplicar uma nova prova antes de qualquer comentário."
+    ],
+    "refusal": [
+      "Não é possível responder sem saber a nota do aluno."
+    ],
+    "retrieval_failure_note": "Se o contexto não inclui a pré-condição de critérios/evidências, falhas devem ser marcadas como insuficiência de evidência."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1"
+    ],
+    "negative_control_query": "O professor devolveu no mesmo dia: “na rubrica, sua argumentação está no nível 2; você já apresenta opinião, mas precisa justificar com dados para chegar ao nível 3”. Isso é feedback acionável?",
+    "negative_control_gold": "Sim. Ele é rápido, específico, ligado à rubrica e aponta o próximo passo.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "34-40",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

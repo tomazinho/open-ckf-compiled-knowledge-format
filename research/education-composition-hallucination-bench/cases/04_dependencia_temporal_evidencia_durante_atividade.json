@@ -1,0 +1,75 @@
+{
+  "case_id": "04_dependencia_temporal_evidencia_durante_atividade",
+  "metadata": {
+    "title": "Avaliação formativa acontece durante a aprendizagem",
+    "domain": "education",
+    "subdomains": [
+      "coleta de evidências",
+      "avaliação formativa"
+    ],
+    "relation_type": "temporal_dependency",
+    "complexity_level": 1,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Avaliação final. Provas bimestrais, trabalhos longos e testes padronizados podem registrar resultados depois de um período de ensino.\n\nSeção B — Dependência temporal da avaliação formativa. Na lógica formativa, a coleta de evidências acontece durante a aprendizagem, não apenas no final. O professor observa sinais concretos em respostas orais, produções, interações e erros recorrentes, registrando-os com instrumentos simples enquanto ainda há tempo de ajustar a aula.",
+    "annotated": "<rule id=\"R1\">Avaliações finais podem registrar resultados ao término de um período.</rule>\n\n<temporal_dependency id=\"T1\" modifies=\"R1\" condition=\"objetivo é avaliação formativa\">Quando o objetivo é formativo, a evidência deve ser coletada durante a aprendizagem, enquanto ainda é possível ajustar o ensino.</temporal_dependency>",
+    "compiled": "case:\n    title: Avaliação formativa acontece durante a aprendizagem\n    domain: education\n    relation_type: temporal_dependency\n    complexity_level: 1\n  fragments:\n- id: R1\n  statement: Avaliações finais registram resultados após o ensino.\n- id: T1\n  statement: Avaliação formativa exige coleta durante a aprendizagem para permitir ajuste em tempo real.\n  relations:\n- T1 changes timing when purpose = formative assessment\n  decision:\n    correct_action: coletar sinais durante a atividade, não esperar apenas a prova final"
+  },
+  "query": "Em uma sequência de quatro semanas sobre frações, a professora diz que só vai descobrir as dificuldades da turma na prova bimestral, porque avaliação deve acontecer no final. Isso está alinhado à avaliação formativa?",
+  "gold_answer": {
+    "full": "Não. Uma prova final pode registrar resultado, mas a avaliação formativa exige observar e registrar evidências durante as atividades, enquanto ainda é possível intervir. A professora deveria usar checklists, anotações rápidas ou observações durante a resolução de problemas para ajustar o ensino antes da prova.",
+    "minimal": "Não — se o objetivo é formativo, as evidências precisam ser coletadas durante a aprendizagem.",
+    "required_relations": [
+      "T1 modifica o tempo de aplicação de R1 quando o objetivo é formativo"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "O que uma avaliação final pode fazer?",
+      "expected_answer": "Registrar resultados ao término de um período de ensino."
+    },
+    {
+      "fragment_id": "T1",
+      "probe": "Quando a avaliação é formativa, em que momento as evidências devem ser coletadas?",
+      "expected_answer": "Durante a aprendizagem, enquanto ainda é possível ajustar o ensino."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Como a prova bimestral é mais completa, ela é suficiente para regular a aprendizagem.",
+      "Sim. Avaliar durante a atividade seria apenas observação informal sem valor."
+    ],
+    "wrong_escalation": [
+      "Não — a professora deve abolir todas as provas da escola."
+    ],
+    "refusal": [
+      "Não dá para responder sem saber o calendário inteiro."
+    ],
+    "retrieval_failure_note": "Se a Seção B não estiver no contexto, não há base suficiente para distinguir avaliação final de formativa."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "T1"
+    ],
+    "negative_control_query": "A professora aplicará uma prova ao final, mas também usará checklists durante as aulas para ajustar intervenções. Isso pode estar alinhado à avaliação formativa?",
+    "negative_control_gold": "Sim. A prova pode existir, desde que a coleta de evidências durante a aprendizagem oriente intervenções antes do fim do ciclo.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "low"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "26-33",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "03_precondicao_feedback_criterio_evidencia",
+    "title": "Feedback acionável depende de critérios e evidências",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Após uma apresentação oral, o professor escreveu “você precisa se esforçar mais” duas semanas depois da atividade. Ele não mencionou evidências nem critérios. Isso conta como feedback formativo acionável?",
+    "expected_outcome": "Não — feedback acionável precisa ser rápido, específico, ligado a evidências e critérios."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "feedback",
+      "avaliação formativa"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 1
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Após uma apresentação oral, o professor escreveu “você precisa se esforçar mais” duas semanas depois da atividade. Ele não mencionou evidências nem critérios. Isso conta como feedback formativo acionável?",
+      "then": "Não — feedback acionável precisa ser rápido, específico, ligado a evidências e critérios.",
+      "requires": [
+        "P1 é pré-condição para o feedback de R1 ser acionável"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. A frase motiva o aluno e, por isso, já é feedback formativo.",
+        "Sim. O aluno sabe que precisa se esforçar, então a devolutiva já basta."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "P1 é pré-condição para o feedback de R1 ser acionável"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Após uma apresentação oral, o professor escreveu “você precisa se esforçar mais” duas semanas depois da atividade. Ele não mencionou evidências nem critérios. Isso conta como feedback formativo acionável?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — feedback acionável precisa ser rápido, específico, ligado a evidências e critérios."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "precondition",
+      "description": "P1 é pré-condição para o feedback de R1 ser acionável"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Após uma apresentação oral, o professor escreveu “você precisa se esforçar mais” duas semanas depois da atividade. Ele não mencionou evidências nem critérios. Isso conta como feedback formativo acionável?",
+      "answer": "Não. O comentário até expressa uma expectativa, mas não é acionável porque não informa evidência, critério nem próximo passo específico. Um feedback formativo deveria ser rápido e dizer algo como: “você explicou bem o exemplo inicial, mas precisa organizar a conclusão; na próxima apresentação, use uma frase final que retome a ideia principal”."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Finalidade do feedback. O feedback formativo devolve ao aluno um retrato do desempenho e indica o próximo passo. Ele deve ser rápido, compreensível, centrado na tarefa e relacionado aos critérios da atividade.\n\nSeção B — Pré-condição. Para ser acionável, o feedback precisa se apoiar em evidências observadas e critérios visíveis. Comentários genéricos como “capriche mais” ou “estude mais” não indicam o que fazer na próxima tentativa."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Um retrato do desempenho e um próximo passo."
+    },
+    {
+      "id": "P1",
+      "text": "Apoiar-se em evidências observadas e critérios visíveis, evitando comentários genéricos."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Avaliação Sem Mistério",
+      "source_pages": "34-40",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

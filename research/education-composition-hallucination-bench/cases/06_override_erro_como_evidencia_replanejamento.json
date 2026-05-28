@@ -1,0 +1,75 @@
+{
+  "case_id": "06_override_erro_como_evidencia_replanejamento",
+  "metadata": {
+    "title": "Erro recorrente deve orientar intervenção, não punição",
+    "domain": "education",
+    "subdomains": [
+      "erros",
+      "replanejamento"
+    ],
+    "relation_type": "override",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Erro individual. Um erro pode indicar que um aluno ainda não consolidou uma habilidade específica e precisa de orientação.\n\nSeção B — Erro recorrente como dado pedagógico. Quando um padrão de erro aparece em muitos alunos, ele deve ser tratado como evidência coletiva de uma lacuna de aprendizagem. Nesse caso, a função formativa da avaliação supera a leitura punitiva do erro: o professor deve replanejar a intervenção em vez de apenas sancionar ou seguir adiante.",
+    "annotated": "<rule id=\"R1\">Um erro individual pode indicar necessidade de orientação para um aluno.</rule>\n\n<override id=\"O1\" overrides=\"punitive_default\" condition=\"erro recorrente em parte significativa da turma\">Um padrão coletivo de erro deve ser tratado como evidência de lacuna de aprendizagem e usado para replanejar a intervenção.</override>",
+    "compiled": "case:\n    title: Erro recorrente deve orientar intervenção, não punição\n    domain: education\n    relation_type: override\n    complexity_level: 2\n  fragments:\n- id: R1\n  statement: Erro individual informa necessidade de orientação.\n- id: O1\n  statement: Erro recorrente coletivo tem prioridade como evidência para replanejamento.\n  relations:\n- O1 overrides punitive/default interpretation when collective error pattern appears\n  decision:\n    correct_action: usar os erros recorrentes como dados para replanejar a aula"
+  },
+  "query": "Em uma atividade de porcentagem, 18 de 30 alunos erraram o mesmo tipo de interpretação do enunciado. O professor afirma que isso mostra falta de estudo individual e decide apenas lançar zero para quem errou e seguir para o próximo conteúdo. Essa é a decisão formativa adequada?",
+  "gold_answer": {
+    "full": "Não. Como o erro é recorrente em parte significativa da turma, ele deve ser tratado como evidência coletiva de uma lacuna. A decisão formativa é replanejar a intervenção sobre interpretação de enunciados e porcentagem, talvez com exemplos guiados, atividade em grupo ou feedback direcionado, antes de seguir adiante.",
+    "minimal": "Não — o padrão coletivo de erro deve orientar replanejamento, não apenas punição ou avanço de conteúdo.",
+    "required_relations": [
+      "O1 tem prioridade sobre leitura punitiva quando há erro recorrente coletivo"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "O que um erro individual pode indicar?",
+      "expected_answer": "Que um aluno ainda precisa de orientação em uma habilidade específica."
+    },
+    {
+      "fragment_id": "O1",
+      "probe": "O que um padrão de erro em muitos alunos deve indicar?",
+      "expected_answer": "Uma evidência coletiva de lacuna de aprendizagem que deve orientar replanejamento."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Se muitos erraram, todos estudaram pouco; a ação formativa é registrar zero.",
+      "Sim. Como já houve atividade, o professor deve avançar para não atrasar o cronograma."
+    ],
+    "wrong_escalation": [
+      "O professor deve suspender todo o currículo por um mês e refazer a disciplina inteira."
+    ],
+    "refusal": [
+      "Não é possível responder sem conhecer a média da turma no bimestre."
+    ],
+    "retrieval_failure_note": "Sem a Seção B, o caso não permite distinguir erro individual de padrão coletivo."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "O1"
+    ],
+    "negative_control_query": "Um único aluno errou a interpretação, enquanto o restante da turma acertou. O professor pode planejar uma orientação individual para esse aluno?",
+    "negative_control_gold": "Sim. Nesse caso, o erro pode ser tratado como necessidade individual de orientação, sem exigir replanejamento coletivo.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "26-33, 41-47",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

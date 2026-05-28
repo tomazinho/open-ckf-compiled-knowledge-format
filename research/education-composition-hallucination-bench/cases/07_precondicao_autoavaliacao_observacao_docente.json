@@ -1,0 +1,75 @@
+{
+  "case_id": "07_precondicao_autoavaliacao_observacao_docente",
+  "metadata": {
+    "title": "Autoavaliação precisa ser confrontada com evidências docentes",
+    "domain": "education",
+    "subdomains": [
+      "autoavaliação",
+      "metacognição"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Autoavaliação. O aluno pode marcar seu próprio nível em uma escala simples, como: ainda não consigo, consigo com ajuda, consigo sozinho em tarefas simples, consigo sozinho em qualquer situação.\n\nSeção B — Comparação com evidências. A autoavaliação não substitui a observação do professor. Ela deve ser comparada com evidências coletadas em sala para estimular metacognição e diálogo sobre o progresso.",
+    "annotated": "<rule id=\"R1\">O aluno pode realizar autoavaliação em escala de níveis para refletir sobre seu progresso.</rule>\n\n<precondition id=\"P1\" required_for=\"R1_as_evidence_for_decision\">Para usar a autoavaliação em uma decisão pedagógica, o professor deve compará-la com evidências observadas em sala.</precondition>",
+    "compiled": "case:\n    title: Autoavaliação precisa ser confrontada com evidências docentes\n    domain: education\n    relation_type: precondition\n    complexity_level: 2\n  fragments:\n- id: R1\n  statement: Autoavaliação apoia reflexão do aluno.\n- id: P1\n  statement: Uso decisório da autoavaliação requer comparação com observação docente.\n  relations:\n- P1 required before R1 can support final pedagogical decision\n  decision:\n    correct_action: usar a autoavaliação como ponto de diálogo, confrontando-a com evidências"
+  },
+  "query": "Depois de uma atividade de leitura, um aluno marcou nível 4 (“consigo sozinho em qualquer situação”), mas o checklist do professor mostra que ele precisou de ajuda em textos longos. O professor deve aceitar o nível 4 como evidência final suficiente?",
+  "gold_answer": {
+    "full": "Não. A autoavaliação é útil, mas deve ser comparada com a observação docente. Nesse caso, a discrepância vira oportunidade de metacognição: o professor pode conversar com o aluno, mostrar a evidência do checklist e ajustar o nível ou o próximo passo de aprendizagem.",
+    "minimal": "Não — a autoavaliação deve ser confrontada com evidências observadas pelo professor.",
+    "required_relations": [
+      "P1 é pré-condição para usar R1 como evidência decisória"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Qual é a função da autoavaliação em escala simples?",
+      "expected_answer": "Ajudar o aluno a refletir sobre seu próprio progresso."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "O que o professor deve fazer com a autoavaliação antes de usá-la em decisão pedagógica?",
+      "expected_answer": "Compará-la com evidências coletadas em sala."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Como o aluno se conhece melhor, sua autoavaliação deve prevalecer sobre o checklist.",
+      "Sim. Autoavaliação é democrática e dispensa observação do professor."
+    ],
+    "wrong_escalation": [
+      "Não — autoavaliações nunca devem ser usadas em nenhuma situação escolar."
+    ],
+    "refusal": [
+      "Não dá para responder sem entrevistar todos os colegas do aluno."
+    ],
+    "retrieval_failure_note": "Sem a Seção B, a resposta pode supervalorizar a autoavaliação e não testar a relação de pré-condição."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1"
+    ],
+    "negative_control_query": "O aluno marcou nível 3 e o professor observou desempenho autônomo em tarefas simples, mas dificuldade em tarefas complexas. A autoavaliação pode ser aceita como coerente?",
+    "negative_control_gold": "Sim. Ela está alinhada às evidências observadas e pode apoiar o diálogo sobre o próximo passo.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Avaliação Sem Mistério",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "Avaliação Sem Mistério (3).pdf",
+    "source_pages": "55-61",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

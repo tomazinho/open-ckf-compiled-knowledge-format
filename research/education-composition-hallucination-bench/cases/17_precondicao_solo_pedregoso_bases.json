@@ -1,0 +1,82 @@
+{
+  "case_id": "17_precondicao_solo_pedregoso_bases",
+  "metadata": {
+    "title": "Aluno com lacunas precisa de raízes antes de tarefas complexas",
+    "domain": "education",
+    "subdomains": [
+      "conhecimento prévio",
+      "lacunas de aprendizagem"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 3,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Solo pedregoso. Alguns alunos acompanham explicações simples no momento, mas não possuem bases suficientes para aprendizagem duradoura. Suas “raízes” de conhecimento prévio são superficiais.\n\nSeção B — Sinal diagnóstico. Quando esse aluno participa de exercícios simples, mas falha quando a tarefa exige maior complexidade, o problema pode ser falta de fundações, não falta de esforço.\n\nSeção C — Intervenção. Para aprofundar as raízes, o professor deve conectar o conteúdo novo ao que o aluno já sabe, reconstruir fundamentos e usar exemplos significativos antes de exigir complexidade maior.",
+    "annotated": "<concept id=\"CPT1\">Solo pedregoso: aluno que entende no momento, mas tem bases frágeis para consolidar aprendizagem.</concept>\n\n<diagnostic id=\"D1\" condition=\"faz exercícios simples mas falha em tarefas complexas\">Sinal de possível lacuna de fundação, não apenas falta de esforço.</diagnostic>\n\n<precondition id=\"P1\" required_for=\"complex_learning\">Reconstruir fundamentos e conectar o novo ao conhecimento prévio antes de exigir maior complexidade.</precondition>",
+    "compiled": "case:\n    title: Aluno com lacunas precisa de raízes antes de tarefas complexas\n    domain: education\n    relation_type: precondition\n    complexity_level: 3\n  fragments:\n- id: CPT1\n  statement: Solo pedregoso = compreensão momentânea com bases frágeis.\n- id: D1\n  statement: Falha em complexidade após sucesso simples sugere lacuna de fundação.\n- id: P1\n  statement: Complexidade exige reconstruir bases e conectar conhecimento prévio.\n  relations:\n- D1 classifies the observed pattern\n- P1 required before complex tasks for rocky-soil profile\n  decision:\n    correct_action: diagnosticar lacunas e reconstruir bases antes de aumentar complexidade"
+  },
+  "query": "Um aluno resolve exemplos simples de equações quando o professor guia passo a passo, mas falha em problemas contextualizados. O professor conclui que ele é preguiçoso e passa exercícios mais difíceis sem retomar fundamentos. A decisão segue a metáfora do solo pedregoso?",
+  "gold_answer": {
+    "full": "Não. O padrão descrito combina com “solo pedregoso”: o aluno acompanha no momento, mas tem bases frágeis para tarefas complexas. A intervenção adequada é diagnosticar lacunas, reconstruir fundamentos e conectar o conteúdo a conhecimentos prévios ou situações significativas antes de aumentar a complexidade.",
+    "minimal": "Não — o padrão indica possíveis lacunas de base; é preciso reconstruir fundamentos antes de exigir maior complexidade.",
+    "required_relations": [
+      "D1 interpreta o padrão como possível lacuna de fundação",
+      "P1 define pré-condição para avançar na complexidade"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "CPT1",
+      "probe": "O que representa o “solo pedregoso” na metáfora educacional?",
+      "expected_answer": "Um aluno que entende no momento, mas tem bases superficiais para aprendizagem duradoura."
+    },
+    {
+      "fragment_id": "D1",
+      "probe": "O que pode indicar sucesso em exercícios simples e falha em tarefas complexas?",
+      "expected_answer": "Possível lacuna de fundação, não apenas falta de esforço."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "O que fazer antes de exigir maior complexidade desse aluno?",
+      "expected_answer": "Reconstruir fundamentos e conectar o novo ao conhecimento prévio ou a exemplos significativos."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Se ele acertou exemplos simples, deve conseguir os difíceis; se não conseguiu, é falta de esforço.",
+      "Sim. A melhor resposta para lacunas é aumentar a dificuldade imediatamente."
+    ],
+    "wrong_escalation": [
+      "O professor deve impedir o aluno de participar de tarefas complexas durante todo o ano."
+    ],
+    "refusal": [
+      "Não posso responder sem histórico escolar completo."
+    ],
+    "retrieval_failure_note": "Sem o diagnóstico D1, a resposta pode confundir lacuna de base com comportamento."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "CPT1",
+      "D1",
+      "P1"
+    ],
+    "negative_control_query": "O aluno domina os fundamentos e falha apenas por distração pontual em um problema complexo. A metáfora do solo pedregoso é necessariamente a melhor explicação?",
+    "negative_control_gold": "Não necessariamente. Sem sinal de lacuna de base, pode ser outro tipo de dificuldade que exige outra intervenção.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "16-24",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

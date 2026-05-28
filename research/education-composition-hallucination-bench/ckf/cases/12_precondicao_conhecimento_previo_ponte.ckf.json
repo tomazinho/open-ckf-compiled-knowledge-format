@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "id": "12_precondicao_conhecimento_previo_ponte",
+    "title": "Conhecimento novo deve se conectar ao que o aluno já sabe",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Em uma turma que ainda confunde frações equivalentes, a professora inicia diretamente problemas algébricos com frações e diz que “eles aprenderão fazendo”. O plano aplica corretamente a aprendizagem por associação?",
+    "expected_outcome": "Não — com lacunas de base, o professor deve ativar conhecimentos prévios e construir fundamentos antes da tarefa complexa."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "aprendizagem significativa",
+      "conhecimento prévio"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 2
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Em uma turma que ainda confunde frações equivalentes, a professora inicia diretamente problemas algébricos com frações e diz que “eles aprenderão fazendo”. O plano aplica corretamente a aprendizagem por associação?",
+      "then": "Não — com lacunas de base, o professor deve ativar conhecimentos prévios e construir fundamentos antes da tarefa complexa.",
+      "requires": [
+        "R1 estabelece a lógica associativa",
+        "P1 exige ponte/fundação quando há lacunas"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Tarefas complexas sempre criam as conexões necessárias por si mesmas.",
+        "Sim. Se a professora explicar rápido, não importa que falte base."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "R1 estabelece a lógica associativa",
+        "P1 exige ponte/fundação quando há lacunas"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Em uma turma que ainda confunde frações equivalentes, a professora inicia diretamente problemas algébricos com frações e diz que “eles aprenderão fazendo”. O plano aplica corretamente a aprendizagem por associação?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — com lacunas de base, o professor deve ativar conhecimentos prévios e construir fundamentos antes da tarefa complexa."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "precondition",
+      "description": "R1 estabelece a lógica associativa; P1 exige ponte/fundação quando há lacunas"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Em uma turma que ainda confunde frações equivalentes, a professora inicia diretamente problemas algébricos com frações e diz que “eles aprenderão fazendo”. O plano aplica corretamente a aprendizagem por associação?",
+      "answer": "Não. Como há lacunas de base, é preciso primeiro construir pontes com conhecimentos prévios e fundamentos: retomar frações equivalentes, usar exemplos concretos e conectar o novo ao familiar. Só depois faz sentido avançar para tarefas algébricas mais complexas."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Aprendizagem por associação. O cérebro aprende conectando novas informações a conhecimentos previamente armazenados. Quando o novo se liga ao familiar, a assimilação se torna mais significativa.\n\nSeção B — Pré-condição pedagógica. Quando os alunos apresentam lacunas de base, o professor deve construir pontes com conhecimentos prévios, exemplos cotidianos ou fundamentos necessários antes de exigir tarefas mais complexas."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Conectando-as a conhecimentos previamente armazenados ou familiares."
+    },
+    {
+      "id": "P1",
+      "text": "Construir pontes com conhecimentos prévios, exemplos cotidianos ou fundamentos necessários."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "19-21, 41-44",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

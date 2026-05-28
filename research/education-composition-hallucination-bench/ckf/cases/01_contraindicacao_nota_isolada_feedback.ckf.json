@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "01_contraindicacao_nota_isolada_feedback",
+    "title": "Nota isolada como avaliação formativa insuficiente",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "Uma professora corrigiu uma redação e pretende devolver apenas “8/10” ao aluno, dizendo que a nota já mostra que ele foi bem e deve melhorar um pouco. Como o objetivo declarado é orientar a próxima versão do texto, essa devolutiva é suficiente?",
+    "expected_outcome": "Não — para orientar aprendizagem, a nota isolada deve ser acompanhada de evidências, critérios e próximo passo."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "avaliação formativa",
+      "feedback"
+    ],
+    "relation_type": "contraindication",
+    "complexity_level": 1
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "Uma professora corrigiu uma redação e pretende devolver apenas “8/10” ao aluno, dizendo que a nota já mostra que ele foi bem e deve melhorar um pouco. Como o objetivo declarado é orientar a próxima versão do texto, essa devolutiva é suficiente?",
+      "then": "Não — para orientar aprendizagem, a nota isolada deve ser acompanhada de evidências, critérios e próximo passo.",
+      "requires": [
+        "C1 contraindica tratar a nota administrativa como orientação formativa suficiente"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Como 8/10 é uma nota alta, o aluno já sabe que foi bem e basta estudar um pouco mais.",
+        "Sim. A nota é objetiva e dispensa explicar critérios ou evidências."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "C1 contraindica tratar a nota administrativa como orientação formativa suficiente"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "Uma professora corrigiu uma redação e pretende devolver apenas “8/10” ao aluno, dizendo que a nota já mostra que ele foi bem e deve melhorar um pouco. Como o objetivo declarado é orientar a próxima versão do texto, essa devolutiva é suficiente?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — para orientar aprendizagem, a nota isolada deve ser acompanhada de evidências, critérios e próximo passo."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "contraindication",
+      "description": "C1 contraindica tratar a nota administrativa como orientação formativa suficiente"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "Uma professora corrigiu uma redação e pretende devolver apenas “8/10” ao aluno, dizendo que a nota já mostra que ele foi bem e deve melhorar um pouco. Como o objetivo declarado é orientar a próxima versão do texto, essa devolutiva é suficiente?",
+      "answer": "Não. A nota pode existir como registro, mas não é suficiente para orientar a próxima versão do texto. Como o objetivo é formativo, a professora precisa explicitar evidências do desempenho, critérios da rubrica e um próximo passo claro, por exemplo: “você organiza bem os parágrafos, mas precisa justificar melhor suas ideias com exemplos”."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Registro administrativo. A escola pode continuar usando boletins, médias e notas para registrar resultados escolares quando o sistema institucional exige esse tipo de síntese.\n\nSeção B — Orientação da aprendizagem. Quando o objetivo é orientar o aluno sobre o que já sabe e o que precisa aprender, a nota isolada é insuficiente: ela não explicita quais habilidades foram consolidadas, quais estão frágeis, quais critérios foram usados nem qual é o próximo passo. Para funcionar formativamente, a avaliação precisa transformar desempenho em evidências, critérios visíveis e devolutivas acionáveis."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "Como registro administrativo, quando boletins, médias ou sistemas institucionais exigem uma síntese."
+    },
+    {
+      "id": "C1",
+      "text": "Porque não mostra habilidades consolidadas ou frágeis, critérios usados nem próximo passo."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Avaliação Sem Mistério",
+      "source_pages": "3-10",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "case_id": "14_escopo_relevancia_sustenta_interesse",
+  "metadata": {
+    "title": "Surpresa capta atenção, mas relevância sustenta interesse",
+    "domain": "education",
+    "subdomains": [
+      "relevância",
+      "engajamento"
+    ],
+    "relation_type": "scope",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Captura inicial. Perguntas instigantes, surpresa e histórias podem captar a atenção dos alunos no início da aula.\n\nSeção B — Sustentação do interesse. Para manter o interesse, o conteúdo precisa fazer sentido para o aluno. Conectar o tema à vida, aos interesses, ao cotidiano ou a usos práticos torna o aprendizado mais significativo. Um gancho divertido, mas desconectado do objetivo da aula, não sustenta engajamento por si só.",
+    "annotated": "<rule id=\"R1\">Surpresa, perguntas e histórias podem captar atenção inicial.</rule>\n\n<scope id=\"S1\" limits=\"R1\">Para sustentar interesse e aprendizagem significativa, o conteúdo deve ser conectado à realidade, utilidade ou interesses dos alunos.</scope>",
+    "compiled": "case:\n    title: Surpresa capta atenção, mas relevância sustenta interesse\n    domain: education\n    relation_type: scope\n    complexity_level: 2\n  fragments:\n- id: R1\n  statement: Ganchos de surpresa podem captar atenção inicial.\n- id: S1\n  statement: Sustentação do interesse exige relevância e conexão com a vida do aluno.\n  relations:\n- S1 limits R1: attention hook alone is not sufficient for sustained interest\n  decision:\n    correct_action: manter o gancho, mas conectá-lo explicitamente à relevância do conteúdo"
+  },
+  "query": "Para uma aula de leis de Newton, o professor começa com um vídeo engraçado de um gato. Os alunos riem, mas o vídeo não é conectado ao conteúdo nem à experiência deles. Depois, ele faz uma explicação abstrata. A surpresa inicial é suficiente para manter o interesse significativo?",
+  "gold_answer": {
+    "full": "Não. A surpresa pode captar atenção inicial, mas precisa ser conectada ao conteúdo e à realidade dos alunos para sustentar interesse. O professor poderia relacionar as leis de Newton a esportes, transporte, quedas ou situações cotidianas, usando o vídeo apenas se ele servir de ponte para o conceito.",
+    "minimal": "Não — o gancho precisa se conectar à relevância do conteúdo para sustentar o interesse.",
+    "required_relations": [
+      "S1 limita R1: captura inicial não substitui relevância"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "O que perguntas, histórias ou surpresa podem fazer no início da aula?",
+      "expected_answer": "Captar a atenção inicial dos alunos."
+    },
+    {
+      "fragment_id": "S1",
+      "probe": "O que ajuda a sustentar o interesse depois da captura inicial?",
+      "expected_answer": "Conectar o conteúdo à realidade, utilidade ou interesses dos alunos."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Se os alunos riram, o engajamento significativo está garantido.",
+      "Sim. Qualquer surpresa é suficiente, mesmo sem relação com o conteúdo."
+    ],
+    "wrong_escalation": [
+      "O professor nunca deve usar humor ou vídeos em aula."
+    ],
+    "refusal": [
+      "Não é possível responder sem conhecer todos os interesses dos alunos."
+    ],
+    "retrieval_failure_note": "Sem S1, a resposta pode supervalorizar a captura inicial."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "S1"
+    ],
+    "negative_control_query": "O professor começa com um vídeo de uma frenagem no ônibus e o usa para discutir inércia e força resultante presentes no trajeto dos alunos. Isso sustenta melhor o interesse?",
+    "negative_control_gold": "Sim. A captura inicial está conectada à experiência dos alunos e ao conteúdo.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "48-61",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

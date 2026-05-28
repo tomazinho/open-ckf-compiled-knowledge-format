@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EducationCompositionHallucinationCase",
+  "description": "Schema for education-focused composition-hallucination benchmark cases adapted from Paulo Tomazinho educational books.",
+  "type": "object",
+  "required": [
+    "case_id",
+    "metadata",
+    "representations",
+    "query",
+    "gold_answer",
+    "local_probes",
+    "failure_examples",
+    "controls"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Stable identifier, lowercase with underscores."
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "domain",
+        "relation_type",
+        "complexity_level",
+        "source_status",
+        "license"
+      ],
+      "properties": {
+        "domain": {
+          "type": "string",
+          "enum": [
+            "corporate_policy",
+            "regulatory",
+            "clinical",
+            "education",
+            "technical_ops",
+            "eligibility",
+            "legal"
+          ]
+        },
+        "relation_type": {
+          "type": "string",
+          "enum": [
+            "exception",
+            "override",
+            "scope",
+            "precondition",
+            "sequence",
+            "contraindication",
+            "temporal_dependency",
+            "exception_of_exception"
+          ]
+        },
+        "complexity_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "1 = one rule + one exception/override; 2 = one rule + two relations; 3 = chained relations."
+        },
+        "source_status": {
+          "type": "string",
+          "enum": [
+            "synthetic",
+            "real",
+            "adapted"
+          ]
+        },
+        "license": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "representations": {
+      "type": "object",
+      "required": [
+        "raw",
+        "annotated",
+        "compiled"
+      ],
+      "description": "Three matched representations of the SAME informational content. No condition may introduce new facts.",
+      "properties": {
+        "raw": {
+          "type": "string",
+          "description": "R condition: natural prose, relations inferable but untyped."
+        },
+        "annotated": {
+          "type": "string",
+          "description": "A condition: same prose with inline relation tags (<rule>, <exception>, <scope>, <precondition>, <sequence>, <contraindication>). No new facts."
+        },
+        "compiled": {
+          "type": "string",
+          "description": "C condition: same content as typed structured representation (YAML-like). No new facts."
+        }
+      }
+    },
+    "query": {
+      "type": "string",
+      "description": "User question that requires composing fragments."
+    },
+    "gold_answer": {
+      "type": "object",
+      "required": [
+        "full",
+        "minimal",
+        "required_relations"
+      ],
+      "properties": {
+        "full": {
+          "type": "string",
+          "description": "Complete correct answer with reasoning."
+        },
+        "minimal": {
+          "type": "string",
+          "description": "Minimal answer for strict binary scoring."
+        },
+        "required_relations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Which relations must be composed to produce the correct answer."
+        }
+      }
+    },
+    "local_probes": {
+      "type": "array",
+      "minItems": 2,
+      "description": "Local-legibility probes per §7.2. Each fragment must be answerable in isolation.",
+      "items": {
+        "type": "object",
+        "required": [
+          "fragment_id",
+          "probe",
+          "expected_answer"
+        ],
+        "properties": {
+          "fragment_id": {
+            "type": "string"
+          },
+          "probe": {
+            "type": "string"
+          },
+          "expected_answer": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "failure_examples": {
+      "type": "object",
+      "description": "Sample wrong outputs labelled by failure category per §8.3.",
+      "properties": {
+        "composition_hallucination": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "wrong_escalation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "refusal": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retrieval_failure_note": {
+          "type": "string"
+        }
+      }
+    },
+    "controls": {
+      "type": "object",
+      "description": "Controls per §7.",
+      "properties": {
+        "necessary_fragments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Sufficiency control (§7.1) — fragments that must be in context."
+        },
+        "negative_control_query": {
+          "type": "string",
+          "description": "Query where the exception/override does NOT trigger and the general rule should apply (per §6.5)."
+        },
+        "negative_control_gold": {
+          "type": "string"
+        },
+        "position_variants_supported": {
+          "type": "boolean",
+          "description": "Whether the case can be reordered for position controls (§7.4). Should be true for all cases."
+        },
+        "parametric_contamination_risk": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "description": "Risk that a model answers from priors without context (§7.6). Synthetic policies should be low."
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Optional provenance metadata for adapted-real cases.",
+      "properties": {
+        "source_status_detail": {
+          "type": "string"
+        },
+        "source_title": {
+          "type": "string"
+        },
+        "source_organization": {
+          "type": "string"
+        },
+        "source_url": {
+          "type": "string"
+        },
+        "source_accessed": {
+          "type": "string"
+        },
+        "adaptation_method": {
+          "type": "string"
+        },
+        "professional_guidance_warning": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

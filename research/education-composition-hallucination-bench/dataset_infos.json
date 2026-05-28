@@ -1,0 +1,25 @@
+{
+  "education-composition-hallucination-bench": {
+    "description": "Portuguese education-focused benchmark for composition hallucination, adapted from Paulo Tomazinho books. Compatible with the generic composition-hallucination benchmark runner when configured for pt-BR.",
+    "citation": "cff-version: 1.2.0\ntitle: \"Education Composition Hallucination Bench\"\nmessage: \"If you use this benchmark, please cite it.\"\ntype: dataset\nauthors:\n  - family-names: Tomazinho\n    given-names: Paulo\nversion: \"0.1.1-draft\"\ndate-released: \"2026-05-28\"\nlicense: \"CC-BY-4.0\"\nrepository-code: \"https://github.com/ckf-research/education-composition-hallucination-bench\"\nabstract: \"A Portuguese education-focused benchmark for evaluating composition hallucination over formative assessment and brain-based teaching guidance.\"\n",
+    "homepage": "https://github.com/ckf-research/education-composition-hallucination-bench",
+    "license": "cc-by-4.0",
+    "features": {
+      "case_id": "string",
+      "metadata": "dict",
+      "representations": "dict",
+      "query": "string",
+      "gold_answer": "dict",
+      "local_probes": "list",
+      "failure_examples": "dict",
+      "controls": "dict",
+      "provenance": "dict"
+    },
+    "splits": {
+      "train": {
+        "name": "train",
+        "num_examples": 20
+      }
+    }
+  }
+}

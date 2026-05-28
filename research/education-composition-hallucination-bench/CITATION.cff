@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "Education Composition Hallucination Bench"
+message: "If you use this benchmark, please cite it."
+type: dataset
+authors:
+  - family-names: Tomazinho
+    given-names: Paulo
+version: "0.1.1-draft"
+date-released: "2026-05-28"
+license: "CC-BY-4.0"
+repository-code: "https://github.com/ckf-research/education-composition-hallucination-bench"
+abstract: "A Portuguese education-focused benchmark for evaluating composition hallucination over formative assessment and brain-based teaching guidance."

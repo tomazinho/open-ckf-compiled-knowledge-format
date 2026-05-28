@@ -1,0 +1,76 @@
+{
+  "case_id": "12_precondicao_conhecimento_previo_ponte",
+  "metadata": {
+    "title": "Conhecimento novo deve se conectar ao que o aluno já sabe",
+    "domain": "education",
+    "subdomains": [
+      "aprendizagem significativa",
+      "conhecimento prévio"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 2,
+    "source_status": "adapted",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho.",
+    "language": "pt-BR",
+    "notes": "Caso adaptado de material autoral de educação; redação condensada para fins de avaliação, sem cópia integral do texto-fonte."
+  },
+  "representations": {
+    "raw": "Seção A — Aprendizagem por associação. O cérebro aprende conectando novas informações a conhecimentos previamente armazenados. Quando o novo se liga ao familiar, a assimilação se torna mais significativa.\n\nSeção B — Pré-condição pedagógica. Quando os alunos apresentam lacunas de base, o professor deve construir pontes com conhecimentos prévios, exemplos cotidianos ou fundamentos necessários antes de exigir tarefas mais complexas.",
+    "annotated": "<rule id=\"R1\">O cérebro aprende por associação entre novas informações e conhecimentos prévios.</rule>\n\n<precondition id=\"P1\" required_for=\"complex_task\">Se há lacunas de base, construir pontes com conhecimentos prévios e fundamentos necessários antes de exigir tarefas complexas.</precondition>",
+    "compiled": "case:\n    title: Conhecimento novo deve se conectar ao que o aluno já sabe\n    domain: education\n    relation_type: precondition\n    complexity_level: 2\n  fragments:\n- id: R1\n  statement: Aprendizagem significativa depende de associação com conhecimentos prévios.\n- id: P1\n  statement: Lacunas de base exigem ponte/fundação antes de tarefas complexas.\n  relations:\n- P1 applies when prior knowledge gap is present\n- R1 explains why bridging matters\n  decision:\n    correct_action: ativar conhecimentos prévios e fundamentos antes da tarefa complexa"
+  },
+  "query": "Em uma turma que ainda confunde frações equivalentes, a professora inicia diretamente problemas algébricos com frações e diz que “eles aprenderão fazendo”. O plano aplica corretamente a aprendizagem por associação?",
+  "gold_answer": {
+    "full": "Não. Como há lacunas de base, é preciso primeiro construir pontes com conhecimentos prévios e fundamentos: retomar frações equivalentes, usar exemplos concretos e conectar o novo ao familiar. Só depois faz sentido avançar para tarefas algébricas mais complexas.",
+    "minimal": "Não — com lacunas de base, o professor deve ativar conhecimentos prévios e construir fundamentos antes da tarefa complexa.",
+    "required_relations": [
+      "R1 estabelece a lógica associativa",
+      "P1 exige ponte/fundação quando há lacunas"
+    ]
+  },
+  "local_probes": [
+    {
+      "fragment_id": "R1",
+      "probe": "Como o cérebro assimila melhor informações novas?",
+      "expected_answer": "Conectando-as a conhecimentos previamente armazenados ou familiares."
+    },
+    {
+      "fragment_id": "P1",
+      "probe": "O que fazer quando há lacunas de base antes de uma tarefa complexa?",
+      "expected_answer": "Construir pontes com conhecimentos prévios, exemplos cotidianos ou fundamentos necessários."
+    }
+  ],
+  "failure_examples": {
+    "composition_hallucination": [
+      "Sim. Tarefas complexas sempre criam as conexões necessárias por si mesmas.",
+      "Sim. Se a professora explicar rápido, não importa que falte base."
+    ],
+    "wrong_escalation": [
+      "A professora deve cancelar todos os conteúdos novos até que todos dominem perfeitamente tudo."
+    ],
+    "refusal": [
+      "Não posso responder sem o livro didático da turma."
+    ],
+    "retrieval_failure_note": "Sem P1, a resposta pode aplicar R1 genericamente sem decidir o que fazer diante de lacunas."
+  },
+  "controls": {
+    "necessary_fragments": [
+      "R1",
+      "P1"
+    ],
+    "negative_control_query": "Uma turma domina frações equivalentes e a professora inicia problemas algébricos fazendo uma analogia com receitas e proporções já conhecidas. Isso está alinhado?",
+    "negative_control_gold": "Sim. O novo conteúdo está sendo conectado a conhecimentos e experiências prévias.",
+    "position_variants_supported": true,
+    "parametric_contamination_risk": "medium"
+  },
+  "provenance": {
+    "source_status_detail": "adapted_from_author_books",
+    "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+    "source_author": "Paulo Tomazinho",
+    "source_file": "e-Book Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem - Paulo Tomazinho (3).pdf",
+    "source_pages": "19-21, 41-44",
+    "source_accessed": "2026-05-28",
+    "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos.",
+    "professional_guidance_warning": "Artefato de benchmark. Não substitui julgamento pedagógico, contexto da escola ou políticas educacionais aplicáveis."
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "id": "09_precondicao_atencao_antes_explicacao",
+    "title": "Atenção é pré-condição para aprendizagem significativa",
+    "language": "pt-BR",
+    "ckf_profile": "experimental_benchmark_case",
+    "dataset": "education-composition-hallucination-bench",
+    "version": "0.1.0-draft",
+    "created": "2026-05-28",
+    "license": "CC-BY-4.0 for benchmark case adaptations; source books remain copyright Paulo Tomazinho."
+  },
+  "core_intent": {
+    "purpose": "Representar um caso de benchmark de alucinação de composição em educação.",
+    "user_task": "A turma está dispersa, com vários alunos olhando para o celular. O professor decide continuar explicando um conceito difícil com mais detalhes, sem mudar a dinâmica da aula. Essa é a melhor decisão segundo o princípio apresentado?",
+    "expected_outcome": "Não — é preciso capturar a atenção antes de esperar aprendizagem significativa pela explicação."
+  },
+  "domain_map": {
+    "primary_domain": "education",
+    "subdomains": [
+      "atenção",
+      "neuroeducação"
+    ],
+    "relation_type": "precondition",
+    "complexity_level": 1
+  },
+  "entities": [
+    {
+      "id": "professor",
+      "type": "role",
+      "label": "Professor"
+    },
+    {
+      "id": "aluno",
+      "type": "role",
+      "label": "Aluno"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "composition_hallucination",
+      "label": "Alucinação de composição",
+      "definition": "Erro em que fragmentos locais são legíveis, mas a relação entre eles não é aplicada corretamente."
+    }
+  ],
+  "principles": [
+    {
+      "id": "source_grounded_pedagogy",
+      "statement": "Responder somente a partir do material-fonte e das relações explicitadas no caso."
+    }
+  ],
+  "heuristics": [
+    {
+      "id": "check_relation_before_answer",
+      "statement": "Antes de responder, identificar regra geral, condição de aplicação, exceção, pré-condição ou sequência."
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "gold_decision",
+      "if": "A turma está dispersa, com vários alunos olhando para o celular. O professor decide continuar explicando um conceito difícil com mais detalhes, sem mudar a dinâmica da aula. Essa é a melhor decisão segundo o princípio apresentado?",
+      "then": "Não — é preciso capturar a atenção antes de esperar aprendizagem significativa pela explicação.",
+      "requires": [
+        "P1 é pré-condição para R1 produzir aprendizagem significativa"
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "id": "answering_procedure",
+      "steps": [
+        "Ler os fragmentos necessários",
+        "Responder probes locais se necessário",
+        "Identificar relações",
+        "Aplicar prioridade relacional",
+        "Responder com evidências"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "correct_pattern",
+      "statement": "A resposta correta aplica a relação requerida e não apenas uma regra isolada."
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "composition_error_pattern",
+      "examples": [
+        "Sim. Se a explicação for mais detalhada, a atenção deixa de importar.",
+        "Sim. O problema é apenas falta de disciplina; o conteúdo pode continuar igual."
+      ]
+    }
+  ],
+  "causal_chains": [
+    {
+      "id": "relation_to_answer",
+      "steps": [
+        "P1 é pré-condição para R1 produzir aprendizagem significativa"
+      ]
+    }
+  ],
+  "contextual_triggers": [
+    {
+      "id": "main_query_trigger",
+      "text": "A turma está dispersa, com vários alunos olhando para o celular. O professor decide continuar explicando um conceito difícil com mais detalhes, sem mudar a dinâmica da aula. Essa é a melhor decisão segundo o princípio apresentado?"
+    }
+  ],
+  "if_then_rules": [
+    {
+      "id": "minimal_gold_rule",
+      "if": "all necessary fragments are present and locally legible",
+      "then": "Não — é preciso capturar a atenção antes de esperar aprendizagem significativa pela explicação."
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "relation_exception_or_constraint",
+      "type": "precondition",
+      "description": "P1 é pré-condição para R1 produzir aprendizagem significativa"
+    }
+  ],
+  "mental_models": [
+    {
+      "id": "formative_education_model",
+      "statement": "Decisões pedagógicas exigem compor objetivo, evidência, critério, estado emocional/cognitivo e próximo passo."
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "benchmark_scoring_playbook",
+      "steps": [
+        "Verificar suficiência de evidência",
+        "Aplicar gold answer",
+        "Rotular falhas conforme categorias"
+      ]
+    }
+  ],
+  "qa_pairs": [
+    {
+      "question": "A turma está dispersa, com vários alunos olhando para o celular. O professor decide continuar explicando um conceito difícil com mais detalhes, sem mudar a dinâmica da aula. Essa é a melhor decisão segundo o princípio apresentado?",
+      "answer": "Não. A explicação pode estar correta, mas sem atenção ela tende a não ser processada de forma significativa. O professor deveria primeiro recuperar a atenção com uma pergunta provocativa, surpresa, história, desafio ou interação, e só então aprofundar a explicação."
+    }
+  ],
+  "retrieval_chunks": [
+    {
+      "id": "raw_representation",
+      "text": "Seção A — Explicação do conteúdo. O professor pode explicar claramente um conceito e usar exemplos corretos.\n\nSeção B — Pré-condição atencional. Sem atenção do aluno, não há aprendizagem significativa. Captar a atenção no início da aula, por meio de perguntas provocativas, surpresa, histórias ou desafios, prepara o cérebro para processar o conteúdo."
+    }
+  ],
+  "atomic_units": [
+    {
+      "id": "R1",
+      "text": "A apresentar o conteúdo corretamente."
+    },
+    {
+      "id": "P1",
+      "text": "Captar a atenção do aluno."
+    }
+  ],
+  "agent_instructions": {
+    "answer_policy": "Use apenas as representações fornecidas. Não invente políticas pedagógicas externas."
+  },
+  "knowledge_limits": {
+    "limitations": [
+      "Caso adaptado para benchmark; não substitui julgamento pedagógico profissional.",
+      "Trechos são paráfrases/condensações e não substituem os livros-fonte."
+    ]
+  },
+  "source_traceability": [
+    {
+      "source_title": "Orientações Baseadas no Cérebro para Transformar Ensino em Aprendizagem",
+      "source_pages": "45-52",
+      "adaptation_method": "Paráfrase e condensação de ideias pedagógicas do livro em um caso avaliativo autocontido, preservando relações conceituais sem reproduzir trechos extensos."
+    }
+  ]
+}
