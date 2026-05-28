@@ -63,6 +63,14 @@ The materials are organized as a research timeline: from the motivating failure 
 | 07 | [`07-personal-knowops`](./07-personal-knowops) | Applies CKF ideas to personal knowledge operations and Obsidian workflows |
 | 08 | [`08-legal-compilation`](./08-legal-compilation) | Explores legal-domain compilation for normative, article-level, compliance-oriented knowledge |
 
+## Research Benchmarks
+
+- [Composition Hallucination Bench](10%20-%20research/composition-hallucination-bench)  
+  A general RAG benchmark for testing whether models can compose implicit relations among retrieved fragments, such as exceptions, overrides, scope constraints, preconditions, temporal dependencies, contraindications, and procedural sequences.
+
+- [Education Composition Hallucination Bench](10%20-%20research/education-composition-hallucination-bench)  
+  A pt-BR education benchmark for testing composition hallucination in pedagogical reasoning, assessment design, formative feedback, classroom decision-making, and brain-based learning strategies.
+  
 ## Suggested reading order
 
 Start with **01** to understand the failure mode, then read **02** and **03** to understand why CKF is a compiler problem rather than a serialization problem. Papers **04** and **05** cover operational robustness and model sensitivity. Paper **06** is the synthesis. Papers **07** and **08** show applied and domain-specialized directions.
